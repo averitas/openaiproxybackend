@@ -38,6 +38,11 @@ class Message:
         self.context = jsonDict.get('context')
         self.promo = jsonDict.get('promo')
         
+    def pushContext(self, role:str='system', content:str='') -> None:
+        if content is None or len(content) == 0:
+            return
+        self.context.append({"role": role, "content": content})
+        
 class Response:
     code: int = 0
     message: str = ""
@@ -90,10 +95,11 @@ class OpenaiHandler:
     def compactMsgContextWithSummary(self):
         self.message.promo = "Summary this chat."
         response = self.completion()
-        self.message.context = [{"role": "system", "content": response}]
+        self.message.context = []
+        self.message.pushContext(content=response)
     
     def completion(self) -> str:
-        self.message.context.append({"role": "user", "content": self.message.promo})
+        self.message.pushContext(role='user', content=self.message.promo)
         
         try:
             response = openai.ChatCompletion.create(
@@ -101,7 +107,7 @@ class OpenaiHandler:
                   messages=self.message.context
                 )
             self.response = response['choices'][0]['message']['content']
-            self.message.context.append({"role": "system", "content": self.response})
+            self.message.pushContext(content=self.response)
             logging.info(self.response)
             return self.response
         except openai.error.APIError as e:
