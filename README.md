@@ -1,5 +1,10 @@
 # openaiproxybackend
 
+## Introduce
+This project will save session and chat history as a proxy to openai model. When chat become long enough, it will compact chat history.
+
+More features are still under development.
+
 ## Local debug
 Create a `local.settings.json`
 ```
