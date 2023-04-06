@@ -17,3 +17,7 @@ Create a `local.settings.json`
   }
 }
 ```
+
+Install Azure function core tool in this [url](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=v4%2Cwindows%2Ccsharp%2Cportal%2Cbash)
+
+then run `func start` under api folder
