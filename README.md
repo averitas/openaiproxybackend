@@ -5,7 +5,8 @@ This project will save session and chat history as a proxy to openai model. When
 
 More features are still under development.
 
-## Local debug
+## Local debug api
+under `api` folder.
 Create a `local.settings.json`
 ```
 {
@@ -26,3 +27,22 @@ Create a `local.settings.json`
 Install Azure function core tool in this [url](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=v4%2Cwindows%2Ccsharp%2Cportal%2Cbash)
 
 then run `func start` under api folder
+
+## local debug website
+under `openaiproxywebsite` folder.
+See openaiproxywebsite/README.md
+
+## endpoints
+api trigger endpoint:
+```
+POST https://openaiproxybackendapp.azurewebsites.net/api/azopenaitrigger
+{
+    "promo": "Show me the folder structure of this azure function project.",
+    "sessionId": "67214e13-ee31-4c05-b3bf-413f7815fa0d",
+    "context": [""], // optional, if you need to add additional context
+}
+```
+website endpoint:
+```
+openaiproxywebsite.azurewebsites.net
+```

@@ -20,8 +20,8 @@ name: Deploy Python project to Azure Function App
 
 on:
   push:
-    branches:
-    - "main"
+    branches: [ "main" ]
+    paths: ['api/**']
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'openaiproxybackendapp'   # set this to your function app name on Azure
@@ -31,7 +31,7 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: dev
+    environment: openaiproxytrigger
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
