@@ -6,6 +6,8 @@ import SendIcon from '@mui/icons-material/Send';
 import ReactMarkdown from 'react-markdown';
 import { css } from '@emotion/react';
 import Message from '@/types/message';
+import styled from '@emotion/styled';
+
 const listItemStyle = css`
   margin: 20% 20%;
 `;
@@ -18,7 +20,6 @@ type ChatWindowProps = {
     messages: Message[];
     setMessages: (messages: Message[]) => void;
 };
-
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession, messages, setMessages }) => {
   const [inputText, setInputText] = useState('');
@@ -48,6 +49,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       setMessages(newMessages);
       setInputText('');
       setWaiting(newMessages)
+      setLoading(true)
 
       const response = await axios.post('/api/chat', {
         session: activeSession.id,
@@ -82,7 +84,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
             setSessions(newSessions)
         }
 
-        setMessages([...newMessages, newResponse]);
+        setMessages([...newMessages, newResponse])
+        setLoading(false)
       }
     } catch (error) {
       setInputText('');
@@ -113,10 +116,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
                 primary={message.id}
                 secondary={(message.id % 2) === 1 ? 'Ask' : 'Answer'}
               />
-              <Typography variant="body1" component="div" style={{maxWidth: "80%"}}>
+              <Box component="div" style={{maxWidth: "70%", borderRadius: '16px', margin: '4px', padding: '8px 12px'}}>
                 {message.isWait? <CircularProgress/> : 
                 <ReactMarkdown>{message.text}</ReactMarkdown>}
-              </Typography>
+              </Box>
             </ListItem>
           ))}
         </List>
@@ -136,7 +139,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
           variant="contained"
           color="primary"
           onClick={handleMessageSend}
-          disabled={!inputText}
+          disabled={!inputText || loading}
           endIcon={<SendIcon />}
         >
           Send

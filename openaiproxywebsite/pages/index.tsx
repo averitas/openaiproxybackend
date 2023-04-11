@@ -10,8 +10,8 @@ const MyApp = () => {
     ReactDOM.render(
       <>
         <Head>
-          <title>My App</title>
-          <meta name="description" content="My App" />
+          <title>My Openai proxy App</title>
+          <meta name="description" content="My openai proxy App" />
         </Head>
         <nav>
           <ul>
