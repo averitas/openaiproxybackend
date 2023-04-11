@@ -20,8 +20,9 @@ type ChatWindowProps = {
 const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession, messages, setMessages }) => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
-  const colors = ["#BDBDBD", "#E0E0E0"]; // set up colors
+  const colors = ["#80cbc4", "#b2dfdb"]; // set up colors
   const [boxMaxWidth, setBoxMaxWidth] = useState('70%')
+  const [boxPadding, setBoxPadding] = useState('8px 12px')
   const [boxMargin, setBoxMargin] = useState('5% 5%')
 
   const setWaiting = (newMessages: Message[]) => {
@@ -40,9 +41,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       if (isLandscape) {
         setBoxMaxWidth('70%')
         setBoxMargin('5% 5%')
+        setBoxPadding('8px 12px')
       } else {
         setBoxMaxWidth('95%')
         setBoxMargin('1% 1%')
+        setBoxPadding('1px 1px')
       }
     }
 
@@ -127,12 +130,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       <Box mt={2} p={2} style={{ maxHeight: "80%", overflow: "auto" }}>
         <List>
           {messages.map((message, index) => (
-            <ListItem key={index} style={{backgroundColor: colors[index % 2]}}>
+            <ListItem key={index} style={{background: "#eceff1"}}>
               <ListItemText style={{maxWidth: "10%"}}
                 primary={message.id}
-                secondary={(message.id % 2) === 1 ? 'Ask' : 'Answer'}
+                secondary={(message.id % 2) === 1 ? 'Ask' : 'Bot'}
               />
-              <Box component="div" style={{maxWidth: boxMaxWidth, borderRadius: '16px', margin: '4px', padding: '8px 12px'}}>
+              <Box component="div" style={{
+                maxWidth: boxMaxWidth, borderRadius: '9px', margin: '1px', padding: boxPadding,
+                backgroundColor: colors[index % 2]}}>
                 {message.isWait? <CircularProgress/> : 
                 <ReactMarkdown>{message.text}</ReactMarkdown>}
               </Box>
