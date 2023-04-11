@@ -88,7 +88,7 @@ class OpenaiHandler:
         totalTokenLen = sum([len(token.get('content')) for token in self.message.context])
         logging.info(f"Token length of Chat of session {self.message.sessionId} is {totalTokenLen}")
         
-        if len(self.message.context) > 10 or totalTokenLen > 3000:
+        if len(self.message.context) > 10 or totalTokenLen > 10000:
             logging.info(f"Chat of session {self.message.sessionId} is too long, compacting")
             self.compactMsgContextWithSummary()
     
