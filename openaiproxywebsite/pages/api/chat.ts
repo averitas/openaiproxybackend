@@ -7,6 +7,7 @@ type Data = {
 }
 
 const FunctionKey = process.env.AZ_OPENAI_TRIGGER_FUNCTION_KEY ?? ""
+const FunctionEndpoint = process.env.AZ_OPENAI_TRIGGER_FUNCTION_ENDPOINT ?? ""
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,7 +19,7 @@ export default async function handler(
     const session = req.body.session
 
     // make a POST request to the backend server
-    const response = await fetch('https://openaiproxybackendapp.azurewebsites.net/api/azopenaitrigger', {
+    const response = await fetch(FunctionEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
