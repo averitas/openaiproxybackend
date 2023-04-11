@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Session from '@/types/types';
-import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemText, TextField, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemText, Paper, TextField, Typography } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import ReactMarkdown from 'react-markdown';
 import { css } from '@emotion/react';
 import Message from '@/types/message';
 import styled from '@emotion/styled';
-
-const listItemStyle = css`
-  margin: 20% 20%;
-`;
 
 type ChatWindowProps = {
     activeSession: Session;
@@ -25,6 +21,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const colors = ["#BDBDBD", "#E0E0E0"]; // set up colors
+  const [boxMaxWidth, setBoxMaxWidth] = useState('70%')
+  const [boxMargin, setBoxMargin] = useState('5% 5%')
 
   const setWaiting = (newMessages: Message[]) => {
     const newResponse: Message = {
@@ -35,6 +33,24 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
 
     setMessages([...newMessages, newResponse])
   }
+
+  useEffect(() => {
+    function handleOrientationChange() {
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+      if (isLandscape) {
+        setBoxMaxWidth('70%')
+        setBoxMargin('5% 5%')
+      } else {
+        setBoxMaxWidth('95%')
+        setBoxMargin('1% 1%')
+      }
+    }
+
+    window.addEventListener('orientationchange', handleOrientationChange);
+    return () => {
+      window.removeEventListener('orientationchange', handleOrientationChange);
+    };
+  }, []);
 
   const handleMessageSend = async () => {
     console.log(`Current session name ${activeSession.name}, id: ${activeSession.id}`)
@@ -101,7 +117,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
   return (
     <Box sx={{
         '&': {
-          margin: '5% 5%', // sets margin for the root element of ListItem
+          margin: boxMargin, // sets margin for the root element of ListItem
         },
       }}>
       <Typography variant="h5" align="center" gutterBottom>
@@ -116,7 +132,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
                 primary={message.id}
                 secondary={(message.id % 2) === 1 ? 'Ask' : 'Answer'}
               />
-              <Box component="div" style={{maxWidth: "70%", borderRadius: '16px', margin: '4px', padding: '8px 12px'}}>
+              <Box component="div" style={{maxWidth: boxMaxWidth, borderRadius: '16px', margin: '4px', padding: '8px 12px'}}>
                 {message.isWait? <CircularProgress/> : 
                 <ReactMarkdown>{message.text}</ReactMarkdown>}
               </Box>

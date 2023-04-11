@@ -50,6 +50,8 @@ const App: React.FC = () => {
     setActiveSession(session)
   }
 
+  const drawerWidth = '240px'
+
   return (
     <div style={{display: 'flex'}}>
       <AppBar position="fixed" style={{zIndex: 1400}}>
@@ -62,23 +64,16 @@ const App: React.FC = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer variant="temporary" anchor='left' style={{width: '240px', flexShrink: 0}} 
+      <Drawer variant="temporary" anchor='left' style={{width: drawerWidth, flexShrink: 0}} 
         onClose={handleDrawerToggle} ModalProps={{keepMounted: true}} open={mobileOpen}>
         <div style={{minHeight: '30px'}}/>
         <SidePanel sessions={sessions} setSessions={setSessions} activeSession={activeSession} setActiveSession={switchSession} newSession={NewSession}/>
       </Drawer>
-      <main style={{flexGrow: 1, padding: '3px', marginLeft: "10%"}}>
-        <div />
+      <main style={{flexGrow: 1, padding: '3px'}}>
+        <div style={{minHeight: '30px'}}/>
         <ChatWindow sessions={sessions} setSessions={setSessions} activeSession={activeSession} setActiveSession={setActiveSession} 
         messages={messages} setMessages={setMessages}/>
       </main>
-    </div>
-  );
-  return (
-    <div>
-      <SidePanel sessions={sessions} setSessions={setSessions} activeSession={activeSession} setActiveSession={switchSession} newSession={NewSession}/>
-      <ChatWindow sessions={sessions} setSessions={setSessions} activeSession={activeSession} setActiveSession={setActiveSession} 
-        messages={messages} setMessages={setMessages}/>
     </div>
   );
 };
