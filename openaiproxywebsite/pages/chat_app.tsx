@@ -6,7 +6,7 @@ import Message from '@/types/message';
 import { AppBar, Drawer, IconButton, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
-const App: React.FC = () => {
+const ChatApp: React.FC = () => {
   const [sessionIndex, setSessionIndex] = useState<number>(1)
   const [sessions, setSessions] = useState<Session[]>([{name: 'Session 0', id: ''}]);
   const [activeSession, setActiveSession] = useState<Session>({name: 'Session 0', id: ''});
@@ -53,6 +53,7 @@ const App: React.FC = () => {
   const drawerWidth = '240px'
 
   return (
+    <>
     <div style={{display: 'flex'}}>
       <AppBar position="fixed" style={{zIndex: 1400}}>
         <Toolbar>
@@ -75,8 +76,9 @@ const App: React.FC = () => {
         messages={messages} setMessages={setMessages}/>
       </main>
     </div>
+    </>
   );
 };
 
 
-export default App;
+export default ChatApp;
