@@ -48,8 +48,8 @@ openaiproxywebsite.azurewebsites.net
 ```
 
 ## TODO
-Session persistent in server and user browser.
-User system.
-Login with Wechat.
-Create application with preset context.
-Create knowledge base application with context and vector based search database.
+- Session persistent in server and user browser.
+- User system.
+- Login with Wechat.
+- Create application with preset context.
+- Create knowledge base application with context and vector based search database.
