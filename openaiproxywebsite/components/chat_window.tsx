@@ -142,6 +142,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       </Box>
       <Box mt={2} display="flex" alignItems="center">
         <TextField
+          disabled={loading}
           fullWidth
           placeholder="Type your message here..."
           value={inputText}
@@ -156,8 +157,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
           color="primary"
           onClick={handleMessageSend}
           disabled={!inputText || loading}
-          endIcon={<SendIcon />}
-        >
+          endIcon={<SendIcon />}>
           Send
         </Button>
       </Box>

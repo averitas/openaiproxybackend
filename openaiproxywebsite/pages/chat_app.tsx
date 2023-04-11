@@ -67,7 +67,7 @@ const ChatApp: React.FC = () => {
       </AppBar>
       <Drawer variant="temporary" anchor='left' style={{width: drawerWidth, flexShrink: 0}} 
         onClose={handleDrawerToggle} ModalProps={{keepMounted: true}} open={mobileOpen}>
-        <div style={{minHeight: '30px'}}/>
+        <div style={{minHeight: '45px'}}/>
         <SidePanel sessions={sessions} setSessions={setSessions} activeSession={activeSession} setActiveSession={switchSession} newSession={NewSession}/>
       </Drawer>
       <main style={{flexGrow: 1, padding: '3px'}}>
