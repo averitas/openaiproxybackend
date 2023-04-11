@@ -5,27 +5,23 @@ import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemText, T
 import SendIcon from '@mui/icons-material/Send';
 import ReactMarkdown from 'react-markdown';
 import { css } from '@emotion/react';
+import Message from '@/types/message';
 const listItemStyle = css`
   margin: 20% 20%;
 `;
-
-type Message = {
-  id: number;
-  text: string;
-  isWait: boolean;
-};
 
 type ChatWindowProps = {
     activeSession: Session;
     sessions: Session[];
     setSessions : (sessions: Session[]) => void;
     setActiveSession: (session: Session) => void;
+    messages: Message[];
+    setMessages: (messages: Message[]) => void;
 };
 
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession, messages, setMessages }) => {
   const [inputText, setInputText] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const colors = ["#BDBDBD", "#E0E0E0"]; // set up colors
 

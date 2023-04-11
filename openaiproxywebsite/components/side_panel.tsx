@@ -25,19 +25,6 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
         <Button onClick={newSession}>New session</Button>
       </Box>
   )
-  return (
-    <div>
-      <h2>Side Panel</h2>
-      <ul>
-        {sessions.map((session) => (
-          <li key={session.name} onClick={() => setActiveSession(session)}>
-            {session.name} {session.name === activeSession.name && <strong>(Active)</strong>}
-          </li>
-        ))}
-      </ul>
-      <button onClick={newSession}>New session</button>
-    </div>
-  );
 };
 
 export default SidePanel;
