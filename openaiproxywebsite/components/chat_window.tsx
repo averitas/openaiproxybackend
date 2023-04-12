@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import Session from '@/types/types';
 import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemText, Paper, TextField, Typography } from '@mui/material';
@@ -26,6 +26,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
   const [boxMaxWidth, setBoxMaxWidth] = useState('70%')
   const [boxPadding, setBoxPadding] = useState('8px 12px')
   const [boxMargin, setBoxMargin] = useState('0 5%')
+
+  const messageListRef = useRef<HTMLUListElement>(null);
 
   const setWaiting = (newMessages: Message[]) => {
     const newResponse: Message = {
@@ -93,6 +95,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       setMessages(newMessages);
       setInputText('');
       setWaiting(newMessages)
+      messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
       setLoading(true)
 
       const response = await axios.post('/api/chat', {
@@ -139,6 +142,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       }])
       console.error(error);
     } finally {
+      messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
       setLoading(false);
     }
   };
@@ -155,18 +159,39 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
         {activeSession.name}
       </Typography>
       <Divider />
-      <Box mt={2} p={2} style={{ maxHeight: '80%', overflow: 'auto' }}>
-        <List>
+      <Box mt={2} p={2} style={{ height: '80%', overflow: 'hidden' }}>
+        <List
+          ref={messageListRef}
+          style={{
+            height: '100%',
+            background: '#eceff1',
+            overflowY: 'scroll'
+          }}
+        >
           {messages.map((message, index) => (
-            <ListItem key={index} style={{ background: '#eceff1' }}>
-              <ListItemText style={{ maxWidth: '10%' }}
+            <ListItem
+              key={index}
+              style={{
+                flexDirection: (message.id % 2) === 0 ? 'row' : 'row-reverse'
+              }}
+            >
+              <ListItemText
+                style={{
+                  maxWidth: '5%',
+                  textAlign: (message.id % 2) === 1 ? 'right' : 'left'
+                }}
                 primary={message.id}
                 secondary={(message.id % 2) === 1 ? 'Ask' : 'Bot'}
               />
-              <Box component='div' style={{
-                maxWidth: boxMaxWidth, borderRadius: '9px', margin: '1px', padding: boxPadding,
-                backgroundColor: colors[index % 2]
-              }}>
+              <Box
+                component='div'
+                style={{
+                  maxWidth: boxMaxWidth,
+                  borderRadius: '9px',
+                  margin: '1px',
+                  padding: boxPadding,
+                  backgroundColor: colors[index % 2]
+                }}>
                 {message.isWait ? <CircularProgress /> :
                   <ReactMarkdown>{message.text}</ReactMarkdown>}
               </Box>
