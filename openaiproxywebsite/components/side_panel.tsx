@@ -21,7 +21,7 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
     }
   }, [activeSession])
 
-  const onDeleteSession = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, sessionName: string) => {
+  const onDeleteSession = (event: React.MouseEvent, sessionName: string) => {
     event.stopPropagation();
     console.log(`Delete session: ${sessionName}`)
     let newSessions = sessions.filter((value) => value.name !== sessionName)
@@ -31,7 +31,7 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
       setActiveSession(newSessions[0])
     }
   }
-  
+
   return (
     <Box mt={3} p={2} style={{ overflow: "auto" }}>
       <CssBaseline />
@@ -50,7 +50,7 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
               </ListItemText>
             </ListItemButton>
             <ListItemButton disabled={sessions.length === 1} color='inherit'
-              onClick={() => onDeleteSession(session.name)} >
+              onClick={event => onDeleteSession(event, session.name)} >
               {<DeleteForeverIcon/>} 
             </ListItemButton>
           </ListItem>
