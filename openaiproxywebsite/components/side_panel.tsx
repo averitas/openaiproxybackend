@@ -8,7 +8,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 type Props = {
   activeSession: Session;
   sessions: Session[];
-  setSessions : (sessions: Session[]) => void;
+  setSessions: (sessions: Session[]) => void;
   setActiveSession: (session: Session) => void;
   newSession: () => void
   refreshData: () => void
@@ -33,14 +33,19 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
   }
 
   return (
-    <Box mt={3} p={2} style={{ overflow: "auto" }}>
+    <Box mt={2} p={2} style={{ minWidth: '250px', overflow: "auto" }}>
       <CssBaseline />
-      <List style={{justifyContent: 'center'}}>
-        <ListItem>
-          <Button disabled={sessions.length > 8} variant='contained' color='secondary' onClick={newSession} endIcon={<AddIcon />}>
-            New session
-          </Button>
-        </ListItem>
+      <Button
+        disabled={sessions.length > 8}
+        variant='contained'
+        color='secondary'
+        onClick={newSession}
+        endIcon={<AddIcon />}
+        style={{ width: "100%" }}
+      >
+        New session
+      </Button>
+      <List>
         {sessions.map((session) => (
           <ListItem key={session.name} style={{display: 'flex', flexDirection: 'row'}}>
             <ListItemButton selected={session.name === activeSession.name} 
@@ -50,7 +55,7 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
               </ListItemText>
             </ListItemButton>
             <ListItemButton disabled={sessions.length === 1} color='inherit'
-              onClick={event => onDeleteSession(event, session.name)} >
+              onClick={event => onDeleteSession(event, session.name)} style={{ padding: '6px', minWidth: '10px' }} >
               {<DeleteForeverIcon/>} 
             </ListItemButton>
           </ListItem>
