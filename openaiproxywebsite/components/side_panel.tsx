@@ -1,5 +1,5 @@
 import Session from '@/types/types';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Button, Divider, List, ListItem, ListItemButton, ListItemText, TextField, Typography } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import AddIcon from '@mui/icons-material/Add';
@@ -11,9 +11,16 @@ type Props = {
   setSessions : (sessions: Session[]) => void;
   setActiveSession: (session: Session) => void;
   newSession: () => void
+  refreshData: () => void
 };
 
-const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setActiveSession, newSession }) => {
+const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setActiveSession, newSession, refreshData }) => {
+  useEffect(() => {
+    return () => {
+      refreshData()
+    }
+  }, [activeSession])
+
   const onDeleteSession = (sessionName: string) => {
     console.log(`Delete session: ${sessionName}`)
     let newSessions = sessions.filter((value) => value.name !== sessionName)
@@ -24,23 +31,27 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
     }
   }
   return (
-    <Box mt={2} p={2} style={{ overflow: "auto" }}>
+    <Box mt={3} p={2} style={{ overflow: "auto" }}>
       <CssBaseline />
-      <Button disabled={sessions.length > 8} variant='contained' color='secondary' onClick={newSession} endIcon={<AddIcon />}>
-        New session
-      </Button>
-      <List>
+      <List style={{justifyContent: 'center'}}>
+        <ListItem>
+          <Button disabled={sessions.length > 8} variant='contained' color='secondary' onClick={newSession} endIcon={<AddIcon />}>
+            New session
+          </Button>
+        </ListItem>
         {sessions.map((session) => (
-          <ListItemButton selected={session.name === activeSession.name} 
-            key={session.name} onClick={() => setActiveSession(session)}>
-            <ListItemText color={session.name === activeSession.name ? "#008394" : "#33c9dc"}>
-              {session.name === activeSession.name ? <strong style={{color: 'ActiveCaption'}}>{session.name + ' '}</strong> : session.name + ' '}
-            </ListItemText>
-            <Button disabled={sessions.length === 1} color='inherit' variant='contained'
-              onClick={() => onDeleteSession(session.name)} style={{maxWidth: '10px'}} >
+          <ListItem key={session.name} style={{display: 'flex', flexDirection: 'row'}}>
+            <ListItemButton selected={session.name === activeSession.name} 
+              key={session.name} onClick={() => setActiveSession(session)}>
+              <ListItemText color={session.name === activeSession.name ? "#008394" : "#33c9dc"}>
+                {session.name === activeSession.name ? <strong style={{color: 'ActiveCaption'}}>{session.name + ' '}</strong> : session.name + ' '}
+              </ListItemText>
+            </ListItemButton>
+            <ListItemButton disabled={sessions.length === 1} color='inherit'
+              onClick={() => onDeleteSession(session.name)} >
               {<DeleteForeverIcon/>} 
-            </Button>
-          </ListItemButton>
+            </ListItemButton>
+          </ListItem>
         ))}
       </List>
     </Box>
