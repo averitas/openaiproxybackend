@@ -73,7 +73,8 @@ const ChatApp: React.FC = () => {
     }
     return []
   }
-  const [messages, setMessages] = useState<Message[]>(getMessages());
+  
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -120,6 +121,13 @@ const ChatApp: React.FC = () => {
     saveSession2MessageHistory(updatedHistory, sessionIndex, sessions);
   }
 
+  useEffect(() => {
+    try {
+      setMessages(getMessages())
+    } catch (error) {
+      console.error('Error getting temporary data from localStorage:', error);
+    }
+  }, []);
 
   const switchSession = (session: Session) => {
     console.log(`switching from session: ${activeSession.name}, ${activeSession.id} to ` +
