@@ -8,13 +8,14 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 type Props = {
   activeSession: Session;
   sessions: Session[];
-  setSessions : (sessions: Session[]) => void;
+  setSessions: (sessions: Session[]) => void;
   setActiveSession: (session: Session) => void;
   newSession: () => void
 };
 
 const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setActiveSession, newSession }) => {
-  const onDeleteSession = (sessionName: string) => {
+  const onDeleteSession = (event: Event, sessionName: string) => {
+    event.stopPropagation();
     console.log(`Delete session: ${sessionName}`)
     let newSessions = sessions.filter((value) => value.name !== sessionName)
     setSessions(newSessions)
@@ -24,21 +25,35 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
     }
   }
   return (
-    <Box mt={2} p={2} style={{ overflow: "auto" }}>
+    <Box mt={2} p={2} style={{ minWidth: '250px', overflow: "auto" }}>
       <CssBaseline />
-      <Button disabled={sessions.length > 8} variant='contained' color='secondary' onClick={newSession} endIcon={<AddIcon />}>
+      <Button
+        disabled={sessions.length > 8}
+        variant='contained'
+        color='secondary'
+        onClick={newSession}
+        endIcon={<AddIcon />}
+        style={{ width: "100%" }}
+      >
         New session
       </Button>
       <List>
         {sessions.map((session) => (
-          <ListItemButton selected={session.name === activeSession.name} 
-            key={session.name} onClick={() => setActiveSession(session)}>
+          <ListItemButton
+            selected={session.name === activeSession.name}
+            key={session.name} onClick={() => setActiveSession(session)}
+          >
             <ListItemText color={session.name === activeSession.name ? "#008394" : "#33c9dc"}>
-              {session.name === activeSession.name ? <strong style={{color: 'ActiveCaption'}}>{session.name + ' '}</strong> : session.name + ' '}
+              {session.name === activeSession.name ? <strong style={{ color: 'ActiveCaption' }}>{session.name + ' '}</strong> : session.name + ' '}
             </ListItemText>
-            <Button disabled={sessions.length === 1} color='inherit' variant='contained'
-              onClick={() => onDeleteSession(session.name)} style={{maxWidth: '10px'}} >
-              {<DeleteForeverIcon/>} 
+            <Button
+              disabled={sessions.length === 1}
+              color='inherit'
+              variant='contained'
+              onClick={event => onDeleteSession(event, session.name)}
+              style={{ padding: '6px', minWidth: '10px' }}
+            >
+              {<DeleteForeverIcon />}
             </Button>
           </ListItemButton>
         ))}
