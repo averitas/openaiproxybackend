@@ -9,12 +9,12 @@ import Message from '@/types/message';
 import styled from '@emotion/styled';
 
 type ChatWindowProps = {
-    activeSession: Session;
-    sessions: Session[];
-    setSessions : (sessions: Session[]) => void;
-    setActiveSession: (session: Session) => void;
-    messages: Message[];
-    setMessages: (messages: Message[]) => void;
+  activeSession: Session;
+  sessions: Session[];
+  setSessions: (sessions: Session[]) => void;
+  setActiveSession: (session: Session) => void;
+  messages: Message[];
+  setMessages: (messages: Message[]) => void;
 };
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession, messages, setMessages }) => {
@@ -86,21 +86,21 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
 
         // if sessionId updated, update local sessionId
         if (response.data.sessionId !== activeSession.id) {
-            console.log(`Update session id of session ${activeSession.name} to ${response.data.sessionId}`)
-            const updateSession : Session = {
-                id: response.data.sessionId,
-                name: activeSession.name,
+          console.log(`Update session id of session ${activeSession.name} to ${response.data.sessionId}`)
+          const updateSession: Session = {
+            id: response.data.sessionId,
+            name: activeSession.name,
+          }
+          setActiveSession(updateSession)
+          var newSessions: Session[] = []
+          for (let index = 0; index < sessions.length; index++) {
+            if (sessions[index].name === activeSession.name) {
+              newSessions.push(updateSession)
+            } else {
+              newSessions.push(sessions[index])
             }
-            setActiveSession(updateSession)
-            var newSessions: Session[] = []
-            for (let index = 0; index < sessions.length; index++) {
-                if (sessions[index].name === activeSession.name) {
-                    newSessions.push(updateSession)
-                } else {
-                    newSessions.push(sessions[index])
-                }
-            }
-            setSessions(newSessions)
+          }
+          setSessions(newSessions)
         }
 
         setMessages([...newMessages, newResponse])
@@ -114,32 +114,35 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
         isWait: false,
       }])
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Box sx={{
-        '&': {
-          margin: boxMargin, // sets margin for the root element of ListItem
-        },
-      }}>
+      '&': {
+        margin: boxMargin, // sets margin for the root element of ListItem
+      },
+    }}>
       <Typography variant="h5" align="center" gutterBottom>
-        Chat Window
+        {activeSession.name}
       </Typography>
       <Divider />
       <Box mt={2} p={2} style={{ maxHeight: "80%", overflow: "auto" }}>
         <List>
           {messages.map((message, index) => (
-            <ListItem key={index} style={{background: "#eceff1"}}>
-              <ListItemText style={{maxWidth: "10%"}}
+            <ListItem key={index} style={{ background: "#eceff1" }}>
+              <ListItemText style={{ maxWidth: "10%" }}
                 primary={message.id}
                 secondary={(message.id % 2) === 1 ? 'Ask' : 'Bot'}
               />
               <Box component="div" style={{
                 maxWidth: boxMaxWidth, borderRadius: '9px', margin: '1px', padding: boxPadding,
-                backgroundColor: colors[index % 2]}}>
-                {message.isWait? <CircularProgress/> : 
-                <ReactMarkdown>{message.text}</ReactMarkdown>}
+                backgroundColor: colors[index % 2]
+              }}>
+                {message.isWait ? <CircularProgress /> :
+                  <ReactMarkdown>{message.text}</ReactMarkdown>}
               </Box>
             </ListItem>
           ))}
