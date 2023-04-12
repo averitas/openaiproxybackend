@@ -6,6 +6,9 @@ import Message from '@/types/message';
 import { AppBar, Drawer, IconButton, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
+const HistoryMessageMap: string = "historyMessageMap"
+const HistorySessionList: string = "historySessionList"
+
 const ChatApp: React.FC = () => {
   const [sessionIndex, setSessionIndex] = useState<number>(1)
   const [sessions, setSessions] = useState<Session[]>([{name: 'Session 0', id: ''}]);
@@ -33,6 +36,19 @@ const ChatApp: React.FC = () => {
     // switchSession to new one
     switchSession(newSession)
   }
+  const getHistoryData = (): Map<string, Message[]> => {
+    let historyData = localStorage.getItem('historyData');
+    if (!historyData) {
+      historyData = JSON.stringify(new Map<string, Message[]>([['Session 0', []]]));
+      localStorage.setItem(HistoryMessageMap, historyData);
+    }
+    return JSON.parse(historyData);
+  };
+  
+  const saveHistoryData = () => {
+    const historyData = JSON.stringify(session2MessageHistory);
+    localStorage.setItem('historyMessageMap', historyData);
+  };
 
   const switchSession = (session: Session) => {
     console.log(`switching from session: ${activeSession.name}, ${activeSession.id} to ` +
@@ -50,7 +66,7 @@ const ChatApp: React.FC = () => {
     setActiveSession(session)
   }
 
-  const drawerWidth = '240px'
+  const drawerWidth = '250px'
 
   return (
     <>
