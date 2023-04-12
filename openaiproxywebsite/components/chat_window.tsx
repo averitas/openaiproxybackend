@@ -177,7 +177,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
             >
               <ListItemText
                 style={{
-                  maxWidth: '5%',
+                  maxWidth: '3%',
                   textAlign: (message.id % 2) === 1 ? 'right' : 'left'
                 }}
                 primary={message.id}
