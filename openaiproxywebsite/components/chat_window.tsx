@@ -148,9 +148,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
           margin: boxMargin, // sets margin for the root element of ListItem
         },
       }}>
-      <Typography variant="h5" align="center" gutterBottom>
+      <TextField >
         Chat Window
-      </Typography>
+      </TextField>
       <Divider />
       <Box mt={2} p={2} style={{ maxHeight: "80%", overflow: "auto" }}>
         <List>
