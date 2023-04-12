@@ -12,7 +12,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 type ChatWindowProps = {
   activeSession: Session;
   sessions: Session[];
-  setSessions : (sessions: Session[]) => void;
+  setSessions: (sessions: Session[]) => void;
   setActiveSession: (session: Session) => void;
   messages: Message[];
   setMessages: (messages: Message[]) => void;
@@ -22,10 +22,10 @@ type ChatWindowProps = {
 const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession, messages, setMessages, refreshData }) => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
-  const colors = ["#80cbc4", "#b2dfdb"]; // set up colors
+  const colors = ['#80cbc4', '#b2dfdb']; // set up colors
   const [boxMaxWidth, setBoxMaxWidth] = useState('70%')
   const [boxPadding, setBoxPadding] = useState('8px 12px')
-  const [boxMargin, setBoxMargin] = useState('5% 5%')
+  const [boxMargin, setBoxMargin] = useState('0 5%')
 
   const setWaiting = (newMessages: Message[]) => {
     const newResponse: Message = {
@@ -129,13 +129,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
         }
 
         setMessages([...newMessages, newResponse])
-        setLoading(false)
       }
     } catch (error) {
       setInputText('');
       setMessages([...newMessages, {
         id: messages.length + 2,
-        text: "Error",
+        text: 'Error',
         isWait: false,
       }])
       console.error(error);
@@ -148,21 +147,23 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
     <Box sx={{
       '&': {
         margin: boxMargin, // sets margin for the root element of ListItem
+        paddingTop: '100px',
+        height: '100vh'
       },
     }}>
-      <Typography variant="h5" align="center" gutterBottom>
+      <Typography variant='h5' align='center' gutterBottom>
         {activeSession.name}
       </Typography>
       <Divider />
-      <Box mt={2} p={2} style={{ maxHeight: "80%", overflow: "auto" }}>
+      <Box mt={2} p={2} style={{ maxHeight: '80%', overflow: 'auto' }}>
         <List>
           {messages.map((message, index) => (
-            <ListItem key={index} style={{ background: "#eceff1" }}>
-              <ListItemText style={{ maxWidth: "10%" }}
+            <ListItem key={index} style={{ background: '#eceff1' }}>
+              <ListItemText style={{ maxWidth: '10%' }}
                 primary={message.id}
                 secondary={(message.id % 2) === 1 ? 'Ask' : 'Bot'}
               />
-              <Box component="div" style={{
+              <Box component='div' style={{
                 maxWidth: boxMaxWidth, borderRadius: '9px', margin: '1px', padding: boxPadding,
                 backgroundColor: colors[index % 2]
               }}>
@@ -173,17 +174,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
           ))}
         </List>
       </Box>
-      <Box mt={2} display="flex" alignItems="center">
+      <Box mt={2} display='flex' alignItems='center'>
         <TextField
           disabled={loading}
           fullWidth
-          placeholder="Type your message here..."
+          placeholder='Type your message here...'
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          variant="outlined"
+          variant='outlined'
           multiline
           rows={2}
-          style={{ marginRight: "10px" }}
+          style={{ marginRight: '10px' }}
         />
         <Box display='flex' flexDirection='column'>
           <Button

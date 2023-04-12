@@ -42,7 +42,7 @@ const ChatApp: React.FC = () => {
 
   const getStorageSessions = (): Session[] => {
     if (typeof window === 'undefined') {
-      return [{name: "Session 0", id: ""}]
+      return [{ name: "Session 0", id: "" }]
     }
 
     const localSessions = localStorage.getItem(HistorySessionList)
@@ -56,13 +56,13 @@ const ChatApp: React.FC = () => {
       console.log(`Set Sessions to ${localSessions}`)
       return newSession
     }
-    return [{name: "Session 0", id: ""}]
+    return [{ name: "Session 0", id: "" }]
   }
 
   const [sessionIndex, setSessionIndex] = useState<number>(getStorageSessionIdx())
   const [sessions, setSessions] = useState<Session[]>(getStorageSessions());
   const [activeSession, setActiveSession] = useState<Session>(sessions[0]);
-  const [session2MessageHistory, setSession2MessageHistory] 
+  const [session2MessageHistory, setSession2MessageHistory]
     = useState<Map<string, Message[]>>(getSession2MessageHistory())
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -73,7 +73,7 @@ const ChatApp: React.FC = () => {
     }
     return []
   }
-  
+
   const [messages, setMessages] = useState<Message[]>([]);
 
   const handleDrawerToggle = () => {
@@ -82,7 +82,7 @@ const ChatApp: React.FC = () => {
 
   const NewSession = () => {
     // create new session
-    const newSession : Session = {
+    const newSession: Session = {
       name: `Session ${sessionIndex}`,
       id: ''
     }
@@ -94,7 +94,7 @@ const ChatApp: React.FC = () => {
     // switchSession to new one
     switchSession(newSession)
   }
-  
+
   const saveSession2MessageHistory = (newHistory: Map<string, Message[]>, sidx: number, lsessions: Session[]) => {
     const historyData = JSON.stringify(Array.from(newHistory.entries()));
     console.log(`Update Session2HistoryMap to ${historyData}`)
@@ -131,8 +131,8 @@ const ChatApp: React.FC = () => {
 
   const switchSession = (session: Session) => {
     console.log(`switching from session: ${activeSession.name}, ${activeSession.id} to ` +
-        `session: ${session.name}, ${session.id}. Current Messages length: ${messages.length}`)
-        
+      `session: ${session.name}, ${session.id}. Current Messages length: ${messages.length}`)
+
     let newSessionHistory = new Map<string, Message[]>()
     session2MessageHistory.forEach((v, k) => {
       newSessionHistory.set(k, v)
@@ -149,29 +149,29 @@ const ChatApp: React.FC = () => {
 
   return (
     <>
-    <div style={{display: 'flex'}}>
-      <AppBar position="fixed" style={{zIndex: 1400}}>
-        <Toolbar>
-          <IconButton color="inherit" aria-label="open drawer" onClick={handleDrawerToggle} edge="start" style={{marginRight: '36px'}}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Chat App
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="temporary" anchor='left' style={{width: drawerWidth, flexShrink: 0}} 
-        onClose={handleDrawerToggle} ModalProps={{keepMounted: true}} open={mobileOpen}>
-        <div style={{minHeight: '45px'}}/>
-        <SidePanel sessions={sessions} setSessions={setSessions} activeSession={activeSession} 
-          setActiveSession={switchSession} newSession={NewSession} refreshData={refreshStorageSessionData}/>
-      </Drawer>
-      <main style={{flexGrow: 1, padding: '3px'}}>
-        <div style={{minHeight: '30px'}}/>
-        <ChatWindow sessions={sessions} setSessions={setSessions} activeSession={activeSession} setActiveSession={switchSession} 
-          messages={messages} setMessages={setMessages} refreshData={refreshStorageSessionData}/>
-      </main>
-    </div>
+      <div style={{ display: 'flex' }}>
+        <AppBar position="fixed" style={{ zIndex: 1400 }}>
+          <Toolbar>
+            <IconButton color="inherit" aria-label="open drawer" onClick={handleDrawerToggle} edge="start" style={{ marginRight: '36px' }}>
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap>
+              Chat App
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="temporary" anchor='left' style={{ width: drawerWidth, flexShrink: 0 }}
+          onClose={handleDrawerToggle} ModalProps={{ keepMounted: true }} open={mobileOpen}>
+          <div style={{ minHeight: '45px' }} />
+          <SidePanel sessions={sessions} setSessions={setSessions} activeSession={activeSession}
+            setActiveSession={switchSession} newSession={NewSession} refreshData={refreshStorageSessionData} />
+        </Drawer>
+        <main style={{ height: '100vh', flexGrow: 1, padding: '3px' }}>
+          <div style={{ minHeight: '30px' }} />
+          <ChatWindow sessions={sessions} setSessions={setSessions} activeSession={activeSession} setActiveSession={switchSession}
+            messages={messages} setMessages={setMessages} refreshData={refreshStorageSessionData} />
+        </main>
+      </div>
     </>
   );
 };
