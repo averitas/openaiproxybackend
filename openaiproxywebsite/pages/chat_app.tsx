@@ -121,6 +121,14 @@ const ChatApp: React.FC = () => {
     saveSession2MessageHistory(updatedHistory, sessionIndex, sessions);
   }
 
+  const cleanSession = () => {
+    setActiveSession({name: "Session 0", id: ""})
+    setSessions([{name: "Session 0", id: ""}])
+    setSessionIndex(1)
+    setMessages([])
+    setSession2MessageHistory(new Map<string, Message[]>([['Session 0', []]]))
+  }
+
   useEffect(() => {
     try {
       setMessages(getMessages())
@@ -164,7 +172,7 @@ const ChatApp: React.FC = () => {
           onClose={handleDrawerToggle} ModalProps={{ keepMounted: true }} open={mobileOpen}>
           <div style={{ minHeight: '45px' }} />
           <SidePanel sessions={sessions} setSessions={setSessions} activeSession={activeSession}
-            setActiveSession={switchSession} newSession={NewSession} refreshData={refreshStorageSessionData} />
+            setActiveSession={switchSession} newSession={NewSession} cleanSession={cleanSession} refreshData={refreshStorageSessionData} />
         </Drawer>
         <main style={{ height: '100vh', flexGrow: 1, padding: '3px' }}>
           <div style={{ minHeight: '30px' }} />

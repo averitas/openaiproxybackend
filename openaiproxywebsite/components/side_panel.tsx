@@ -12,9 +12,10 @@ type Props = {
   setActiveSession: (session: Session) => void;
   newSession: () => void
   refreshData: () => void
+  cleanSession: () => void
 };
 
-const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setActiveSession, newSession, refreshData }) => {
+const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setActiveSession, newSession, cleanSession, refreshData }) => {
   useEffect(() => {
     return () => {
       refreshData()
@@ -45,6 +46,16 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
       >
         New session
       </Button>
+      <Button
+        disabled={sessions.length > 8}
+        variant='contained'
+        color='error'
+        onClick={cleanSession}
+        endIcon={<AddIcon />}
+        style={{ width: "100%" }}
+      >
+        Clean session
+      </Button>
       <List>
         {sessions.map((session) => (
           <ListItem key={session.name} style={{display: 'flex', flexDirection: 'row'}}>
@@ -55,7 +66,7 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
               </ListItemText>
             </ListItemButton>
             <ListItemButton disabled={sessions.length === 1} color='inherit'
-              onClick={event => onDeleteSession(event, session.name)} style={{ padding: '6px', minWidth: '10px' }} >
+              onClick={event => onDeleteSession(event, session.name)} style={{ padding: '3px', minWidth: '10px' }} >
               {<DeleteForeverIcon/>} 
             </ListItemButton>
           </ListItem>
