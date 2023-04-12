@@ -7,17 +7,19 @@ import ReactMarkdown from 'react-markdown';
 import { css } from '@emotion/react';
 import Message from '@/types/message';
 import styled from '@emotion/styled';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 type ChatWindowProps = {
   activeSession: Session;
   sessions: Session[];
-  setSessions: (sessions: Session[]) => void;
+  setSessions : (sessions: Session[]) => void;
   setActiveSession: (session: Session) => void;
   messages: Message[];
   setMessages: (messages: Message[]) => void;
+  refreshData: () => void
 };
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession, messages, setMessages }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession, messages, setMessages, refreshData }) => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const colors = ["#80cbc4", "#b2dfdb"]; // set up colors
@@ -36,6 +38,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
   }
 
   useEffect(() => {
+    return () => {
+      refreshData()
+    }
+  }, [messages])
+
+  useEffect(() => {
     function handleOrientationChange() {
       const isLandscape = window.matchMedia('(orientation: landscape)').matches;
       if (isLandscape) {
@@ -45,7 +53,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       } else {
         setBoxMaxWidth('95%')
         setBoxMargin('1% 1%')
-        setBoxPadding('1px 1px')
+        setBoxPadding('4px 7px')
       }
     }
 
@@ -54,6 +62,23 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       window.removeEventListener('orientationchange', handleOrientationChange);
     };
   }, []);
+
+  const handlerMessageClean = () => {
+    setMessages([])
+    let newActiveSession: Session = {
+      id: '',
+      name: activeSession.name
+    }
+    let newSesssions: Session[] = []
+    sessions.forEach(session => {
+      if (session.name === newActiveSession.name) {
+        newSesssions.push(newActiveSession)
+      }
+      newSesssions.push(session)
+    });
+    setSessions(newSesssions)
+    setActiveSession(newActiveSession)
+  }
 
   const handleMessageSend = async () => {
     console.log(`Current session name ${activeSession.name}, id: ${activeSession.id}`)
@@ -160,14 +185,24 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
           rows={2}
           style={{ marginRight: "10px" }}
         />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleMessageSend}
-          disabled={!inputText || loading}
-          endIcon={<SendIcon />}>
-          Send
-        </Button>
+        <Box display='flex' flexDirection='column'>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleMessageSend}
+            disabled={!inputText || loading}
+            endIcon={<SendIcon />}>
+            Send
+          </Button>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={handlerMessageClean}
+            disabled={loading}
+            endIcon={<DeleteForeverIcon />}>
+            Clean
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
