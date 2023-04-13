@@ -16,10 +16,9 @@ type ChatWindowProps = {
   setActiveSession: (session: Session) => void;
   messages: Message[];
   setMessages: (messages: Message[]) => void;
-  refreshData: () => void
 };
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession, messages, setMessages, refreshData }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession, messages, setMessages }) => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const colors = ['#80cbc4', '#b2dfdb']; // set up colors
@@ -38,12 +37,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
 
     setMessages([...newMessages, newResponse])
   }
-
-  useEffect(() => {
-    return () => {
-      refreshData()
-    }
-  }, [messages])
 
   useEffect(() => {
     function handleOrientationChange() {
@@ -66,7 +59,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
   }, []);
 
   const handlerMessageClean = () => {
-    setMessages([])
     let newActiveSession: Session = {
       id: '',
       name: activeSession.name
@@ -76,8 +68,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       if (session.name === newActiveSession.name) {
         newSesssions.push(newActiveSession)
       }
-      newSesssions.push(session)
+      else {
+        newSesssions.push(session)
+      }
     });
+    setMessages([])
     setSessions(newSesssions)
     setActiveSession(newActiveSession)
   }
@@ -142,8 +137,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       }])
       console.error(error);
     } finally {
-      messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
-      setLoading(false);
+      messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' })
+      setLoading(false)
     }
   };
 

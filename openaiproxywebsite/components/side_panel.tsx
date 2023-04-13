@@ -11,17 +11,10 @@ type Props = {
   setSessions: (sessions: Session[]) => void;
   setActiveSession: (session: Session) => void;
   newSession: () => void
-  refreshData: () => void
   cleanSession: () => void
 };
 
-const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setActiveSession, newSession, cleanSession, refreshData }) => {
-  useEffect(() => {
-    return () => {
-      refreshData()
-    }
-  }, [activeSession])
-
+const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setActiveSession, newSession, cleanSession }) => {
   const onDeleteSession = (event: React.MouseEvent, sessionName: string) => {
     event.stopPropagation();
     console.log(`Delete session: ${sessionName}`)
