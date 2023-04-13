@@ -40,12 +40,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
   }
 
   useEffect(() => {
-    return () => {
-      refreshData()
-    }
-  }, [messages])
-
-  useEffect(() => {
     function handleOrientationChange() {
       const isLandscape = window.matchMedia('(orientation: landscape)').matches;
       if (isLandscape) {
@@ -65,6 +59,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      refreshData()
+    }
+  }, [refreshData])
+
   const handlerMessageClean = () => {
     setMessages([])
     let newActiveSession: Session = {
@@ -76,7 +76,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       if (session.name === newActiveSession.name) {
         newSesssions.push(newActiveSession)
       }
-      newSesssions.push(session)
+      else {
+        newSesssions.push(session)
+      }
     });
     setSessions(newSesssions)
     setActiveSession(newActiveSession)
@@ -142,8 +144,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       }])
       console.error(error);
     } finally {
-      messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
-      setLoading(false);
+      messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' })
+      setLoading(false)
     }
   };
 

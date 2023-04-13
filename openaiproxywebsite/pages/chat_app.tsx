@@ -16,13 +16,13 @@ const ChatApp: React.FC = () => {
     }
 
     let historyData = localStorage.getItem(HistoryMessageMap);
-    console.log(`Set session history to ${historyData}`)
     if (!historyData) {
       let newHistoryData = new Map<string, Message[]>([['Session 0', []]])
       historyData = JSON.stringify(Array.from(newHistoryData.entries()));
       localStorage.setItem(HistoryMessageMap, historyData);
       return newHistoryData
     }
+    console.log(`Restore from LocalStorage Set session history to ${historyData}`)
     let historyDataJson = JSON.parse(historyData)
     let retmap = new Map<string, Message[]>(historyDataJson)
     return retmap
@@ -34,7 +34,7 @@ const ChatApp: React.FC = () => {
     }
     const localIndex = localStorage.getItem('sessionIndex')
     if (localIndex) {
-      console.log(`Set session index to ${localIndex}`)
+      console.log(`Restore from LocalStorage Set session index to ${localIndex}`)
       return parseInt(localIndex)
     }
     return 1
@@ -53,7 +53,7 @@ const ChatApp: React.FC = () => {
           name: obj.name,
         };
       })
-      console.log(`Set Sessions to ${localSessions}`)
+      console.log(`Restore from LocalStorage Set Sessions to ${localSessions.toString()}`)
       return newSession
     }
     return [{ name: "Session 0", id: "" }]
@@ -97,12 +97,12 @@ const ChatApp: React.FC = () => {
 
   const saveSession2MessageHistory = (newHistory: Map<string, Message[]>, sidx: number, lsessions: Session[]) => {
     const historyData = JSON.stringify(Array.from(newHistory.entries()));
-    console.log(`Update Session2HistoryMap to ${historyData}`)
+    console.log(`Update LocalStorage Session2HistoryMap to ${historyData}`)
     localStorage.setItem(HistoryMessageMap, historyData);
-    console.log(`Update sessionIndex to ${sidx}`)
+    console.log(`Update LocalStorage sessionIndex to ${sidx}`)
     localStorage.setItem('sessionIndex', sidx.toString())
     const sessionsData = JSON.stringify(lsessions);
-    console.log(`Update Sessions to ${sessionsData}`)
+    console.log(`Update LocalStorage Sessions to ${sessionsData}`)
     localStorage.setItem(HistorySessionList, sessionsData)
   };
 
@@ -111,7 +111,7 @@ const ChatApp: React.FC = () => {
     // save and update local storage history
     let updatedHistory = new Map<string, Message[]>()
     session2MessageHistory.forEach((v, k) => {
-      console.log(`refresh sessionhistory key:${k}, value:${v}`)
+      console.log(`Refresh localStorage session history key:${k.toString()}, value:${v.toString()}`)
       if (k === activeSession.name) {
         updatedHistory.set(k, messages)
       } else {
@@ -127,6 +127,8 @@ const ChatApp: React.FC = () => {
     setSessionIndex(1)
     setMessages([])
     setSession2MessageHistory(new Map<string, Message[]>([['Session 0', []]]))
+
+    refreshStorageSessionData()
   }
 
   useEffect(() => {
@@ -151,6 +153,8 @@ const ChatApp: React.FC = () => {
     setSession2MessageHistory(newSessionHistory)
     setMessages(newMessages)
     setActiveSession(session)
+
+    refreshStorageSessionData()
   }
 
   const drawerWidth = '250px'
