@@ -8,43 +8,20 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 const HistoryMessageMap: string = "historyMessageMap"
 const HistorySessionList: string = "historySessionList"
-const HistoryDataVersion: string = "historyDataVersion"
 
 const ChatApp: React.FC = () => {
   const [sessionIndex, setSessionIndex] = useState<number>(1)
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [activeSession, setActiveSession] = useState<Session>({name: 'Session 0', id: ''});
+  const [activeSession, setActiveSession] = useState<Session>({ name: 'Session 0', id: '' });
   const [session2MessageHistory, setSession2MessageHistory]
     = useState<Map<string, Message[]>>(new Map())
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [dataVersion, setDataVersion] = useState<number>(0);
+  const isMounted = useRef(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
-  const getStorageDataVersion = () => {
-    const localDataVersionString = localStorage.getItem(HistoryDataVersion)
-    if (!localDataVersionString) {
-      return 0
-    }
-    const dataVersionNumber = parseInt(localDataVersionString)
-    if (!dataVersionNumber) {
-      return 0
-    }
-    return dataVersionNumber
-  }
-
-  const DataVersionInc = (version: number): number => {
-    const newVersion = version + 1
-    if (newVersion >= Number.MAX_SAFE_INTEGER - 1) {
-      localStorage.setItem(HistoryDataVersion, '0')
-      return 1
-    }
-
-    return newVersion
-  }
 
   const NewSession = () => {
     // create new session
@@ -62,8 +39,8 @@ const ChatApp: React.FC = () => {
   }
 
   const cleanSession = () => {
-    setActiveSession({name: "Session 0", id: ""})
-    setSessions([{name: "Session 0", id: ""}])
+    setActiveSession({ name: "Session 0", id: "" })
+    setSessions([{ name: "Session 0", id: "" }])
     setSessionIndex(1)
     setMessages([])
     setSession2MessageHistory(new Map<string, Message[]>([['Session 0', []]]))
@@ -124,7 +101,6 @@ const ChatApp: React.FC = () => {
 
   useEffect(() => {
     console.log(`--Setup callback started--`);
-    const localDataVersion = getStorageDataVersion()
     try {
       const localSessionHistory = getSession2MessageHistory()
       const localSessionIdx = getStorageSessionIdx()
@@ -136,20 +112,17 @@ const ChatApp: React.FC = () => {
       setActiveSession(localSessions[0])
     } catch (error) {
       console.error('Error getting temporary data from localStorage:', error);
-    } finally {
-      setDataVersion(DataVersionInc(localDataVersion))
     }
     console.log(`--Setup callback end--`);
   }, []);
 
   useEffect(() => {
-    console.log(`--Update callback started--`);
-    const localDataVersion = getStorageDataVersion()
-    if (localDataVersion > dataVersion) {
-      console.log(`storage data version: [${localDataVersion}] is higher than state: [${dataVersion}], stop refresh`);
-      return
+    if (!isMounted.current) {
+      // skip the first execution
+      isMounted.current = true;
+      return;
     }
-
+    console.log(`--Update callback started--`);
     const sessionHistory: string[] = []
     session2MessageHistory.forEach((v, k) => {
       sessionHistory.push(`Session name: ${k}, message length: ${v.length}`)
@@ -167,13 +140,10 @@ const ChatApp: React.FC = () => {
       const sessionsData = JSON.stringify(lsessions);
       console.log(`Update LocalStorage Sessions to ${sessionsData}`)
       localStorage.setItem(HistorySessionList, sessionsData)
-      console.log(`Update LocalStorage Data version to ${dataVersion}`)
-      localStorage.setItem(HistoryDataVersion, dataVersion.toString());
     }
     refreshStorageSessionData(session2MessageHistory, messages, sessionIndex, sessions)
     console.log(`--Update callback end--`);
-    setDataVersion(DataVersionInc(localDataVersion))
-  }, [messages, sessions, sessionIndex, session2MessageHistory, activeSession, dataVersion])
+  }, [messages, sessions, sessionIndex, session2MessageHistory, activeSession])
 
   const switchSession = (session: Session) => {
     console.log(`switching from session: ${activeSession.name}, ${activeSession.id} to ` +
