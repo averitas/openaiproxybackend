@@ -26,7 +26,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
   const [boxPadding, setBoxPadding] = useState('8px 12px')
   const [boxMargin, setBoxMargin] = useState('0 5%')
 
-  const messageListRef = useRef<HTMLUListElement>(null);
+  const messageListRef = useRef<HTMLUListElement>(null)
+  const inputAreaRef = useRef<HTMLTextAreaElement>(null)
 
   const setWaiting = (newMessages: Message[]) => {
     const newResponse: Message = {
@@ -139,6 +140,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
     } finally {
       messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' })
       setLoading(false)
+      setTimeout(() => inputAreaRef.current?.focus(), 0)
     }
   };
 
@@ -147,7 +149,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       '&': {
         margin: boxMargin, // sets margin for the root element of ListItem
         paddingTop: '100px',
-        height: '100vh'
+        height: '100vh',
+        overflow: 'hidden'
       },
     }}>
       <Typography variant='h5' align='center' gutterBottom>
@@ -196,6 +199,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       </Box>
       <Box mt={2} display='flex' alignItems='center'>
         <TextField
+          inputRef={inputAreaRef}
           disabled={loading}
           fullWidth
           placeholder='Type your message here...'
@@ -206,7 +210,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
           rows={2}
           style={{ marginRight: '10px' }}
         />
-        <Box display='flex' flexDirection='column'>
+        <Box display='flex' flexDirection='column' gap='5px'>
           <Button
             variant="contained"
             color="primary"
