@@ -27,6 +27,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
   const [boxMargin, setBoxMargin] = useState('0 5%')
 
   const messageListRef = useRef<HTMLUListElement>(null);
+  const inputAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const setWaiting = (newMessages: Message[]) => {
     const newResponse: Message = {
@@ -139,6 +140,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
     } finally {
       messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' })
       setLoading(false)
+      setTimeout(() => inputAreaRef.current?.focus(), 0);
     }
   };
 
@@ -196,6 +198,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       </Box>
       <Box mt={2} display='flex' alignItems='center'>
         <TextField
+          inputRef={inputAreaRef}
           disabled={loading}
           fullWidth
           placeholder='Type your message here...'
