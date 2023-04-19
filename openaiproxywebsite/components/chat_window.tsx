@@ -26,8 +26,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
   const [boxPadding, setBoxPadding] = useState('8px 12px')
   const [boxMargin, setBoxMargin] = useState('0 5%')
 
-  const messageListRef = useRef<HTMLUListElement>(null);
-  const inputAreaRef = useRef<HTMLTextAreaElement>(null);
+  const messageListRef = useRef<HTMLUListElement>(null)
+  const inputAreaRef = useRef<HTMLTextAreaElement>(null)
 
   const setWaiting = (newMessages: Message[]) => {
     const newResponse: Message = {
@@ -140,7 +140,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
     } finally {
       messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' })
       setLoading(false)
-      setTimeout(() => inputAreaRef.current?.focus(), 0);
+      setTimeout(() => inputAreaRef.current?.focus(), 0)
     }
   };
 
