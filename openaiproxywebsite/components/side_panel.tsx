@@ -46,15 +46,19 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
         color='error'
         onClick={cleanSession}
         startIcon={<DeleteSweep />}
-        style={{ width: "100%" }}
+        style={{ width: "100%", marginTop: '5px' }}
       >
         Clean sessions
       </Button>
       <List>
         {sessions.map((session) => (
           <ListItem key={session.name} style={{ display: 'flex', flexDirection: 'row' }}>
-            <ListItemButton selected={session.name === activeSession.name}
-              key={session.name} onClick={() => setActiveSession(session)}>
+            <ListItemButton
+              selected={session.name === activeSession.name}
+              key={session.name}
+              onClick={() => setActiveSession(session)}
+              style={{ width: '100%' }}
+            >
               <ListItemText color={session.name === activeSession.name ? "#008394" : "#33c9dc"}>
                 {session.name === activeSession.name ? <strong style={{ color: 'ActiveCaption' }}>{session.name + ' '}</strong> : session.name + ' '}
               </ListItemText>

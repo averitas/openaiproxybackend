@@ -149,7 +149,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       '&': {
         margin: boxMargin, // sets margin for the root element of ListItem
         paddingTop: '100px',
-        height: '100vh'
+        height: '100vh',
+        overflow: 'hidden'
       },
     }}>
       <Typography variant='h5' align='center' gutterBottom>
@@ -209,7 +210,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
           rows={2}
           style={{ marginRight: '10px' }}
         />
-        <Box display='flex' flexDirection='column'>
+        <Box display='flex' flexDirection='column' gap='5px'>
           <Button
             variant="contained"
             color="primary"
