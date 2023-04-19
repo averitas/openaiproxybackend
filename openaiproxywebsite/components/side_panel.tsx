@@ -4,6 +4,7 @@ import { Box, Button, Divider, List, ListItem, ListItemButton, ListItemText, Tex
 import CssBaseline from '@mui/material/CssBaseline';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteSweep from '@mui/icons-material/DeleteSweep';
 
 type Props = {
   activeSession: Session;
@@ -34,7 +35,7 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
         variant='contained'
         color='secondary'
         onClick={newSession}
-        endIcon={<AddIcon />}
+        startIcon={<AddIcon />}
         style={{ width: "100%" }}
       >
         New session
@@ -44,23 +45,23 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
         variant='contained'
         color='error'
         onClick={cleanSession}
-        endIcon={<AddIcon />}
+        startIcon={<DeleteSweep />}
         style={{ width: "100%" }}
       >
-        Clean session
+        Clean sessions
       </Button>
       <List>
         {sessions.map((session) => (
-          <ListItem key={session.name} style={{display: 'flex', flexDirection: 'row'}}>
-            <ListItemButton selected={session.name === activeSession.name} 
+          <ListItem key={session.name} style={{ display: 'flex', flexDirection: 'row' }}>
+            <ListItemButton selected={session.name === activeSession.name}
               key={session.name} onClick={() => setActiveSession(session)}>
               <ListItemText color={session.name === activeSession.name ? "#008394" : "#33c9dc"}>
-                {session.name === activeSession.name ? <strong style={{color: 'ActiveCaption'}}>{session.name + ' '}</strong> : session.name + ' '}
+                {session.name === activeSession.name ? <strong style={{ color: 'ActiveCaption' }}>{session.name + ' '}</strong> : session.name + ' '}
               </ListItemText>
             </ListItemButton>
             <ListItemButton disabled={sessions.length === 1} color='inherit'
               onClick={event => onDeleteSession(event, session.name)} style={{ padding: '3px', minWidth: '10px' }} >
-              {<DeleteForeverIcon/>} 
+              {<DeleteForeverIcon />}
             </ListItemButton>
           </ListItem>
         ))}
