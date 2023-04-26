@@ -1,31 +1,50 @@
-import Session from '@/types/types';
-import React, { useEffect } from 'react';
-import { Box, Button, Divider, List, ListItem, ListItemButton, ListItemText, TextField, Typography } from '@mui/material';
-import CssBaseline from '@mui/material/CssBaseline';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import DeleteSweep from '@mui/icons-material/DeleteSweep';
+import React, { useEffect, useState } from 'react'
+import { Box, Button, Divider, List, ListItem, ListItemButton, ListItemText, TextField, Typography } from '@mui/material'
+import CssBaseline from '@mui/material/CssBaseline'
+import AddIcon from '@mui/icons-material/Add'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import DeleteSweep from '@mui/icons-material/DeleteSweep'
+import ChatManager from './chat_manager'
+import ChatSession from './chat_session'
 
-type Props = {
-  activeSession: Session;
-  sessions: Session[];
-  setSessions: (sessions: Session[]) => void;
-  setActiveSession: (session: Session) => void;
-  newSession: () => void
-  cleanSession: () => void
-};
+const SidePanel = () => {
+  const [sessions, setSessions] = useState<ChatSession[]>(ChatManager.instance.getSessions())
+  const [activeSessionName, setActiveSessionName] = useState(ChatManager.instance.activeSession.name)
 
-const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setActiveSession, newSession, cleanSession }) => {
-  const onDeleteSession = (event: React.MouseEvent, sessionName: string) => {
-    event.stopPropagation();
-    console.log(`Delete session: ${sessionName}`)
-    let newSessions = sessions.filter((value) => value.name !== sessionName)
-    setSessions(newSessions)
-    // if delete session is active, switch to the first session after delete
-    if (sessionName === activeSession.name) {
-      setActiveSession(newSessions[0])
-    }
+  const createSession = () => {
+    ChatManager.instance.createSession()
   }
+
+  const cleanSessions = () => {
+    ChatManager.instance.clean()
+  }
+
+  const setActiveSession = (sessionName: string) => {
+    ChatManager.instance.setActiveSession(sessionName)
+  }
+
+  const deleteSession = (event: React.MouseEvent, sessionName: string) => {
+    event.stopPropagation();
+    ChatManager.instance.removeSession(sessionName)
+  }
+
+  useEffect(() => {
+    const sessionsUpdateHandler = () => {
+      setSessions(Array.from(ChatManager.instance.sessions.values()))
+    }
+
+    const activeSessionChangeHandler = () => {
+      setActiveSessionName(ChatManager.instance.activeSession.name)
+    }
+
+    ChatManager.instance.addEventListener(ChatManager.SESSIONS_CHANGE_EVENT, sessionsUpdateHandler)
+    ChatManager.instance.addEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
+
+    return () => {
+      ChatManager.instance.removeEventListener(ChatManager.SESSIONS_CHANGE_EVENT, sessionsUpdateHandler)
+      ChatManager.instance.removeEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
+    }
+  }, [])
 
   return (
     <Box mt={2} p={2} style={{ minWidth: '250px', overflow: "auto" }}>
@@ -34,7 +53,7 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
         disabled={sessions.length > 8}
         variant='contained'
         color='secondary'
-        onClick={newSession}
+        onClick={createSession}
         startIcon={<AddIcon />}
         style={{ width: "100%" }}
       >
@@ -44,7 +63,7 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
         disabled={sessions.length > 8}
         variant='contained'
         color='error'
-        onClick={cleanSession}
+        onClick={cleanSessions}
         startIcon={<DeleteSweep />}
         style={{ width: "100%", marginTop: '5px' }}
       >
@@ -54,17 +73,17 @@ const SidePanel: React.FC<Props> = ({ sessions, setSessions, activeSession, setA
         {sessions.map((session) => (
           <ListItem key={session.name} style={{ display: 'flex', flexDirection: 'row' }}>
             <ListItemButton
-              selected={session.name === activeSession.name}
+              selected={session.name === activeSessionName}
               key={session.name}
-              onClick={() => setActiveSession(session)}
+              onClick={() => setActiveSession(session.name)}
               style={{ width: '100%' }}
             >
-              <ListItemText color={session.name === activeSession.name ? "#008394" : "#33c9dc"}>
-                {session.name === activeSession.name ? <strong style={{ color: 'ActiveCaption' }}>{session.name + ' '}</strong> : session.name + ' '}
+              <ListItemText color={session.name === activeSessionName ? "#008394" : "#33c9dc"}>
+                {session.name === activeSessionName ? <strong style={{ color: 'ActiveCaption' }}>{session.name + ' '}</strong> : session.name + ' '}
               </ListItemText>
             </ListItemButton>
             <ListItemButton disabled={sessions.length === 1} color='inherit'
-              onClick={event => onDeleteSession(event, session.name)} style={{ padding: '3px', minWidth: '10px' }} >
+              onClick={event => deleteSession(event, session.name)} style={{ padding: '3px', minWidth: '10px' }} >
               {<DeleteForeverIcon />}
             </ListItemButton>
           </ListItem>
