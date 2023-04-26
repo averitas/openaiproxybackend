@@ -1,43 +1,24 @@
 import React, { useRef, useState, useEffect } from 'react';
-import axios from 'axios';
-import Session from '@/types/types';
 import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemText, Paper, TextField, Typography } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import ReactMarkdown from 'react-markdown';
-import { css } from '@emotion/react';
-import Message from '@/types/message';
-import styled from '@emotion/styled';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import SendIcon from '@mui/icons-material/Send'
+import ReactMarkdown from 'react-markdown'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import ChatManager from './chat_manager'
+import ChatSession from './chat_session'
+import ChatMessage from './chat_message'
 
-type ChatWindowProps = {
-  activeSession: Session;
-  sessions: Session[];
-  setSessions: (sessions: Session[]) => void;
-  setActiveSession: (session: Session) => void;
-  messages: Message[];
-  setMessages: (messages: Message[]) => void;
-};
-
-const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSession, setActiveSession, messages, setMessages }) => {
+const ChatWindow = () => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const colors = ['#80cbc4', '#b2dfdb']; // set up colors
   const [boxMaxWidth, setBoxMaxWidth] = useState('70%')
   const [boxPadding, setBoxPadding] = useState('8px 12px')
   const [boxMargin, setBoxMargin] = useState('0 5%')
+  const [activeSession, setActiveSession] = useState<ChatSession | null>(null)
+  const [messages, setMessages] = useState<ChatMessage[]>([])
 
   const messageListRef = useRef<HTMLUListElement>(null)
   const inputAreaRef = useRef<HTMLTextAreaElement>(null)
-
-  const setWaiting = (newMessages: Message[]) => {
-    const newResponse: Message = {
-      id: messages.length + 2,
-      text: '',
-      isWait: true,
-    };
-
-    setMessages([...newMessages, newResponse])
-  }
 
   useEffect(() => {
     function handleOrientationChange() {
@@ -53,96 +34,48 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       }
     }
 
+    const messagesChangeHandler = () => {
+      setMessages(activeSession?.messages || [])
+      messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
+
+      if (messages.length > 0 && messages[messages.length - 1].isWaiting) {
+        setLoading(true)
+      } else {
+        setLoading(false)
+      }
+      setTimeout(() => inputAreaRef.current?.focus(), 0)
+    }
+
+    const activeSessionChangeHandler = () => {
+      const newActiveSession = ChatManager.instance.activeSession
+
+      activeSession?.removeListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+
+      setActiveSession(newActiveSession)
+      setMessages(newActiveSession.messages)
+      newActiveSession.on(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+    }
+
     window.addEventListener('orientationchange', handleOrientationChange);
+    ChatManager.instance.on(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
+
     return () => {
       window.removeEventListener('orientationchange', handleOrientationChange);
+      activeSession?.removeListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+      ChatManager.instance.removeListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
     };
   }, []);
 
-  const handlerMessageClean = () => {
-    let newActiveSession: Session = {
-      id: '',
-      name: activeSession.name
-    }
-    let newSesssions: Session[] = []
-    sessions.forEach(session => {
-      if (session.name === newActiveSession.name) {
-        newSesssions.push(newActiveSession)
-      }
-      else {
-        newSesssions.push(session)
-      }
-    });
-    setMessages([])
-    setSessions(newSesssions)
-    setActiveSession(newActiveSession)
+  const sendMessage = async () => {
+    console.log(`Current session name ${ChatManager.instance.activeSession.name}, id: ${ChatManager.instance.activeSession.id}`)
+    const inputValue = inputText
+    setInputText('')
+    activeSession?.sendMessage(inputValue)
   }
 
-  const handleMessageSend = async () => {
-    console.log(`Current session name ${activeSession.name}, id: ${activeSession.id}`)
-    const inputValue = inputText
-    const newMessage: Message = {
-      id: messages.length + 1,
-      text: inputValue,
-      isWait: false,
-    };
-    const newMessages = [...messages, newMessage]
-    try {
-      setMessages(newMessages);
-      setInputText('');
-      setWaiting(newMessages)
-      messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
-      setLoading(true)
-
-      const response = await axios.post('/api/chat', {
-        session: activeSession.id,
-        message: inputValue,
-      });
-
-      if (response.data) {
-        const newResponse: Message = {
-          id: messages.length + 2,
-          text: response.data.data,
-          isWait: false,
-        };
-
-        console.log(`session id now: ${activeSession.id}, comming: ${response.data.sessionId}`)
-
-        // if sessionId updated, update local sessionId
-        if (response.data.sessionId !== activeSession.id) {
-          console.log(`Update session id of session ${activeSession.name} to ${response.data.sessionId}`)
-          const updateSession: Session = {
-            id: response.data.sessionId,
-            name: activeSession.name,
-          }
-          setActiveSession(updateSession)
-          var newSessions: Session[] = []
-          for (let index = 0; index < sessions.length; index++) {
-            if (sessions[index].name === activeSession.name) {
-              newSessions.push(updateSession)
-            } else {
-              newSessions.push(sessions[index])
-            }
-          }
-          setSessions(newSessions)
-        }
-
-        setMessages([...newMessages, newResponse])
-      }
-    } catch (error) {
-      setInputText('');
-      setMessages([...newMessages, {
-        id: messages.length + 2,
-        text: 'Error',
-        isWait: false,
-      }])
-      console.error(error);
-    } finally {
-      messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' })
-      setLoading(false)
-      setTimeout(() => inputAreaRef.current?.focus(), 0)
-    }
-  };
+  const cleanActiveSession = () => {
+    ChatManager.instance.activeSession.clean()
+  }
 
   return (
     <Box sx={{
@@ -154,7 +87,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
       },
     }}>
       <Typography variant='h5' align='center' gutterBottom>
-        {activeSession.name}
+        {activeSession?.name || 'Session 0'}
       </Typography>
       <Divider />
       <Box mt={2} p={2} style={{ height: '80%', overflow: 'hidden' }}>
@@ -190,8 +123,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
                   padding: boxPadding,
                   backgroundColor: colors[index % 2]
                 }}>
-                {message.isWait ? <CircularProgress /> :
-                  <ReactMarkdown>{message.text}</ReactMarkdown>}
+                {message.isWaiting ? <CircularProgress /> :
+                  <ReactMarkdown>{message.content}</ReactMarkdown>}
               </Box>
             </ListItem>
           ))}
@@ -214,7 +147,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
           <Button
             variant="contained"
             color="primary"
-            onClick={handleMessageSend}
+            onClick={sendMessage}
             disabled={!inputText || loading}
             endIcon={<SendIcon />}>
             Send
@@ -222,7 +155,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ sessions, setSessions, activeSe
           <Button
             variant="contained"
             color="warning"
-            onClick={handlerMessageClean}
+            onClick={cleanActiveSession}
             disabled={loading}
             endIcon={<DeleteForeverIcon />}>
             Clean

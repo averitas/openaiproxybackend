@@ -25,22 +25,23 @@ class ChatMessage {
     /**
      * is the message waiting for server
      */
-    isWait: boolean
+    isWaiting: boolean
 
-    constructor(content: string, type: number, timestamp: number) {
-        this.id = 0
+    constructor(id: number, content: string, type: number, timestamp: number) {
+        this.id = id
         this.content = content
         this.type = type
         this.timestamp = timestamp
-        this.isWait = false
+        this.isWaiting = false
     }
 
     static fromObj(input: any) {
-        return new ChatMessage(input.content, input.type, input.timestamp)
+        return new ChatMessage(input.id, input.content, input.type, input.timestamp)
     }
 
     toObj() {
         return {
+            id: this.id,
             content: this.content,
             type: this.type,
             timestamp: this.timestamp
