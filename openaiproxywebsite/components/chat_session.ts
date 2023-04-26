@@ -1,8 +1,7 @@
 import axios from 'axios'
-import { EventEmitter } from 'stream'
 import ChatMessage from './chat_message'
 
-class ChatSession extends EventEmitter {
+class ChatSession extends EventTarget {
     static MESSAGES_CHANGE_EVENT = 'messageChange'
 
     id: string
@@ -27,7 +26,7 @@ class ChatSession extends EventEmitter {
         const botMsg = this.createBot()
         botMsg.isWaiting = true
 
-        this.emit(ChatSession.MESSAGES_CHANGE_EVENT)
+        this.dispatchEvent(new Event(ChatSession.MESSAGES_CHANGE_EVENT))
 
         try {
             const response = await axios.post('/api/chat', {
@@ -52,7 +51,7 @@ class ChatSession extends EventEmitter {
             console.error(error);
         } finally {
             botMsg.isWaiting = false
-            this.emit(ChatSession.MESSAGES_CHANGE_EVENT)
+            this.dispatchEvent(new Event(ChatSession.MESSAGES_CHANGE_EVENT))
         }
     }
 

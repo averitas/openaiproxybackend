@@ -1,4 +1,3 @@
-import { EventEmitter } from 'stream'
 import ChatSession from './chat_session'
 
 const HISTORY_STORAGE_KEY = 'openaiproxy_histories'
@@ -6,7 +5,7 @@ const HISTORY_STORAGE_KEY = 'openaiproxy_histories'
 /**
  * chat session persistent class
  */
-class ChatManager extends EventEmitter {
+class ChatManager extends EventTarget {
     static ACTIVE_SESSION_CHANGE_EVENT: 'activeSessionChange'
     static SESSIONS_CHANGE_EVENT: 'session_change'
 
@@ -51,7 +50,7 @@ class ChatManager extends EventEmitter {
                 this.createSession()
             }
             this.activeSession = this.getFirstSession()
-            this.emit(ChatManager.SESSIONS_CHANGE_EVENT)
+            this.dispatchEvent(new Event(ChatManager.SESSIONS_CHANGE_EVENT))
             this.setActiveSession(historyObj.activeSession)
         } else {
             throw new Error('History storage is empty');
@@ -63,7 +62,7 @@ class ChatManager extends EventEmitter {
         // create an init session
         this.createSession()
         this.activeSession = this.getFirstSession()
-        this.emit(ChatManager.SESSIONS_CHANGE_EVENT)
+        this.dispatchEvent(new Event(ChatManager.SESSIONS_CHANGE_EVENT))
     }
 
     createSession() {
@@ -74,8 +73,8 @@ class ChatManager extends EventEmitter {
         const newSession = new ChatSession('', `Session ${seqId}`)
         this.sessions.set(newSession.name, newSession)
         this.activeSession = newSession
-        this.emit(ChatManager.SESSIONS_CHANGE_EVENT)
-        this.emit(ChatManager.ACTIVE_SESSION_CHANGE_EVENT)
+        this.dispatchEvent(new Event(ChatManager.SESSIONS_CHANGE_EVENT))
+        this.dispatchEvent(new Event(ChatManager.ACTIVE_SESSION_CHANGE_EVENT))
     }
 
     getSession(name: string) {
@@ -92,7 +91,7 @@ class ChatManager extends EventEmitter {
             if (this.activeSession.name === name) {
                 this.activeSession = this.sessions.values().next().value
             }
-            this.emit(ChatManager.SESSIONS_CHANGE_EVENT)
+            this.dispatchEvent(new Event(ChatManager.SESSIONS_CHANGE_EVENT))
         } else {
             throw new Error('Cannot remove the only session')
         }
@@ -103,7 +102,7 @@ class ChatManager extends EventEmitter {
         if (newActiveSession) {
             this.activeSession = newActiveSession
         }
-        this.emit(ChatManager.ACTIVE_SESSION_CHANGE_EVENT)
+        this.dispatchEvent(new Event(ChatManager.ACTIVE_SESSION_CHANGE_EVENT))
     }
 }
 

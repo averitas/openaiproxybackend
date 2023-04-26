@@ -37,12 +37,12 @@ const SidePanel = () => {
       setActiveSessionName(ChatManager.instance.activeSession.name)
     }
 
-    ChatManager.instance.on(ChatManager.SESSIONS_CHANGE_EVENT, sessionsUpdateHandler)
-    ChatManager.instance.on(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
+    ChatManager.instance.addEventListener(ChatManager.SESSIONS_CHANGE_EVENT, sessionsUpdateHandler)
+    ChatManager.instance.addEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
 
     return () => {
-      ChatManager.instance.removeListener(ChatManager.SESSIONS_CHANGE_EVENT, sessionsUpdateHandler)
-      ChatManager.instance.removeListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
+      ChatManager.instance.removeEventListener(ChatManager.SESSIONS_CHANGE_EVENT, sessionsUpdateHandler)
+      ChatManager.instance.removeEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
     }
   }, [])
 

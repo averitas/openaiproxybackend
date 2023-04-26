@@ -49,20 +49,20 @@ const ChatWindow = () => {
     const activeSessionChangeHandler = () => {
       const newActiveSession = ChatManager.instance.activeSession
 
-      activeSession?.removeListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+      activeSession?.removeEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
 
       setActiveSession(newActiveSession)
       setMessages(newActiveSession.messages)
-      newActiveSession.on(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+      newActiveSession.addEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
     }
 
     window.addEventListener('orientationchange', handleOrientationChange);
-    ChatManager.instance.on(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
+    ChatManager.instance.addEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
 
     return () => {
       window.removeEventListener('orientationchange', handleOrientationChange);
-      activeSession?.removeListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
-      ChatManager.instance.removeListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
+      activeSession?.removeEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+      ChatManager.instance.removeEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
     };
   }, []);
 
