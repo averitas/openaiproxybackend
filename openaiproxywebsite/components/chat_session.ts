@@ -21,7 +21,7 @@ class ChatSession extends EventTarget {
     }
 
     async sendMessage(content: string) {
-        const userMsg = this.createUser(content)
+        this.createUser(content)
 
         const botMsg = this.createBot()
         botMsg.isWaiting = true
@@ -57,6 +57,7 @@ class ChatSession extends EventTarget {
 
     clean() {
         this.messages = []
+        this.dispatchEvent(new Event(ChatSession.MESSAGES_CHANGE_EVENT))
     }
 
     createBot(msgContent: string = '') {
@@ -79,7 +80,7 @@ class ChatSession extends EventTarget {
         return {
             id: this.id,
             name: this.name,
-            messages: this.messages.map(msg => msg.toString())
+            messages: this.messages.map(msg => msg.toObj())
         };
     }
 }

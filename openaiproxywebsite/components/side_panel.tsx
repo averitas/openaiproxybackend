@@ -8,8 +8,8 @@ import ChatManager from './chat_manager'
 import ChatSession from './chat_session'
 
 const SidePanel = () => {
-  const [sessions, setSessions] = useState<ChatSession[]>([])
-  const [activeSessionName, setActiveSessionName] = useState('')
+  const [sessions, setSessions] = useState<ChatSession[]>(ChatManager.instance.getSessions())
+  const [activeSessionName, setActiveSessionName] = useState(ChatManager.instance.activeSession.name)
 
   const createSession = () => {
     ChatManager.instance.createSession()

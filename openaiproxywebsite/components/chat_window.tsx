@@ -14,8 +14,8 @@ const ChatWindow = () => {
   const [boxMaxWidth, setBoxMaxWidth] = useState('70%')
   const [boxPadding, setBoxPadding] = useState('8px 12px')
   const [boxMargin, setBoxMargin] = useState('0 5%')
-  const [activeSession, setActiveSession] = useState<ChatSession | null>(null)
-  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const activeSession = useRef(ChatManager.instance.activeSession)
+  const [messages, setMessages] = useState<ChatMessage[]>(ChatManager.instance.activeSession.messages.slice(0))
 
   const messageListRef = useRef<HTMLUListElement>(null)
   const inputAreaRef = useRef<HTMLTextAreaElement>(null)
@@ -35,25 +35,34 @@ const ChatWindow = () => {
     }
 
     const messagesChangeHandler = () => {
-      setMessages(activeSession?.messages || [])
-      messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
+      const newMessages = activeSession.current.messages.slice(0)
+      setMessages(newMessages)
 
-      if (messages.length > 0 && messages[messages.length - 1].isWaiting) {
+      if (newMessages.length > 0 && newMessages[newMessages.length - 1].isWaiting) {
         setLoading(true)
       } else {
         setLoading(false)
       }
-      setTimeout(() => inputAreaRef.current?.focus(), 0)
+
+      setTimeout(() => {
+        messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
+        inputAreaRef.current?.focus();
+      }, 0)
     }
 
     const activeSessionChangeHandler = () => {
       const newActiveSession = ChatManager.instance.activeSession
 
-      activeSession?.removeEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+      activeSession.current.removeEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
 
-      setActiveSession(newActiveSession)
-      setMessages(newActiveSession.messages)
+      activeSession.current = newActiveSession
+      setMessages(newActiveSession.messages.slice(0))
       newActiveSession.addEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+
+      setTimeout(() => {
+        messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
+        inputAreaRef.current?.focus();
+      }, 0)
     }
 
     window.addEventListener('orientationchange', handleOrientationChange);
@@ -61,7 +70,7 @@ const ChatWindow = () => {
 
     return () => {
       window.removeEventListener('orientationchange', handleOrientationChange);
-      activeSession?.removeEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+      activeSession.current.removeEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
       ChatManager.instance.removeEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
     };
   }, []);
@@ -70,7 +79,7 @@ const ChatWindow = () => {
     console.log(`Current session name ${ChatManager.instance.activeSession.name}, id: ${ChatManager.instance.activeSession.id}`)
     const inputValue = inputText
     setInputText('')
-    activeSession?.sendMessage(inputValue)
+    activeSession.current.sendMessage(inputValue)
   }
 
   const cleanActiveSession = () => {
@@ -87,7 +96,7 @@ const ChatWindow = () => {
       },
     }}>
       <Typography variant='h5' align='center' gutterBottom>
-        {activeSession?.name || 'Session 0'}
+        {activeSession.current.name || 'Session 0'}
       </Typography>
       <Divider />
       <Box mt={2} p={2} style={{ height: '80%', overflow: 'hidden' }}>
@@ -103,17 +112,24 @@ const ChatWindow = () => {
             <ListItem
               key={index}
               style={{
-                flexDirection: (message.id % 2) === 0 ? 'row' : 'row-reverse'
+                flexDirection: message.type === 0 ? 'row' : 'row-reverse',
+                alignItems: 'start'
               }}
             >
-              <ListItemText
-                style={{
-                  maxWidth: '3%',
-                  textAlign: (message.id % 2) === 1 ? 'right' : 'left'
-                }}
-                primary={message.id}
-                secondary={(message.id % 2) === 1 ? 'Ask' : 'Bot'}
-              />
+              {message.type === 0 ?
+                <div>
+                  <img
+                    src="bot_avatar.jpg"
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      marginRight: '2px',
+                      overflow: 'hidden'
+                    }}
+                  />
+                </div>
+                : <></>}
               <Box
                 component='div'
                 style={{
