@@ -99,7 +99,7 @@ const ChatWindow = () => {
         {activeSession.current.name || 'Session 0'}
       </Typography>
       <Divider />
-      <Box mt={2} p={2} style={{ height: '80%', overflow: 'hidden' }}>
+      <Box mt={2} p={2} style={{ height: 'calc(100% - 200px)', overflow: 'hidden' }}>
         <List
           ref={messageListRef}
           style={{

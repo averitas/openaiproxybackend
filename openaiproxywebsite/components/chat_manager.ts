@@ -20,7 +20,7 @@ class ChatManager extends EventTarget {
 
     activeSession: ChatSession
 
-    loaded: bool
+    loaded: boolean
 
     /**
      * use session name as index

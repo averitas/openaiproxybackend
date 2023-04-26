@@ -42,8 +42,7 @@ const ChatApp: React.FC = () => {
           <div style={{ minHeight: '45px' }} />
           <SidePanel />
         </Drawer>
-        <main style={{ height: '100vh', flexGrow: 1, padding: '3px' }}>
-          <div style={{ minHeight: '30px' }} />
+        <main style={{ height: '100vh', flexGrow: 1 }}>
           <ChatWindow />
         </main>
       </div>
