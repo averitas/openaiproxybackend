@@ -6,6 +6,8 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import ChatManager from './chat_manager'
 import ChatMessage from './chat_message'
 
+import styles from '../styles/chat_window.module.scss'
+
 const ChatWindow = () => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
@@ -140,13 +142,15 @@ const ChatWindow = () => {
                   backgroundColor: colors[index % 2]
                 }}>
                 <p style={{
+                  margin: '0',
                   color: message.type === 0 ? '#666' : '#fff',
-                  fontSize: '0.6em'
+                  fontSize: '0.6em',
+                  lineHeight: '1'
                 }}>
                   {new Date(message.timestamp).toLocaleTimeString()}
                 </p>
                 {message.isWaiting ? <CircularProgress /> :
-                  <ReactMarkdown>{message.content}</ReactMarkdown>}
+                  <ReactMarkdown className={styles['message-content']}>{message.content}</ReactMarkdown>}
               </Box>
             </ListItem>
           ))}

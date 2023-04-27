@@ -1,9 +1,6 @@
 import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import Head from 'next/head';
-import Link from 'next/link';
 import ChatApp from './chat_app';
-
 
 const MyApp = () => {
   return (
@@ -13,7 +10,7 @@ const MyApp = () => {
         <meta name="description" content="openai proxy App" />
         <meta name="email" content="lewis0204@outlook.com" />
       </Head>
-      <ChatApp/>
+      <ChatApp />
     </>
   );
 };
