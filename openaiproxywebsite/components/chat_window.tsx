@@ -4,7 +4,6 @@ import SendIcon from '@mui/icons-material/Send'
 import ReactMarkdown from 'react-markdown'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import ChatManager from './chat_manager'
-import ChatSession from './chat_session'
 import ChatMessage from './chat_message'
 
 const ChatWindow = () => {
@@ -53,11 +52,8 @@ const ChatWindow = () => {
     const activeSessionChangeHandler = () => {
       const newActiveSession = ChatManager.instance.activeSession
 
-      activeSession.current.removeEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
-
       activeSession.current = newActiveSession
       setMessages(newActiveSession.messages.slice(0))
-      newActiveSession.addEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
 
       setTimeout(() => {
         messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
@@ -67,11 +63,12 @@ const ChatWindow = () => {
 
     window.addEventListener('orientationchange', handleOrientationChange);
     ChatManager.instance.addEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
+    ChatManager.instance.addEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
 
     return () => {
       window.removeEventListener('orientationchange', handleOrientationChange);
-      activeSession.current.removeEventListener(ChatSession.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
       ChatManager.instance.removeEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
+      ChatManager.instance.removeEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
     };
   }, []);
 
@@ -89,8 +86,11 @@ const ChatWindow = () => {
   return (
     <Box sx={{
       '&': {
+        display: 'flex',
+        flexDirection: 'column',
         margin: boxMargin, // sets margin for the root element of ListItem
         paddingTop: '100px',
+        paddingBottom: '2%',
         height: '100vh',
         overflow: 'hidden'
       },
@@ -99,7 +99,7 @@ const ChatWindow = () => {
         {activeSession.current.name || 'Session 0'}
       </Typography>
       <Divider />
-      <Box mt={2} p={2} style={{ height: 'calc(100% - 200px)', overflow: 'hidden' }}>
+      <Box mt={2} p={2} style={{ flexGrow: '1', overflow: 'hidden' }}>
         <List
           ref={messageListRef}
           style={{
@@ -139,6 +139,12 @@ const ChatWindow = () => {
                   padding: boxPadding,
                   backgroundColor: colors[index % 2]
                 }}>
+                <p style={{
+                  color: message.type === 0 ? '#666' : '#fff',
+                  fontSize: '0.6em'
+                }}>
+                  {new Date(message.timestamp).toLocaleTimeString()}
+                </p>
                 {message.isWaiting ? <CircularProgress /> :
                   <ReactMarkdown>{message.content}</ReactMarkdown>}
               </Box>
