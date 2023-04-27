@@ -7,7 +7,8 @@ const HISTORY_STORAGE_KEY = 'openaiproxy_histories'
  */
 class ChatManager extends EventTarget {
     static ACTIVE_SESSION_CHANGE_EVENT: 'activeSessionChange'
-    static SESSIONS_CHANGE_EVENT: 'session_change'
+    static SESSIONS_CHANGE_EVENT: 'sessionChange'
+    static MESSAGES_CHANGE_EVENT: 'messagesChange'
 
     static instance: ChatManager
 
@@ -16,6 +17,7 @@ class ChatManager extends EventTarget {
      */
     static messagesChangeHandler() {
         ChatManager.instance.save()
+        ChatManager.instance.dispatchEvent(new Event(ChatManager.MESSAGES_CHANGE_EVENT))
     }
 
     activeSession: ChatSession
