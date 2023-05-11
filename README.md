@@ -7,12 +7,14 @@ More features are still under development.
 
 ## Structure
 Ignore the package.json under root directory.
+```
 -
 |- api  The Azure function app that restore chat session and call openai completion API.
 |- openaiproxywebsite  The frontend app based on React.js and Next.js
    |- pages  All webpages
       |- api  The API used by React app to call Azure function app in ./api folder.
    |- components  React frontend components
+```
 
 ## Local debug api
 under `api` folder.
