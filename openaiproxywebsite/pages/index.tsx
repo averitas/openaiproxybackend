@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Head from 'next/head';
-import ChatApp from './chat_app';
+import ChatApp from '../../chat/pages/chat_app';
 
 const MyApp = () => {
   return (

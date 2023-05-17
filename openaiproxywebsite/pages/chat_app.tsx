@@ -1,15 +1,29 @@
-import ChatWindow from '@/components/chat_window';
-import SidePanel from '@/components/side_panel';
-import React, { useEffect, useRef, useState } from 'react';
-import { AppBar, Drawer, IconButton, Toolbar, Typography } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChatManager from '@/components/chat_manager';
+
+import React, { useEffect, useRef, useState } from 'react'
+import { AppBar, Avatar, Box, Drawer, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
+import ChatWindow from '@/chat/components/chat_window'
+import SidePanel from '@/chat/components/side_panel'
+import ChatManager from '@/chat/components/chat_manager'
+import UserManager from '@/user/components/user_manager'
 
 const ChatApp: React.FC = () => {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false)
+  const [userName, setUserName] = React.useState(UserManager.instance.username)
+  const [userEmail, setUserEmail] = React.useState(UserManager.instance.email)
+  const [userShortName, setUserShortName] = React.useState(UserManager.instance.shortName)
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  }
+
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
   };
 
   useEffect(() => {
@@ -19,7 +33,20 @@ const ChatApp: React.FC = () => {
     } catch (error) {
       console.error('Error getting temporary data from localStorage:', error);
     }
+
+    const userChangeHandler = () => {
+      setUserName(UserManager.instance.username)
+      setUserShortName(UserManager.instance.shortName)
+      setUserEmail(UserManager.instance.email)
+    }
+
+    UserManager.instance.addEventListener('userChange', userChangeHandler)
+
     console.log(`--Setup callback end--`);
+
+    return () => {
+      UserManager.instance.removeEventListener('userChange', userChangeHandler)
+    }
   }, []);
 
   const drawerWidth = '250px'
@@ -27,14 +54,44 @@ const ChatApp: React.FC = () => {
   return (
     <>
       <div style={{ display: 'flex' }}>
-        <AppBar position="fixed" style={{ zIndex: 1400 }}>
+        <AppBar position="fixed">
           <Toolbar>
             <IconButton color="inherit" aria-label="open drawer" onClick={handleDrawerToggle} edge="start" style={{ marginRight: '36px' }}>
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap>
+            <Typography sx={{ flexGrow: 1 }} variant="h6" noWrap>
               Chat App
             </Typography>
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title={userName}>
+                <IconButton sx={{ p: 0 }} onClick={handleOpenUserMenu}>
+                  <Avatar>{userShortName}</Avatar>
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                <MenuItem>
+                  <Typography textAlign="center">Profile</Typography>
+                </MenuItem>
+                <MenuItem>
+                  <Typography textAlign="center">Sign out</Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
           </Toolbar>
         </AppBar>
         <Drawer variant="temporary" anchor='left' style={{ width: drawerWidth, flexShrink: 0 }}
