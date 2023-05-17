@@ -2,10 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { AppBar, Avatar, Box, Drawer, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import ChatWindow from '@/chat/components/chat_window'
-import SidePanel from '@/chat/components/side_panel'
-import ChatManager from '@/chat/components/chat_manager'
-import UserManager from '@/user/components/user_manager'
+import ChatWindow from '@/components/chat/chat_window'
+import SidePanel from '@/components/chat/side_panel'
+import ChatManager from '@/components/chat/chat_manager'
+import UserManager from '@/components/auth/user_manager'
 
 const ChatApp: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false)

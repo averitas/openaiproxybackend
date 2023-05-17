@@ -26,6 +26,10 @@ class UserManager extends EventTarget {
             .substring(0, 2);
     }
 
+    init() {
+        // validate cookies, check if the user is signed in
+    }
+
     signIn(username: string, password: string) {
         // do the sign in ajax
 
@@ -34,6 +38,10 @@ class UserManager extends EventTarget {
         this.username = username
         this.email = ''
         this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
+    }
+
+    signOut() {
+        // remove user sign in session in server
     }
 }
 
