@@ -1,5 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { AppBar, Avatar, Box, Drawer, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import ChatWindow from '@/components/chat/chat_window'
@@ -8,10 +9,10 @@ import ChatManager from '@/components/chat/chat_manager'
 import UserManager from '@/components/auth/user_manager'
 
 const ChatApp: React.FC = () => {
+  const { push } = useRouter()
+
   const [mobileOpen, setMobileOpen] = React.useState(false)
-  const [userName, setUserName] = React.useState(UserManager.instance.username)
   const [userEmail, setUserEmail] = React.useState(UserManager.instance.email)
-  const [userShortName, setUserShortName] = React.useState(UserManager.instance.shortName)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
 
   const handleDrawerToggle = () => {
@@ -26,6 +27,11 @@ const ChatApp: React.FC = () => {
     setAnchorElUser(null);
   };
 
+  const handleSignOut = async (event: React.MouseEvent<HTMLElement>) => {
+    await UserManager.instance.signOut()
+    push('/user/signin')
+  }
+
   useEffect(() => {
     console.log(`--Setup callback started--`);
     try {
@@ -35,8 +41,6 @@ const ChatApp: React.FC = () => {
     }
 
     const userChangeHandler = () => {
-      setUserName(UserManager.instance.username)
-      setUserShortName(UserManager.instance.shortName)
       setUserEmail(UserManager.instance.email)
     }
 
@@ -63,9 +67,9 @@ const ChatApp: React.FC = () => {
               Chat App
             </Typography>
             <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title={userName}>
+              <Tooltip title={userEmail}>
                 <IconButton sx={{ p: 0 }} onClick={handleOpenUserMenu}>
-                  <Avatar>{userShortName}</Avatar>
+                  <Avatar>{userEmail.charAt(0)}</Avatar>
                 </IconButton>
               </Tooltip>
               <Menu
@@ -87,7 +91,7 @@ const ChatApp: React.FC = () => {
                 <MenuItem>
                   <Typography textAlign="center">Profile</Typography>
                 </MenuItem>
-                <MenuItem>
+                <MenuItem onClick={handleSignOut}>
                   <Typography textAlign="center">Sign out</Typography>
                 </MenuItem>
               </Menu>

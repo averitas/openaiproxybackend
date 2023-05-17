@@ -6,7 +6,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import ChatManager from './chat_manager'
 import ChatMessage from './chat_message'
 
-import styles from '../styles/chat_window.module.scss'
+import styles from '../../styles/chat_window.module.scss'
 
 const ChatWindow = () => {
   const [inputText, setInputText] = useState('');

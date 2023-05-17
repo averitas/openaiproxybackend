@@ -5,7 +5,6 @@ class UserManager extends EventTarget {
 
     isSignedIn: boolean
     id: string
-    username: string
     email: string
 
     constructor() {
@@ -13,35 +12,40 @@ class UserManager extends EventTarget {
 
         this.isSignedIn = false
         this.id = ''
-        this.username = 'Unknown User'
-        this.email = ''
-    }
-
-    get shortName() {
-        return this.username
-            .split(' ')
-            .filter(item => item.length > 0)
-            .map(item => item[0])
-            .join('')
-            .substring(0, 2);
+        this.email = 'user@example.com'
     }
 
     init() {
-        // validate cookies, check if the user is signed in
+        // query user sign in session(cookie) in server
     }
 
-    signIn(username: string, password: string) {
-        // do the sign in ajax
+    async signIn(email: string, password: string) {
+        // query the sign in API
 
         this.isSignedIn = true
         this.id = '65535'
-        this.username = username
-        this.email = ''
+        this.email = email
         this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
+
+        return true
     }
 
-    signOut() {
+    async signOut() {
         // remove user sign in session in server
+
+        return true
+    }
+
+    async signUp(email: string, password: string) {
+        // send mail to user email address
+
+        return true
+    }
+
+    async confirmSignUp() {
+        // query the sign up confirmation API
+
+        return true
     }
 }
 
