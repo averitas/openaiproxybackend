@@ -29,7 +29,7 @@ class UserInfo:
 
     def fromJson(self, jsonDict: dict) -> None:
         for key in jsonDict:
-            if key not in self.__dict__:
+            if key not in self.__dict__ and not key.startswith("_"):
                 self.__dict__[key] = jsonDict[key]
 
     def toTableEntity(self) -> dict:
@@ -54,6 +54,6 @@ class UserInfo:
         }
 
         for key in self.__dict__:
-            if key not in entity and key != "Password":
+            if key not in entity and key != "Password" and not key.startswith("_"):
                 entity[key] = self.__dict__[key]
         return entity
