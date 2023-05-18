@@ -10,8 +10,6 @@ from azure.data.tables import TableServiceClient
 
 import azure.functions as func
 
-TableName = 'openaiSessionTable'
-
 app = func.FunctionApp()
 
 connectionString = os.getenv('AzureDataStorage', '')
