@@ -71,6 +71,7 @@ class OpenaiHandler:
         openai.api_version = os.getenv('OPENAI_API_VERSION')
         
         self.message = message
+        self.response = ""
         pass
     
     def runChatCompletion(self) -> Response:
@@ -109,10 +110,8 @@ class OpenaiHandler:
                   engine=self.chatgpt_model_name,
                   messages=self.message.context
                 )
-            if self.response is None or len(self.response) == 0:
+            if not response:
                 return ''
-            if self.response is slice:
-                self.response = self.response[0]
             self.response = response['choices'][0]['message']['content'] # type: ignore
             self.message.pushContext(content=self.response)
             logging.info(self.response)
