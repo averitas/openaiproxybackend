@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import ChatManager from './chat_manager'
 import ChatMessage from './chat_message'
+import Image from 'next/image'
 
 import styles from '../../styles/chat_window.module.scss'
 
@@ -120,8 +121,9 @@ const ChatWindow = () => {
             >
               {message.type === 0 ?
                 <div>
-                  <img
+                  <Image
                     src="bot_avatar.jpg"
+                    alt="Landscape picture"
                     style={{
                       width: '40px',
                       height: '40px',

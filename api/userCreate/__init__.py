@@ -6,7 +6,7 @@ import logging
 import azure.functions as func
 from shared_lib.types.errors import AuthError
 
-from shared_lib.user import UserLogin
+from shared_lib.user import UserCreate
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -17,7 +17,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(f"Empty body", status_code=400)
 
     try:
-        token = UserLogin(body.get('Email'), body.get('Password'))
+        token = UserCreate(body.get('Email'), body.get('Password'))
         logging.info(f"User: [{body.get('Email')}] login success. Token: {token}")
         return func.HttpResponse(token, status_code=200)
     except AuthError as ex:

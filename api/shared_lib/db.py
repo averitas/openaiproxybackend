@@ -8,6 +8,7 @@ import logging
 import os
 import zlib
 from azure.data.tables import TableServiceClient, UpdateMode
+from shared_lib.types.models import UserInfo
 from shared_lib.handler import Message
 
 TableName = 'openaiSessionTable'
@@ -70,54 +71,30 @@ class PersistenceLayer:
             
             tableClient.upsert_entity(data)
 
-    def saveUser(self, email: str, password: str, isCreate: bool = True) -> None:
+    def saveUser(self, user: UserInfo, isCreate: bool = True) -> None:
         with self.service.get_table_client(table_name=UserTableName) as tableClient:
-            # Hash the email to generate the PartitionKey
-            partition_key = str(zlib.crc32(email.encode()) % 100)
-
-            # Set the RowKey to the email
-            row_key = email
-
-            # Generate a random salt
-            salt = bcrypt.gensalt()
-
-            # Hash the password with the salt
-            hashed_password = bcrypt.hashpw(password.encode(), salt)
-
-            entity = {
-                "PartitionKey": partition_key,
-                "RowKey": row_key,
-                "Email": email,
-                "Salt": salt,
-                "HashedPassword": hashed_password,
-                "CreatedAt": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            }
+            entity = user.toTableEntity()
 
             # Save the user to the database with the generated keys
             # Replace the following line with your database save logic
-            logging.info(f"Saving user with PartitionKey: {partition_key} and RowKey: {row_key}")
+            logging.info(f"Saving user with PartitionKey: {entity.get('PartitionKey')} and RowKey: {entity.get('RowKey')}")
 
             if isCreate:
                 tableClient.create_entity(entity)
             else:
                 tableClient.upsert_entity(entity, mode = UpdateMode.REPLACE)
     
-    def checkUserPassword(self, email: str, password: str) -> bool:
+    def checkUserPassword(self, inputUser: UserInfo) -> bool:
         with self.service.get_table_client(table_name=UserTableName) as tableClient:
-            # Hash the email to generate the PartitionKey
-            partition_key = str(zlib.crc32(email.encode()) % 100)
-            row_key = email
+            inputUserEntity = inputUser.toTableEntity()
 
-            # Save the user to the database with the generated keys
-            # Replace the following line with your database save logic
-            logging.info(f"Saving user with PartitionKey: {partition_key} and RowKey: {row_key}")
-
-            existingUser = tableClient.get_entity(partition_key=partition_key, row_key=row_key)
+            # Get existing user information
+            existingUser = tableClient.get_entity(partition_key=inputUserEntity.get('PartitionKey', ''), row_key=inputUserEntity.get('RowKey', ''))
             if existingUser is None:
                 return False
             
             # Hash the password with the salt
-            input_hashed_password = bcrypt.hashpw(password.encode(), existingUser.get('Salt', ''))
+            input_hashed_password = bcrypt.hashpw(inputUser.Password.encode(), existingUser.get('Salt', ''))
 
             return input_hashed_password == existingUser.get('HashedPassword', '').encode()
 
