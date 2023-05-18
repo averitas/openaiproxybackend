@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import datetime
 import json
 import uuid
@@ -6,12 +9,12 @@ import openai
 import logging
 
 class Message:
-    pk:str = None
-    sessionId:str = None
-    context:list[str] = None
-    promo:str = None
+    pk:str
+    sessionId:str
+    context:list[dict[str, str]]
+    promo:str
     
-    def __init__(self, pk:str=None, sessionId:str=None, context:list[str]=[], promo:str="") -> None:
+    def __init__(self, pk:str="", sessionId:str="", context:list[dict[str, str]]=[], promo:str="") -> None:
         if pk is None or len(pk) == 0:
             self.pk = datetime.date.today().strftime("%Y%m%d")
         else:
@@ -33,10 +36,10 @@ class Message:
             sort_keys=True, indent=2)
         
     def fromJson(self, jsonDict: dict) -> None:
-        self.sessionId = jsonDict.get('pk')
-        self.sessionId = jsonDict.get('sessionId')
-        self.context = jsonDict.get('context')
-        self.promo = jsonDict.get('promo')
+        self.pk = jsonDict.get('pk', '')
+        self.sessionId = jsonDict.get('sessionId', '')
+        self.context = jsonDict.get('context', [])
+        self.promo = jsonDict.get('promo', 'Hi')
         
     def pushContext(self, role:str='system', content:str='') -> None:
         if content is None or len(content) == 0:
@@ -46,7 +49,7 @@ class Message:
 class Response:
     code: int = 0
     message: str = ""
-    data = None
+    data: object
     
     def toJson(self) -> str:
         return json.dumps(self, default=lambda o: o.__dict__, 
@@ -85,7 +88,7 @@ class OpenaiHandler:
         return retval
     
     def compactMsgContextWithSummaryIfNeed(self):
-        totalTokenLen = sum([len(token.get('content')) for token in self.message.context])
+        totalTokenLen = sum([len(token.get('content', '')) for token in self.message.context])
         logging.info(f"Token length of Chat of session {self.message.sessionId} is {totalTokenLen}")
         
         if len(self.message.context) > 10 or totalTokenLen > 10000:
@@ -106,39 +109,43 @@ class OpenaiHandler:
                   engine=self.chatgpt_model_name,
                   messages=self.message.context
                 )
-            self.response = response['choices'][0]['message']['content']
+            if self.response is None or len(self.response) == 0:
+                return ''
+            if self.response is slice:
+                self.response = self.response[0]
+            self.response = response['choices'][0]['message']['content'] # type: ignore
             self.message.pushContext(content=self.response)
             logging.info(self.response)
             return self.response
-        except openai.error.APIError as e:
+        except openai.error.APIError as e: # type: ignore
             # Handle API error here, e.g. retry or log
             logging.error(f"OpenAI API returned an API Error: {e}")
             raise e
-        except openai.error.AuthenticationError as e:
+        except openai.error.AuthenticationError as e: # type: ignore
             # Handle Authentication error here, e.g. invalid API key
             logging.error(f"OpenAI API returned an Authentication Error: {e}")
             raise e
-        except openai.error.APIConnectionError as e:
+        except openai.error.APIConnectionError as e: # type: ignore
             # Handle connection error here
             logging.error(f"Failed to connect to OpenAI API: {e}")
             raise e
-        except openai.error.InvalidRequestError as e:
+        except openai.error.InvalidRequestError as e: # type: ignore
             # Handle connection error here
             logging.error(f"Invalid Request Error: {e}")
             raise e
-        except openai.error.RateLimitError as e:
+        except openai.error.RateLimitError as e: # type: ignore
             # Handle rate limit error
             logging.error(f"OpenAI API request exceeded rate limit: {e}")
             raise e
-        except openai.error.ServiceUnavailableError as e:
+        except openai.error.ServiceUnavailableError as e: # type: ignore
             # Handle Service Unavailable error
             logging.error(f"Service Unavailable: {e}")
             raise e
-        except openai.error.Timeout as e:
+        except openai.error.Timeout as e: # type: ignore
             # Handle request timeout
             logging.error(f"Request timed out: {e}")
             raise e
-        except:
+        except Exception as e:
             # Handles all other exceptions
             logging.error("An exception has occured.")
             raise e
@@ -156,6 +163,6 @@ class OpenaiHandler:
               presence_penalty=0, # Higher penalty means less repetition of the same response
                 )
             # print the response
-        self.response = response['choices'][0]['text']
+        self.response = response['choices'][0]['text'] # type: ignore
         return self.response
     

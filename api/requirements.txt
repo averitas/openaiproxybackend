@@ -5,3 +5,5 @@
 azure-functions
 azure-data-tables
 openai
+alipay-sdk-python==3.6.623
+bcrypt
