@@ -4,24 +4,21 @@
 import logging
 
 import azure.functions as func
+from api.shared_lib.types.errors import AuthError
+
+from api.shared_lib.user import UserLogin
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+    logging.info('User login api triggered.')
 
-    name = req.params.get('name')
-    if not name:
-        try:
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            name = req_body.get('name')
+    body = req.get_json()
+    if not body:
+        return func.HttpResponse(f"Empty body", status_code=400)
 
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-    else:
-        return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
-        )
+    try:
+        token = UserLogin(body.get('Email'), body.get('Password'))
+        logging.info(f"User: [{body.get('Email')}] login success. Token: {token}")
+        return func.HttpResponse(token, status_code=200)
+    except AuthError as ex:
+        return func.HttpResponse(f"Auth failed: {ex}", status_code=401)
