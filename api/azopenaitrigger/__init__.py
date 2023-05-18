@@ -4,7 +4,7 @@
 import json
 import logging
 import os
-from api.shared_lib.db import PersistenceLayer, loadContextAsList
+from shared_lib.db import PersistenceLayer, loadContextAsList
 from shared_lib.handler import Message, OpenaiHandler
 from azure.data.tables import TableServiceClient
 

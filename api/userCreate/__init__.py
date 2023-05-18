@@ -4,9 +4,9 @@
 import logging
 
 import azure.functions as func
-from api.shared_lib.types.errors import AuthError
+from shared_lib.types.errors import AuthError
 
-from api.shared_lib.user import UserCreate
+from shared_lib.user import UserCreate
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:

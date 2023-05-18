@@ -8,7 +8,7 @@ import logging
 import os
 import zlib
 from azure.data.tables import TableServiceClient, UpdateMode
-from api.shared_lib.types.models import UserInfo
+from shared_lib.types.models import UserInfo
 from shared_lib.handler import Message
 
 TableName = 'openaiSessionTable'

@@ -4,10 +4,10 @@
 import json
 import logging
 import uuid
-from api.shared_lib.db import PersistenceLayer
-from api.shared_lib.types.errors import AuthError
+from shared_lib.db import PersistenceLayer
+from shared_lib.types.errors import AuthError
 
-from api.shared_lib.types.models import UserInfo
+from shared_lib.types.models import UserInfo
 
 # Return user token if auth success.
 # Otherwise, raise AuthError.
