@@ -122,7 +122,7 @@ const ChatWindow = () => {
               {message.type === 0 ?
                 <div>
                   <Image
-                    src="bot_avatar.jpg"
+                    src="/bot_avatar.jpg"
                     alt="Landscape picture"
                     style={{
                       width: '40px',
@@ -131,6 +131,8 @@ const ChatWindow = () => {
                       marginRight: '2px',
                       overflow: 'hidden'
                     }}
+                    width={40}
+                    height={40}
                   />
                 </div>
                 : <></>}
