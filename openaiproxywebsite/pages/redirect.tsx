@@ -33,6 +33,10 @@ const Redirect = () => {
                 push(path)
             }
         }, 1000)
+
+        return () => {
+            clearInterval(timer)
+        }
     }, [])
 
     return (
@@ -42,9 +46,32 @@ const Redirect = () => {
                 <meta name="description" content="openai proxy App" />
                 <meta name="email" content="lewis0204@outlook.com" />
             </Head>
-            {msg.length > 0 ? <p>{msg}</p> : ''}
-            <p>Redirecting in {countdown} seconds...</p>
-            <p>Or <a href={path} onClick={handleLinkClick}>click here</a> to redirect manually</p>
+            <main style={{
+                display: 'flex',
+                width: '100%',
+                height: '100vh',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+                <div style={{
+                    maxWidth: '90%',
+                    padding: '20px',
+                    border: '1px solid #ccc',
+                }}>
+                    {
+                        msg.length > 0 ?
+                            <p style={{
+                                textAlign: 'center',
+                            }}>{msg}</p>
+                            : ''
+                    }
+                    <div>
+                        <p>Redirecting in {countdown} seconds...</p>
+                        <p>Or <a href={path} onClick={handleLinkClick}>click here</a> to redirect manually</p>
+                    </div>
+                </div>
+            </main>
         </>
     )
 }
