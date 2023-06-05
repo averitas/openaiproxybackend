@@ -1,32 +1,11 @@
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
-import Head from 'next/head'
-import Alert from '@mui/material/Alert'
-import Avatar from '@mui/material/Avatar'
-import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
-import TextField from '@mui/material/TextField'
-import Link from '@mui/material/Link'
-import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
+import { Alert, Avatar, Box, Button, Container, CssBaseline, Grid, Link, TextField, Typography } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import Typography from '@mui/material/Typography'
-import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import UserManager from '@/components/auth/user_manager'
-
-function Copyright(props: any) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="#">
-                Lewis
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+import Heads from '@/components/Heads'
+import Copyright from '@/components/Copyright'
 
 const theme = createTheme();
 
@@ -73,11 +52,7 @@ const SignIn = () => {
 
     return (
         <>
-            <Head>
-                <title>Azure Openai proxy App</title>
-                <meta name="description" content="openai proxy App" />
-                <meta name="email" content="lewis0204@outlook.com" />
-            </Head>
+            <Heads />
             <ThemeProvider theme={theme}>
                 <Container component="main" maxWidth="xs">
                     <CssBaseline />
@@ -136,7 +111,7 @@ const SignIn = () => {
                                 </Grid>
                                 <Grid item>
                                     <Link href="./signup" variant="body2">
-                                        {"Don't have an account? Sign Up"}
+                                        {`Don't have an account? Sign Up`}
                                     </Link>
                                 </Grid>
                             </Grid>

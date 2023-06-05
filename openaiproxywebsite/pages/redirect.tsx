@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import Head from 'next/head'
 import { useRouter } from 'next/navigation'
+import Heads from '@/components/Heads'
 
 const Redirect = () => {
     const { push } = useRouter()
@@ -41,11 +41,7 @@ const Redirect = () => {
 
     return (
         <>
-            <Head>
-                <title>Azure Openai proxy App</title>
-                <meta name="description" content="openai proxy App" />
-                <meta name="email" content="lewis0204@outlook.com" />
-            </Head>
+            <Heads />
             <main style={{
                 display: 'flex',
                 width: '100%',
