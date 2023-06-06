@@ -42,8 +42,20 @@ class UserManager extends EventTarget {
         return true
     }
 
-    async confirmSignUp() {
+    async confirmSignUp(email: string, rand: string) {
         // query the sign up confirmation API
+
+        return true
+    }
+
+    async sendResetPasswordMail(email: string) {
+        // send reset password mail
+
+        return true
+    }
+
+    async resetPassword(email: string, password: string, rand: string) {
+        // query the reset password API
 
         return true
     }

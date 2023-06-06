@@ -1,15 +1,11 @@
-import React from 'react';
-import Head from 'next/head';
-import ChatApp from './chat_app';
+import React from 'react'
+import Heads from '@/components/Heads'
+import ChatApp from '../components/chat/chat_app'
 
 const MyApp = () => {
   return (
     <>
-      <Head>
-        <title>Azure Openai proxy App</title>
-        <meta name="description" content="openai proxy App" />
-        <meta name="email" content="lewis0204@outlook.com" />
-      </Head>
+      <Heads />
       <ChatApp />
     </>
   );

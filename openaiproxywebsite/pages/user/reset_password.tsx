@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation'
 import { Alert, Avatar, Box, Button, Container, CssBaseline, Grid, Link, TextField, Typography } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
@@ -9,11 +9,27 @@ import UserManager from '@/components/auth/user_manager'
 
 const theme = createTheme();
 
-const SignUp = () => {
+const ResetPassword = () => {
     const { push } = useRouter()
 
+    const [email, setEmail] = React.useState('')
+    const [rand, setRand] = React.useState('')
     const [loading, setLoading] = React.useState(false)
     const [errMsg, setErrMsg] = React.useState('')
+
+    useEffect(() => {
+        const searchParams = new URL(window.location.href).searchParams
+        const urlEmail = searchParams.get('email')
+        const urlRand = searchParams.get('rand')
+
+        if (urlEmail === null || urlRand === null) {
+            push('/')
+            return
+        }
+
+        setEmail(urlEmail)
+        setRand(urlRand)
+    }, [])
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -24,29 +40,24 @@ const SignUp = () => {
         try {
             // form validation
             const data = new FormData(event.currentTarget);
-            const email = data.get('email') as string || ''
             const password = data.get('password') as string || ''
-            console.log({
-                email,
-                password,
-            })
 
-            if (email.length === 0 || password.length === 0) {
+            if (password.length === 0) {
                 setErrMsg('Invalid input!')
                 return
             }
 
-            const success = await UserManager.instance.signUp(email, password)
+            const success = await UserManager.instance.resetPassword(email, password, rand)
 
             if (success) {
-                const redirectUrl = `../redirect?msg=${encodeURIComponent('Signed up successfully! A confirmation mail will be sent to your email address.')}&url=${encodeURIComponent('./signin')}`
+                const redirectUrl = `../redirect?msg=${encodeURIComponent('Reset successfully! Please sign in with your new password!')}&url=${encodeURIComponent('./user/signin')}`
                 push(redirectUrl)
             } else {
-                setErrMsg('Sign up fail!')
+                setErrMsg('Reset failed!')
                 setLoading(false)
             }
         } catch (e) {
-            setErrMsg('Sign up fail!')
+            setErrMsg('Reset failed!')
             setLoading(false)
         }
     };
@@ -69,19 +80,25 @@ const SignUp = () => {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Sign up
+                            Reset password
                         </Typography>
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
+                                        margin="normal"
                                         required
                                         fullWidth
                                         id="email"
                                         label="Email Address"
                                         name="email"
                                         autoComplete="email"
-                                        disabled={loading}
+                                        value={email}
+                                        onChange={(e) => {
+                                            // do nothing
+                                        }}
+                                        inputProps={{ readOnly: true }
+                                        }
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -105,12 +122,17 @@ const SignUp = () => {
                                 sx={{ mt: 3, mb: 2 }}
                                 disabled={loading}
                             >
-                                Sign Up
+                                Reset password
                             </Button>
-                            <Grid container justifyContent="flex-end">
-                                <Grid item>
+                            <Grid container>
+                                <Grid item xs>
                                     <Link href="./signin" variant="body2">
-                                        Already have an account? Sign in
+                                        Sign In
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <Link href="./signup" variant="body2">
+                                        Sign Up
                                     </Link>
                                 </Grid>
                             </Grid>
@@ -123,4 +145,4 @@ const SignUp = () => {
     )
 }
 
-export default SignUp
+export default ResetPassword
