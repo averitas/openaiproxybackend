@@ -9,8 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@azure/msal-browser": "^2.38.1",
+    "@azure/msal-react": "^1.5.10",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@microsoft/microsoft-graph-client": "^3.0.5",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.11.16",
     "@types/node": "18.15.11",
