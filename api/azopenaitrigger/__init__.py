@@ -20,6 +20,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     db = PersistenceLayer()
     name = req.params.get('version')
+    
+    token = req.headers['Authorization'].lstrip("Bearer ")
+    logging.info('Receive auth token: ' + token)
+    logging.info(f'X-MS-CLIENT-PRINCIPAL-NAME is {req.headers.get("X-MS-CLIENT-PRINCIPAL-NAME", "N/A")}')
+    logging.info(f'X-MS-CLIENT-PRINCIPAL is {req.headers.get("X-MS-CLIENT-PRINCIPAL", "N/A")}')
+    
     if name:
         chatgpt_model_name = os.getenv("CHATGPT_MODEL")
         api_version = os.getenv('OPENAI_API_VERSION')
