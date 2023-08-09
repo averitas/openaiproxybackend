@@ -1,18 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AppBar, Avatar, Box, Drawer, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material'
+import { AppBar, Avatar, Box, Drawer, IconButton, Menu, MenuItem, MenuList, Toolbar, Tooltip, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import ChatWindow from '@/components/chat/chat_window'
 import SidePanel from '@/components/chat/side_panel'
 import ChatManager from '@/components/chat/chat_manager'
 import UserManager from '@/components/auth/user_manager'
+import GraphClient from '../graph/graph_manager'
 
 const ChatApp: React.FC = () => {
   const { push } = useRouter()
 
   const [mobileOpen, setMobileOpen] = React.useState(false)
+  const [userIsLogin, setUserIsLogin] = React.useState(UserManager.instance.isSignedIn)
   const [userEmail, setUserEmail] = React.useState(UserManager.instance.email)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
+  const [userIcon, setUserIcon] = React.useState<string | undefined>(undefined)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -28,7 +31,12 @@ const ChatApp: React.FC = () => {
 
   const handleSignOut = async (event: React.MouseEvent<HTMLElement>) => {
     await UserManager.instance.signOut()
-    push('/user/signin')
+    handleCloseUserMenu()
+  }
+
+  const handleSignIn = async (event: React.MouseEvent<HTMLElement>) => {
+    await UserManager.instance.signInMsal()
+    handleCloseUserMenu()
   }
 
   useEffect(() => {
@@ -40,15 +48,30 @@ const ChatApp: React.FC = () => {
     }
 
     const userChangeHandler = () => {
+      console.debug('!! userChangeHandler Set user email ' + UserManager.instance.email)
       setUserEmail(UserManager.instance.email)
+      setUserIsLogin(UserManager.instance.isSignedIn)
+
+      if (UserManager.instance.isSignedIn) {
+        console.debug('user login, set user icon')
+        GraphClient.instance.GetUserPicUrl().then(url => {
+          setUserIcon(url)
+        }).catch(err => {
+          console.error('Set user icon error ' + err)
+        })
+      }
     }
 
-    UserManager.instance.addEventListener('userChange', userChangeHandler)
+    UserManager.instance.addEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler)
+    UserManager.instance.init().then( () =>
+      setUserEmail(UserManager.instance.email)
+    )
 
     console.log(`--Setup callback end--`);
 
     return () => {
-      UserManager.instance.removeEventListener('userChange', userChangeHandler)
+      console.log(`User manager listener removed --Setup callback end--`);
+      UserManager.instance.removeEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler)
     }
   }, []);
 
@@ -68,7 +91,7 @@ const ChatApp: React.FC = () => {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title={userEmail}>
                 <IconButton sx={{ p: 0 }} onClick={handleOpenUserMenu}>
-                  <Avatar>{userEmail.charAt(0)}</Avatar>
+                  <Avatar src={userIcon}>{userEmail.charAt(0)}</Avatar>
                 </IconButton>
               </Tooltip>
               <Menu
@@ -87,12 +110,23 @@ const ChatApp: React.FC = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <MenuItem>
-                  <Typography textAlign="center">Profile</Typography>
-                </MenuItem>
-                <MenuItem onClick={handleSignOut}>
-                  <Typography textAlign="center">Sign out</Typography>
-                </MenuItem>
+                {
+                  userIsLogin ?
+                  <MenuList>
+                  <MenuItem onClick={() => UserManager.instance.printToken()}>
+                    <Typography textAlign="center">Profile</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleSignOut}>
+                    <Typography textAlign="center">Sign out</Typography>
+                  </MenuItem>
+                  </MenuList>
+                  :
+                  <MenuList>
+                  <MenuItem onClick={handleSignIn}>
+                    <Typography textAlign="center">Sign In</Typography>
+                  </MenuItem>
+                  </MenuList>
+                }
               </Menu>
             </Box>
           </Toolbar>

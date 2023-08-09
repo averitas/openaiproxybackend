@@ -19,11 +19,13 @@ export default async function handler(
     const session = req.body.session
 
     // make a POST request to the backend server
+    console.log('Call remote api with token: ' + req.headers['authorization'])
     const response = await fetch(FunctionEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-functions-key': FunctionKey
+        'x-functions-key': FunctionKey,
+        'Authorization': req.headers['authorization'] ?? '',
       },
       body: JSON.stringify({
         promo: message,

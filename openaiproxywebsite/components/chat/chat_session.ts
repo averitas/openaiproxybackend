@@ -1,5 +1,6 @@
 import axios from 'axios'
 import ChatMessage from './chat_message'
+import UserManager from '../auth/user_manager'
 
 class ChatSession extends EventTarget {
     static MESSAGES_CHANGE_EVENT = 'messageChange'
@@ -25,13 +26,28 @@ class ChatSession extends EventTarget {
 
         const botMsg = this.createBot()
         botMsg.isWaiting = true
+        if (UserManager.instance.authResult === undefined) {
+            botMsg.content = 'Please login you Microsoft account with top right corner'
+            botMsg.isWaiting = false
+            this.dispatchEvent(new Event(ChatSession.MESSAGES_CHANGE_EVENT))
+            return;
+        }
 
         this.dispatchEvent(new Event(ChatSession.MESSAGES_CHANGE_EVENT))
 
         try {
+            console.log('call api with token: ' + UserManager.instance.authResult?.accessToken)
             const response = await axios.post('/api/chat', {
                 session: this.id,
                 message: content,
+            }, {
+                headers: {
+                  'Authorization': `Bearer ${UserManager.instance.authResult?.accessToken}`,
+                  // 'application/json' is the modern content-type for JSON, but some
+                  // older servers may use 'text/json'.
+                  // See: http://bit.ly/text-json
+                  'content-type': 'text/json'
+                }
             });
 
             if (response.data) {
