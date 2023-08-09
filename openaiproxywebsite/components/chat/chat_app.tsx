@@ -31,6 +31,7 @@ const ChatApp: React.FC = () => {
 
   const handleSignOut = async (event: React.MouseEvent<HTMLElement>) => {
     await UserManager.instance.signOut()
+    handleCloseUserMenu()
   }
 
   const handleSignIn = async (event: React.MouseEvent<HTMLElement>) => {
