@@ -5,9 +5,9 @@ import base64
 import json
 import logging
 import os
-from api.shared_lib.cache import RedisClientInst
-from api.shared_lib.cache.redis import QuoteState
-from api.shared_lib.types.models import UserInfo
+from shared_lib.cache import RedisClientInst
+from shared_lib.cache.redis import QuoteState
+from shared_lib.types.models import UserInfo
 from shared_lib.db import PersistenceLayer, loadContextAsList
 from shared_lib.handler import Message, OpenaiHandler, Response
 from azure.data.tables import TableServiceClient

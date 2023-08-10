@@ -1,3 +1,3 @@
-from api.shared_lib.cache.redis import CacheManager
+from shared_lib.cache.redis import CacheManager
 
 RedisClientInst = CacheManager()
