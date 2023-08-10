@@ -55,6 +55,7 @@ const ChatApp: React.FC = () => {
       if (UserManager.instance.isSignedIn) {
         console.debug('user login, set user icon')
         GraphClient.instance.GetUserPicUrl().then(url => {
+          console.debug('User icon url is ' + url)
           setUserIcon(url)
         }).catch(err => {
           console.error('Set user icon error ' + err)
