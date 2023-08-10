@@ -9,7 +9,7 @@ from api.shared_lib.cache import RedisClientInst
 from api.shared_lib.cache.redis import QuoteState
 from api.shared_lib.types.models import UserInfo
 from shared_lib.db import PersistenceLayer, loadContextAsList
-from shared_lib.handler import Message, OpenaiHandler
+from shared_lib.handler import Message, OpenaiHandler, Response
 from azure.data.tables import TableServiceClient
 
 import azure.functions as func
@@ -32,8 +32,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     upn = getUserNameFromRequest(req)
     passed = checkQuote(upn)
     if not passed:
+        errResp = Response()
+        errResp.code = -1
+        errResp.message = f"API quote for user {upn} is exceeded, please contact admin lewis0204@outlook.com or wait 24 hours."
+        errResp.data = None
+        
         return func.HttpResponse(
-            f"API quote for user {upn} is exceeded, please contact admin.",
+            errResp.toJson(),
             status_code=200
         )
     
