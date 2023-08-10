@@ -19,10 +19,9 @@ class GraphClient {
     async GetUserPicUrl() {
         try {
             const response = await this.client.api('/me/photo/$value')
-                .responseType(ResponseType.BLOB)
                 .get();
             const url = window.URL || window.webkitURL;
-            return url.createObjectURL(response.data);
+            return url.createObjectURL(response);
         }
         catch (err) {
             if (err instanceof GraphError) {

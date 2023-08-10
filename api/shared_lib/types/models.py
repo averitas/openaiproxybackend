@@ -2,11 +2,23 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+from enum import Enum, EnumMeta
 import json
 import logging
 import zlib
 
 import bcrypt
+
+class MetaEnum(EnumMeta):
+    def __contains__(cls, item):
+        try:
+            cls(item)
+        except ValueError:
+            return False
+        return True
+
+class BaseEnum(Enum, metaclass=MetaEnum):
+    pass
 
 # Table Schema
 # {
@@ -19,9 +31,14 @@ import bcrypt
 # }
 
 class UserInfo:
-    def __init__(self, email: str, password: str) -> None:
+    @staticmethod
+    def generatePartitionKey(email: str) -> str:
+        return str(zlib.crc32(email.encode()) % 100)
+    
+    def __init__(self, email: str, password: str = '', quoteInDay: int = 10) -> None:
         self.Email = email
         self.Password = password
+        self.QuoteInDay = quoteInDay
 
     def toJson(self) -> str:
         return json.dumps(self, default=lambda o: o.__dict__, 
@@ -34,7 +51,7 @@ class UserInfo:
 
     def toTableEntity(self) -> dict:
         # Hash the email to generate the PartitionKey
-        partition_key = str(zlib.crc32(self.Email.encode()) % 100)
+        partition_key = UserInfo.generatePartitionKey(self.Email)
 
         # Set the RowKey to the email
         row_key = self.Email

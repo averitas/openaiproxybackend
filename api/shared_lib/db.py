@@ -8,6 +8,7 @@ import logging
 import os
 import zlib
 from azure.data.tables import TableServiceClient, UpdateMode
+from azure.core.exceptions import ResourceNotFoundError
 from shared_lib.types.models import UserInfo
 from shared_lib.handler import Message
 
@@ -83,6 +84,20 @@ class PersistenceLayer:
                 tableClient.create_entity(entity)
             else:
                 tableClient.upsert_entity(entity, mode = UpdateMode.REPLACE)
+                
+    def retrieveUser(self, userId: str) -> UserInfo | None:
+        try:
+            with self.service.get_table_client(table_name=UserTableName) as tableClient:
+                entity = tableClient.get_entity(partition_key=UserInfo.generatePartitionKey(userId), row_key=userId)
+                retval = UserInfo()
+                retval.fromJson(entity)
+                return retval
+        except ResourceNotFoundError as err:
+            logging.warning(f'User {userId} not found')
+            return None
+        except err:
+            logging.error('Retrieve user err: ' + err)
+            raise
     
     def checkUserPassword(self, inputUser: UserInfo) -> bool:
         with self.service.get_table_client(table_name=UserTableName) as tableClient:
