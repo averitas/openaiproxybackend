@@ -22,7 +22,7 @@ class GraphClient {
                 .responseType(ResponseType.BLOB)
                 .get();
             const url = window.URL || window.webkitURL;
-            return url.createObjectURL(response.data);
+            return url.createObjectURL(new Blob([response.data], {type: response.headers['content-type']}));
         }
         catch (err) {
             if (err instanceof GraphError) {
