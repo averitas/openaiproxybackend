@@ -3,7 +3,7 @@ import redis
 from redis.commands.json.path import Path
 from datetime import datetime, timedelta
 
-from api.shared_lib.types.models import BaseEnum
+from shared_lib.types.models import BaseEnum
 
 redisHost = os.getenv('AZURE_REDIS_HOST', '')
 redisSecret = os.getenv('AZURE_REDIS_SECRET', '')
