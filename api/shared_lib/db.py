@@ -89,14 +89,14 @@ class PersistenceLayer:
         try:
             with self.service.get_table_client(table_name=UserTableName) as tableClient:
                 entity = tableClient.get_entity(partition_key=UserInfo.generatePartitionKey(userId), row_key=userId)
-                retval = UserInfo()
+                retval = UserInfo(email=entity['Email'], quoteInDay=entity['QuoteInDay'])
                 retval.fromJson(entity)
                 return retval
         except ResourceNotFoundError as err:
             logging.warning(f'User {userId} not found')
             return None
-        except err:
-            logging.error('Retrieve user err: ' + err)
+        except Exception as err:
+            logging.error(f'Retrieve user err: {err}')
             raise
     
     def checkUserPassword(self, inputUser: UserInfo) -> bool:
