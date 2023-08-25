@@ -3,6 +3,7 @@
 
 import datetime
 import json
+from typing import Mapping
 import uuid
 import os
 import openai
@@ -165,3 +166,10 @@ class OpenaiHandler:
         self.response = response['choices'][0]['text'] # type: ignore
         return self.response
     
+def CreateCORSResponseHeaders() -> Mapping[str, str]:
+    headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,PATCH,OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-functions-key'
+    }
+    return headers

@@ -116,6 +116,12 @@ class PersistenceLayer:
 def loadContextAsList(rawContext) -> list:
     if rawContext is None or len(rawContext) == 0:
         return []
+    if type(rawContext) is list:
+        return rawContext
+    if type(rawContext) is not str and \
+        type(rawContext) is not bytes and \
+        type(rawContext) is not bytearray:
+        rawContext = str(rawContext)
     context = json.loads(rawContext)
     if type(context) is not list:
         context = [{"role": "system", "content": str(context)}]
