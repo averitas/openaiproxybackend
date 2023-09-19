@@ -87,7 +87,7 @@ const ChatApp: React.FC = () => {
               <MenuIcon />
             </IconButton>
             <Typography sx={{ flexGrow: 1 }} variant="h6" noWrap>
-              Chat App
+              Chat App, empowered by GPT-4
             </Typography>
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title={userEmail}>
