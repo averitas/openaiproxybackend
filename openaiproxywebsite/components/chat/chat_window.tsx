@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import {
   Box,
   Button,
+  Chip,
   CircularProgress,
   Divider,
   List,
@@ -11,7 +12,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import SendIcon from "@mui/icons-material/Send";
-import AttachmentIcon from "@mui/icons-material/Attachment";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ReactMarkdown from "react-markdown";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ChatManager from "./chat_manager";
@@ -31,9 +32,11 @@ const ChatWindow = () => {
   const [messages, setMessages] = useState<ChatMessage[]>(
     ChatManager.instance.activeSession.messages.slice(0)
   );
+  const [filename, setFilename] = useState("");
 
   const messageListRef = useRef<HTMLUListElement>(null);
   const inputAreaRef = useRef<HTMLTextAreaElement>(null);
+  const inputFileRef = useRef<HTMLInputElement>(null);
 
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -136,6 +139,24 @@ const ChatWindow = () => {
     ChatManager.instance.activeSession.clean();
   };
 
+  const handleFileChange = (e: any) => {
+    const files = e.target.files;
+    console.log(e.target);
+    if (files.length > 0) {
+      setFilename(files[0].name);
+    } else {
+      setFilename("");
+    }
+  };
+
+  const removeAttachFile = () => {
+    if (inputFileRef.current) {
+      inputFileRef.current.value = "";
+    }
+    setFilename("");
+    console.log(inputFileRef.current?.files);
+  };
+
   return (
     <Box
       sx={{
@@ -232,6 +253,8 @@ const ChatWindow = () => {
       </Box>
       <Box
         mt={2}
+        gap={2}
+        alignItems={"center"}
         display="flex"
         style={{
           marginTop: "16px",
@@ -240,11 +263,18 @@ const ChatWindow = () => {
         <Button
           component="label"
           variant="contained"
-          startIcon={<AttachmentIcon />}
+          startIcon={<AttachFileIcon />}
         >
           Attach File
-          <VisuallyHiddenInput type="file" />
+          <VisuallyHiddenInput
+            ref={inputFileRef}
+            onChange={handleFileChange}
+            type="file"
+          />
         </Button>
+        {filename.length > 0 && (
+          <Chip label={filename} onDelete={removeAttachFile} />
+        )}
       </Box>
       <Box mt={2} display="flex" alignItems="center">
         <TextField
