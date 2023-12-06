@@ -132,6 +132,12 @@ const ChatWindow = () => {
     );
     const inputValue = inputText;
     setInputText("");
+
+    if (inputFileRef.current?.files && inputFileRef.current?.files.length > 0) {
+      const file = inputFileRef.current.files[0];
+      // TODO upload file
+    }
+
     activeSession.current.sendMessage(inputValue);
   };
 
