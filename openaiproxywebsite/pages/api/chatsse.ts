@@ -29,12 +29,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Set Server-Sent Events headers
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
+    'Cache-Control': 'no-cache, no-transform',
     'Connection': 'keep-alive',
+    'X-Accel-Buffering': 'no', // Disable buffering for Nginx
+    'Transfer-Encoding': 'chunked',
   });
 
-  // Set up heartbeat interval
-  const heartbeatInterval = 8000; // 8 seconds
+  // Make sure headers are sent immediately
+  if (res.flushHeaders) {
+    res.flushHeaders();
+  }
+
+  // Helper function to write and flush data
+  const writeAndFlush = (data: string) => {
+    res.write(data);
+    
+    // Use flush method if available (for streams)
+    if (typeof (res as any).flush === 'function') {
+      (res as any).flush();
+    }
+  };
+
+  // Set up heartbeat interval - reduced to 5 seconds to prevent connection timeouts
+  const heartbeatInterval = 5000; // 5 seconds
   let heartbeatTimer: NodeJS.Timeout | null = null;
   
   const sendHeartbeat = () => {
@@ -56,13 +73,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         procedures: []
       }
     };
-    res.write('data:' + JSON.stringify(heartbeat) + '\n\n');
+    writeAndFlush('data:' + JSON.stringify(heartbeat) + '\n\n');
   };
 
   try {
     const remoteSSEUrl = `${FunctionEndpoint}/chat/sse`;
     if (!FunctionEndpoint) {
-      res.write('data: {"error": "SSE endpoint not configured"}\n\n');
+      writeAndFlush('data: {"error": "SSE endpoint not configured"}\n\n');
       res.end();
       return;
     }
@@ -75,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Request the remote SSE API
     const response = await fetch(remoteSSEUrl, {
-        method: "POST",
+      method: "POST",
       headers: {
         'x-functions-key': FunctionKey,
         'Authorization': req.headers['authorization'] ?? '',
@@ -88,8 +105,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const decoder = new TextDecoder();
     
     if (!response.ok) {
-      console.error('SSE Error: Failed to connect, status:', response.status);
       let resp = await response.json();
+      console.error('SSE Error: Failed to connect, status:', response.status, resp);
       let event = {
         type: 'unauthorize',
         payload: {
@@ -99,14 +116,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           is_final: true,
         } as ReplyPayload,
       } as SSEUnauthorizeEvent;
-      res.write('data:' + JSON.stringify(event) + '\n\n')
+      writeAndFlush('data:' + JSON.stringify(event) + '\n\n');
       res.end();
       return;
     }
     
     if (!response.body) {
       console.error('SSE Error: No response body from remote SSE');
-      res.write('data: {"error": "No response body from remote SSE"}\n\n');
+      writeAndFlush('data: {"error": "No response body from remote SSE"}\n\n');
       res.end();
       return;
     }
@@ -117,28 +134,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      const chunk = decoder.decode(value);
-      if (!chunk.startsWith('data:')) {
-        console.error('SSE Error: Unexpected chunk:', chunk);
-        let resp = JSON.parse(chunk);
-        let event = {
-            type: 'reply',
-            payload: {
+      const chunk = decoder.decode(value, { stream: true });
+      
+      // Split by double newline to handle multiple messages in one chunk
+      const messages = chunk.split('\n\n');
+      for (const message of messages) {
+        if (!message.trim()) continue;
+        
+        if (!message.startsWith('data:')) {
+          console.error('SSE Error: Unexpected message format:', message);
+          try {
+            let resp = JSON.parse(message);
+            let event = {
+              type: 'reply',
+              payload: {
                 is_from_self: false,
-                content: resp?.message ?? 'Error happened: ' + chunk,
+                content: resp?.message ?? 'Error happened: ' + message,
                 session_id: sessionId,
                 is_final: true,
-            } as ReplyPayload,
-        } as SSEReplyEvent;
-        res.write('data:' + JSON.stringify(event) + "\n\n")
-      }
-      else{
-        res.write(chunk);
+              } as ReplyPayload,
+            } as SSEReplyEvent;
+            writeAndFlush('data:' + JSON.stringify(event) + '\n\n');
+          } catch (e) {
+            console.error('Error parsing unexpected message:', e);
+          }
+        } else {
+          writeAndFlush(message + '\n\n');
+        }
       }
     }
   } catch (error) {
     console.error('SSE Error:', error);
-    res.write('data: {"error": "An exception occurred"}\n\n');
+    writeAndFlush('data: {"error": "An exception occurred"}\n\n');
   } finally {
     // Clear the heartbeat interval
     if (heartbeatTimer) {
