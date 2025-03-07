@@ -1,4 +1,4 @@
-import { ReplyPayload, SSEReplyEvent, SSEUnauthorizeEvent } from '@/components/chat/chat_interfaces';
+import { ReplyPayload, SSEReplyEvent, SSEUnauthorizeEvent, SSETokenStatEvent } from '@/components/chat/chat_interfaces';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 const FunctionKey = process.env.AZ_OPENAI_TRIGGER_FUNCTION_KEY ?? ""
@@ -33,13 +33,45 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     'Connection': 'keep-alive',
   });
 
+  // Set up heartbeat interval
+  const heartbeatInterval = 8000; // 8 seconds
+  let heartbeatTimer: NodeJS.Timeout | null = null;
+  
+  const sendHeartbeat = () => {
+    const heartbeat: SSETokenStatEvent = {
+      type: 'token_stat',
+      message_id: `heartbeat-${Date.now()}`,
+      payload: {
+        session_id: sessionId,
+        request_id: `heartbeat-${Date.now()}`,
+        token_count: 0,
+        used_count: 0,
+        free_count: 0,
+        order_count: 0,
+        status_summary: "Connection alive",
+        status_summary_title: "Heartbeat",
+        elapsed: 0,
+        record_id: `heartbeat-${Date.now()}`,
+        trace_id: `heartbeat-${Date.now()}`,
+        procedures: []
+      }
+    };
+    res.write('data:' + JSON.stringify(heartbeat) + '\n\n');
+  };
+
   try {
     const remoteSSEUrl = `${FunctionEndpoint}/chat/sse`;
     if (!FunctionEndpoint) {
       res.write('data: {"error": "SSE endpoint not configured"}\n\n');
-            res.end();
+      res.end();
       return;
     }
+
+    // Start the heartbeat
+    heartbeatTimer = setInterval(sendHeartbeat, heartbeatInterval);
+    
+    // Send initial heartbeat
+    sendHeartbeat();
 
     // Request the remote SSE API
     const response = await fetch(remoteSSEUrl, {
@@ -62,20 +94,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         type: 'unauthorize',
         payload: {
           is_from_self: false,
-          content: resp?.Message ? resp.Message : "Failed to connect, status: " + response.status,
+          content: resp?.message ? resp.message : "Failed to connect, status: " + response.status,
           session_id: sessionId,
           is_final: true,
         } as ReplyPayload,
       } as SSEUnauthorizeEvent;
       res.write('data:' + JSON.stringify(event) + '\n\n')
-            res.end();
+      res.end();
       return;
     }
     
     if (!response.body) {
       console.error('SSE Error: No response body from remote SSE');
       res.write('data: {"error": "No response body from remote SSE"}\n\n');
-            res.end();
+      res.end();
       return;
     }
 
@@ -108,6 +140,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error('SSE Error:', error);
     res.write('data: {"error": "An exception occurred"}\n\n');
   } finally {
-        res.end();
+    // Clear the heartbeat interval
+    if (heartbeatTimer) {
+      clearInterval(heartbeatTimer);
+    }
+    res.end();
   }
 }
