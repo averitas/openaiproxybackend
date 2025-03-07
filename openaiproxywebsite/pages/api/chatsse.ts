@@ -139,17 +139,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Split by double newline to handle multiple messages in one chunk
       const messages = chunk.split('\n\n');
       for (const message of messages) {
-        if (!message.trim()) continue;
+        const trimmedMessage = message.trim();
+        if (!trimmedMessage.trim()) continue;
         
-        if (!message.startsWith('data:')) {
-          console.error('SSE Error: Unexpected message format:', message);
+        if (!trimmedMessage.startsWith('data:')) {
+          console.error('SSE Error: Unexpected message format:', trimmedMessage);
           try {
-            let resp = JSON.parse(message);
+            let resp = JSON.parse(trimmedMessage);
             let event = {
               type: 'reply',
               payload: {
                 is_from_self: false,
-                content: resp?.message ?? 'Error happened: ' + message,
+                content: resp?.message ?? 'Error happened: ' + trimmedMessage,
                 session_id: sessionId,
                 is_final: true,
               } as ReplyPayload,
@@ -157,9 +158,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             writeAndFlush('data:' + JSON.stringify(event) + '\n\n');
           } catch (e) {
             console.error('Error parsing unexpected message:', e);
+            console.error('Error Message is', trimmedMessage);
           }
         } else {
-          writeAndFlush(message + '\n\n');
+          writeAndFlush(trimmedMessage + '\n\n');
         }
       }
     }

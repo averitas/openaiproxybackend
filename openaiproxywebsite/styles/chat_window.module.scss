@@ -1,5 +1,48 @@
 .message-content {
-    p {
-        margin: 0.2em 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  
+  p {
+    margin: 0.5em 0;
+  }
+  
+  code {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.9em;
+  }
+  
+  pre {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 1em;
+    border-radius: 4px;
+    overflow-x: auto;
+    
+    code {
+      background-color: transparent;
+      padding: 0;
     }
+  }
+}
+
+.thought-section {
+  border-left: 3px solid #7986cb;
+  padding-left: 8px;
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: #546e7a;
+  background-color: rgba(121, 134, 203, 0.1);
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.thought-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
 }

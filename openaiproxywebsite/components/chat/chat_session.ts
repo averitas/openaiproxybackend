@@ -91,6 +91,7 @@ class ChatSession extends EventTarget {
         
         try {
             // Use fetch instead of EventSource to make a POST request
+            // Note: No timeout is set intentionally to allow for long-running connections
             const response = await fetch('/api/chatsse', {
                 method: 'POST',
                 headers: {
