@@ -1,3 +1,5 @@
+import { ReferenceItem } from "./chat_interfaces"
+
 /**
  * message class
  */
@@ -27,16 +29,35 @@ class ChatMessage {
      */
     isWaiting: boolean
 
+    /**
+     * thought process from the AI
+     */
+    thought: string | null
+    
+    /**
+     * references from the AI
+     */
+    references: ReferenceItem[]
+
     constructor(id: number, content: string, type: number, timestamp: number) {
         this.id = id
         this.content = content
         this.type = type
         this.timestamp = timestamp
         this.isWaiting = false
+        this.thought = null
+        this.references = []
     }
 
     static fromObj(input: any) {
-        return new ChatMessage(input.id, input.content, input.type, input.timestamp)
+        const message = new ChatMessage(input.id, input.content, input.type, input.timestamp);
+        if (input.thought) {
+            message.thought = input.thought;
+        }
+        if (input.references) {
+            message.references = input.references;
+        }
+        return message;
     }
 
     toObj() {
@@ -44,7 +65,9 @@ class ChatMessage {
             id: this.id,
             content: this.content,
             type: this.type,
-            timestamp: this.timestamp
+            timestamp: this.timestamp,
+            thought: this.thought,
+            references: this.references
         }
     }
 }

@@ -35,7 +35,7 @@ class ChatManager extends EventTarget {
         this.sessions = new Map()
         // create an init session
         this.createSession()
-        this.activeSession = this.sessions.values().next().value
+        this.activeSession = this.sessions.values().next().value ?? new ChatSession("", "")
         this.loaded = false
     }
 
@@ -71,7 +71,7 @@ class ChatManager extends EventTarget {
             if (this.sessions.size === 0) {
                 this.createSession()
             }
-            this.activeSession = this.getFirstSession()
+            this.activeSession = this.getFirstSession() ?? new ChatSession('', '')
             this.setActiveSession(historyObj.activeSession)
             this.dispatchEvent(new Event(ChatManager.SESSIONS_CHANGE_EVENT))
         } else {
@@ -89,7 +89,7 @@ class ChatManager extends EventTarget {
         this.sessions = new Map()
         // create an init session
         this.createSession()
-        this.activeSession = this.getFirstSession()
+        this.activeSession = this.getFirstSession() ?? new ChatSession("", "")
         this.save()
         this.dispatchEvent(new Event(ChatManager.SESSIONS_CHANGE_EVENT))
     }
@@ -128,7 +128,7 @@ class ChatManager extends EventTarget {
 
                 this.sessions.delete(name)
                 if (this.activeSession.name === name) {
-                    this.activeSession = this.sessions.values().next().value
+                    this.activeSession = this.sessions.values().next().value ?? new ChatSession('', '')
                 }
                 this.save()
                 this.dispatchEvent(new Event(ChatManager.SESSIONS_CHANGE_EVENT))

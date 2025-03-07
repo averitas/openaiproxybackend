@@ -1,11 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemText, Paper, TextField, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemText, Paper, TextField, Typography, Link } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send'
 import ReactMarkdown from 'react-markdown'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import ChatManager from './chat_manager'
 import ChatMessage from './chat_message'
+import ThoughtBubble from './thought_bubble';
 import Image from 'next/image'
+import LinkIcon from '@mui/icons-material/Link'
+import CircleIcon from '@mui/icons-material/Circle'
 
 import styles from '../../styles/chat_window.module.scss'
 
@@ -46,6 +49,7 @@ const ChatWindow = () => {
         setLoading(false)
       }
 
+      // Scroll to bottom whenever messages change, including streaming updates
       setTimeout(() => {
         messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
         inputAreaRef.current?.focus();
@@ -79,7 +83,13 @@ const ChatWindow = () => {
     console.log(`Current session name ${ChatManager.instance.activeSession.name}, id: ${ChatManager.instance.activeSession.id}`)
     const inputValue = inputText
     setInputText('')
-    activeSession.current.sendMessage(inputValue)
+    // Use the streaming version by default (true parameter)
+    activeSession.current.sendMessage(inputValue, true)
+    
+    // Focus the input field after sending
+    setTimeout(() => {
+      inputAreaRef.current?.focus();
+    }, 100);
   }
 
   const cleanActiveSession = () => {
@@ -143,7 +153,8 @@ const ChatWindow = () => {
                   borderRadius: '9px',
                   margin: '1px',
                   padding: boxPadding,
-                  backgroundColor: colors[index % 2]
+                  backgroundColor: colors[index % 2],
+                  position: 'relative' // Added for positioning CircularProgress
                 }}>
                 <p style={{
                   margin: '0',
@@ -153,8 +164,80 @@ const ChatWindow = () => {
                 }}>
                   {new Date(message.timestamp).toLocaleTimeString()}
                 </p>
-                {message.isWaiting ? <CircularProgress /> :
-                  <ReactMarkdown className={styles['message-content']}>{message.content}</ReactMarkdown>}
+                
+                {/* Always show thought bubble and message content */}
+                {message.thought && message.type === 0 && (
+                  <ThoughtBubble thought={message.thought} defaultExpanded={message.isWaiting} />
+                )}
+                <ReactMarkdown className={styles['message-content']}>
+                  {message.content}
+                </ReactMarkdown>
+                
+                {/* Display references if they exist */}
+                {message.references && message.references.length > 0 && (
+                  <Box 
+                    sx={{
+                      mt: 2,
+                      pt: 1,
+                      borderTop: '1px solid rgba(0,0,0,0.1)',
+                      fontSize: '0.9em'
+                    }}
+                  >
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
+                      <LinkIcon fontSize="small" sx={{ mr: 0.5 }} /> References:
+                    </Typography>
+                    <List dense sx={{ py: 0, mt: 0.5 }}>
+                      {message.references.map((ref, idx) => (
+                        <ListItem 
+                          key={idx} 
+                          sx={{ 
+                            py: 0.25, 
+                            px: 0,
+                            display: 'flex',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <CircleIcon sx={{ fontSize: 8, mr: 1, color: 'text.secondary' }} />
+                          {ref.url ? 
+                            <Link 
+                              href={ref.url}
+                              underline="hover"
+                              color="primary"
+                              sx={{ fontSize: '0.95em' }}
+                            >
+                              {(ref.id ?? '') + ' ' + (ref.name ?? '')}
+                            </Link>
+                            : 
+                            <Typography variant="body2">
+                              {(ref.id ?? '') + ' ' + (ref.name ?? '')}
+                            </Typography>
+                          }
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+                
+                {/* Show CircularProgress overlay when waiting */}
+                {message.isWaiting && (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'rgba(255, 255, 255, 0.7)', // semi-transparent backdrop
+                      borderRadius: '9px',
+                      zIndex: 1
+                    }}
+                  >
+                    <CircularProgress size={30} />
+                  </Box>
+                )}
               </Box>
             </ListItem>
           ))}
