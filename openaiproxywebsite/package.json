@@ -41,5 +41,6 @@
   "devDependencies": {
     "@types/react": "^18.3.5",
     "@types/react-router-dom": "^5.3.3"
-  }
+  },
+  "license": "MIT"
 }
