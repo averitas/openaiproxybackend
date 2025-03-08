@@ -47,7 +47,7 @@ const SidePanel = () => {
   }, [])
 
   return (
-    <Box mt={2} p={2} style={{ minWidth: '250px', overflow: "auto" }}>
+    <Box mt={'64px'} p={2} style={{ minWidth: '200px', overflow: "auto" }}>
       <CssBaseline />
       <Button
         disabled={sessions.length > 8}

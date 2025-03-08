@@ -26,20 +26,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const sessionId = req.body.sessionId;
   const promo = req.body.promo;
 
-  // Set Server-Sent Events headers
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache, no-transform',
-    'Connection': 'keep-alive',
-    'X-Accel-Buffering': 'no', // Disable buffering for Nginx
-    'Transfer-Encoding': 'chunked',
-  });
-
-  // Make sure headers are sent immediately
-  if (res.flushHeaders) {
-    res.flushHeaders();
-  }
-
   // Helper function to write and flush data
   const writeAndFlush = (data: string) => {
     res.write(data);
@@ -50,8 +36,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   };
 
-  // Set up heartbeat interval - reduced to 5 seconds to prevent connection timeouts
-  const heartbeatInterval = 5000; // 5 seconds
+  // Set up heartbeat interval - reduced to 10 seconds to prevent connection timeouts
+  const heartbeatInterval = 10000; // 10 seconds
   let heartbeatTimer: NodeJS.Timeout | null = null;
   
   const sendHeartbeat = () => {
@@ -84,12 +70,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
 
-    // Start the heartbeat
-    heartbeatTimer = setInterval(sendHeartbeat, heartbeatInterval);
-    
-    // Send initial heartbeat
-    sendHeartbeat();
-
     // Request the remote SSE API
     const response = await fetch(remoteSSEUrl, {
       method: "POST",
@@ -107,26 +87,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!response.ok) {
       let resp = await response.json();
       console.error('SSE Error: Failed to connect, status:', response.status, resp);
-      let event = {
-        type: 'unauthorize',
-        payload: {
-          is_from_self: false,
-          content: resp?.message ? resp.message : "Failed to connect, status: " + response.status,
-          session_id: sessionId,
-          is_final: true,
-        } as ReplyPayload,
-      } as SSEUnauthorizeEvent;
-      writeAndFlush('data:' + JSON.stringify(event) + '\n\n');
+      res.status(response.status).json(resp);
       res.end();
       return;
     }
     
     if (!response.body) {
       console.error('SSE Error: No response body from remote SSE');
-      writeAndFlush('data: {"error": "No response body from remote SSE"}\n\n');
-      res.end();
+      res.status(204).end();
       return;
     }
+
+    // Set Server-Sent Events headers
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-transform',
+      'Connection': 'keep-alive',
+      'X-Accel-Buffering': 'no', // Disable buffering for Nginx
+      'Transfer-Encoding': 'chunked',
+    });
+
+    // Make sure headers are sent immediately
+    if (res.flushHeaders) {
+      res.flushHeaders();
+    }
+
+    // Start the heartbeat
+    heartbeatTimer = setInterval(sendHeartbeat, heartbeatInterval);
+    
+    // Send initial heartbeat
+    sendHeartbeat();
 
     // Pipe the remote SSE stream to the client
     const reader = response.body.getReader();

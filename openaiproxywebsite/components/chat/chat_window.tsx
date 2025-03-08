@@ -102,9 +102,8 @@ const ChatWindow = () => {
         display: 'flex',
         flexDirection: 'column',
         margin: boxMargin, // sets margin for the root element of ListItem
-        paddingTop: '100px',
-        paddingBottom: '2%',
-        height: '100vh',
+        paddingBottom: '2px',
+        height: 'calc(100vh - 80px)',
         overflow: 'hidden'
       },
     }}>
@@ -112,7 +111,7 @@ const ChatWindow = () => {
         {activeSession.current.name || 'Session 0'}
       </Typography>
       <Divider />
-      <Box mt={2} p={2} style={{ flexGrow: '1', overflow: 'hidden' }}>
+      <Box mt={2} p={0} style={{ flexGrow: '1', overflow: 'hidden' }}>
         <List
           ref={messageListRef}
           style={{

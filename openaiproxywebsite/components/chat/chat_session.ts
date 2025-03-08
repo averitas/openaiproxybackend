@@ -106,6 +106,12 @@ class ChatSession extends EventTarget {
             });
             
             if (!response.ok) {
+                if (response.status === 401) {
+                    UserManager.instance.isSignedIn = false;
+                    await UserManager.instance.signInMsal();
+                    return;
+                }
+
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
@@ -179,8 +185,6 @@ class ChatSession extends EventTarget {
                                     console.error('SSE Error:', sseEvent.payload.content);
                                     botMsg.content = sseEvent.payload.content;
                                     this.dispatchEvent(new Event(ChatSession.MESSAGES_CHANGE_EVENT));
-                                    // set login to false
-                                    await UserManager.instance.signInMsal();
                                     break;
                                     
                                 default:
