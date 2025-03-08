@@ -12,6 +12,7 @@ class UserManager extends EventTarget {
     email: string
     msalInstance: msal.PublicClientApplication
     authResult: msal.AuthenticationResult | undefined
+    isInited: boolean = false
 
     constructor() {
         super()
@@ -23,6 +24,9 @@ class UserManager extends EventTarget {
     }
 
     async init() {
+        if (this.isInited) {
+            return
+        }
         // query user sign in session(cookie) in server
         console.log('init user manager')
         await this.msalInstance.initialize()
@@ -41,6 +45,7 @@ class UserManager extends EventTarget {
             })
         }
         this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
+        this.isInited = true
     }
 
     async acquireTokenSlient(scopes: string[]) {
