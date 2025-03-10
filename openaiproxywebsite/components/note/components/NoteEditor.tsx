@@ -12,7 +12,6 @@ import {
   Fab,
   Snackbar,
   Alert,
-  Drawer
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveIcon from '@mui/icons-material/Save';
@@ -20,6 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import ChatIcon from '@mui/icons-material/Chat';
+import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../redux/store';
 import { fetchNotes, updateNote, setActiveNote, deleteNote } from '../redux/notesSlice';
@@ -36,10 +36,19 @@ const ReactQuill = dynamic(
   { ssr: false }
 );
 
-const NoteEditor: React.FC = () => {
-  const { noteId } = useParams();
+interface NoteEditorProps {
+  noteId?: string;  // Optional for use with react-router
+  onClose?: (note?: Note) => void;  // For modal usage
+  isModal?: boolean;  // Flag to indicate if editor is in modal mode
+}
+
+const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, isModal = false }) => {
+  const { noteId: routeNoteId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  
+  // Use either the prop noteId or the route param
+  const noteId = propNoteId || routeNoteId;
   
   const notes = useSelector((state: RootState) => state.notes.notes);
   const activeNote = useSelector((state: RootState) => state.notes.activeNote);
@@ -51,11 +60,8 @@ const NoteEditor: React.FC = () => {
   const [isChatVisible, setIsChatVisible] = useState<boolean>(false);
   const [incomingText, setIncomingText] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  
-  // Add a state to track if we're on client side
   const [isBrowser, setIsBrowser] = useState(false);
   
-  // Check if we're on client side
   useEffect(() => {
     setIsBrowser(true);
   }, []);
@@ -94,11 +100,11 @@ const NoteEditor: React.FC = () => {
         date: new Date().toISOString(),
         isDraft: false
       };
+      
       dispatch(updateNote(updatedNote))
         .unwrap()
-        .then((note) => {
-          // Show success feedback
-          setNote(note)
+        .then((savedNote) => {
+          setNote(savedNote);
         })
         .catch((err) => {
           setError(`Failed to save: ${err.message}`);
@@ -114,7 +120,11 @@ const NoteEditor: React.FC = () => {
       }))
         .unwrap()
         .then(() => {
-          navigate('/');
+          if (isModal && onClose) {
+            onClose();
+          } else {
+            navigate('/');
+          }
         })
         .catch((err) => {
           setError(`Failed to delete: ${err.message || 'Unknown error'}`);
@@ -123,7 +133,21 @@ const NoteEditor: React.FC = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/');
+    // Save current note state before going back
+    if (note) {
+      if (isModal && onClose) {
+        onClose(note);
+      } else {
+        handleSave();
+        navigate('/');
+      }
+    } else {
+      if (isModal && onClose) {
+        onClose();
+      } else {
+        navigate('/');
+      }
+    }
   };
 
   const toggleEditingMode = () => {
@@ -147,7 +171,13 @@ const NoteEditor: React.FC = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      height: isModal ? '100%' : '100vh',
+      bgcolor: 'background.paper',
+      borderRadius: isModal ? 1 : 0
+    }}>
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -156,7 +186,7 @@ const NoteEditor: React.FC = () => {
             onClick={handleBackToList}
             aria-label="back"
           >
-            <ArrowBackIcon />
+            {isModal ? <CloseIcon /> : <ArrowBackIcon />}
           </IconButton>
           
           {isEditingTitle ? (
@@ -244,7 +274,7 @@ const NoteEditor: React.FC = () => {
       <Fab
         color="secondary"
         aria-label="delete"
-        sx={{ position: 'fixed', bottom: 16, right: 16 }}
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
         onClick={handleDelete}
       >
         <DeleteIcon />

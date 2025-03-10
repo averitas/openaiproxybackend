@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Box, 
@@ -10,15 +10,19 @@ import {
   AppBar,
   Toolbar,
   Fab,
-  CircularProgress
+  CircularProgress,
+  Modal,
+  Backdrop,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../redux/store';
-import { fetchNotes, createNote } from '../redux/notesSlice';
+import { fetchNotes, createNote, updateNote } from '../redux/notesSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { Note } from '../../../types/note';
 import dynamic from 'next/dynamic';
+import NoteEditor from './NoteEditor';
+
 const Layout = dynamic(() => import('react-masonry-list'), {
     ssr: false,
   });
@@ -28,6 +32,10 @@ const NoteExplorer: React.FC = () => {
   const navigate = useNavigate();
   const notes = useSelector((state: RootState) => state.notes.notes);
   const loading = useSelector((state: RootState) => state.notes.loading);
+  
+  // State for modal editor
+  const [openEditor, setOpenEditor] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchNotes());
@@ -44,12 +52,26 @@ const NoteExplorer: React.FC = () => {
     
     dispatch(createNote(newNote))
       .then(() => {
-        navigate(`/note/${newNote.localId}`);
+        setSelectedNoteId(newNote.localId);
+        setOpenEditor(true);
       });
   };
 
   const handleNoteClick = (noteId: string) => {
-    navigate(`/note/${noteId}`);
+    setSelectedNoteId(noteId);
+    setOpenEditor(true);
+  };
+
+  const handleCloseEditor = (note?: Note) => {
+    // If note provided, save it before closing
+    if (note) {
+      dispatch(updateNote({
+        ...note,
+        date: new Date().toISOString()
+      }));
+    }
+    setOpenEditor(false);
+    setSelectedNoteId(null);
   };
 
   if (loading && notes.length === 0) {
@@ -70,7 +92,17 @@ const NoteExplorer: React.FC = () => {
         </Toolbar>
       </AppBar>
       
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4, flexGrow: 1, overflow: 'auto' }}>
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          mt: 4, 
+          mb: 4, 
+          flexGrow: 1, 
+          overflow: 'auto',
+          filter: openEditor ? 'blur(5px)' : 'none',
+          transition: 'filter 0.3s ease'
+        }}
+      >
         <Layout
           minWidth={100}
           gap={24}
@@ -117,11 +149,61 @@ const NoteExplorer: React.FC = () => {
       <Fab 
         color="secondary" 
         aria-label="add" 
-        sx={{ position: 'fixed', bottom: 16, right: 16 }}
+        sx={{ 
+          position: 'fixed', 
+          bottom: 16, 
+          right: 16,
+          zIndex: openEditor ? 0 : 1
+        }}
         onClick={handleCreateNote}
       >
         <AddIcon />
       </Fab>
+
+      {/* Modal for Note Editor */}
+      <Modal
+        open={openEditor}
+        onClose={() => handleCloseEditor()} // Will save current note state
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+          sx: { backgroundColor: 'rgba(0, 0, 0, 0.5)' }
+        }}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          // The modal content needs to be above the backdrop
+          zIndex: 1300
+        }}
+      >
+        <Box 
+          onClick={(e) => e.stopPropagation()} // Prevent click from closing modal when clicking inside
+          sx={{ 
+            width: '80%',
+            height: '80%',
+            bgcolor: 'background.paper',
+            borderRadius: 1,
+            boxShadow: 24,
+            outline: 'none',
+            overflow: 'hidden',
+            // Ensure the background is completely opaque
+            backgroundColor: 'white',
+            // Apply a higher z-index to appear above the backdrop
+            position: 'relative',
+            zIndex: 1301
+          }}
+        >
+          {selectedNoteId && (
+            <NoteEditor 
+              noteId={selectedNoteId} 
+              onClose={handleCloseEditor}
+              isModal={true}
+            />
+          )}
+        </Box>
+      </Modal>
     </Box>
   );
 };

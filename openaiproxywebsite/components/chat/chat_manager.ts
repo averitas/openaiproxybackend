@@ -76,9 +76,13 @@ class ChatManager extends EventTarget {
             this.dispatchEvent(new Event(ChatManager.SESSIONS_CHANGE_EVENT))
         } else {
             // invoke for default session
+            this.sessions = new Map()
+            if (this.sessions.size === 0) {
+                this.createSession()
+            }
             this.dispatchEvent(new Event(ChatManager.SESSIONS_CHANGE_EVENT))
             this.dispatchEvent(new Event(ChatManager.ACTIVE_SESSION_CHANGE_EVENT))
-            throw new Error('History storage is empty');
+            console.log('No history found, create a new session');
         }
     }
 

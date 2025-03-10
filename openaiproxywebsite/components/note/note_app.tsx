@@ -68,6 +68,7 @@ const NoteApp: React.FC<NoteAppProps> = (props: NoteAppProps) => {
           <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
             <Routes>
               <Route path="/" element={<NoteExplorer />} />
+              {/* Keep these routes for direct URL access, but main interaction will be through modal */}
               <Route path="/note/:noteId" element={<NoteEditor />} />
               <Route path="/note/new" element={<NoteEditor />} />
               <Route path="*" element={<Navigate to="/" replace />} />
