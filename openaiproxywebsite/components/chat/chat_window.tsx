@@ -1,29 +1,79 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemText, Paper, TextField, Typography, Link } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send'
-import ReactMarkdown from 'react-markdown'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import ChatManager from './chat_manager'
-import ChatMessage from './chat_message'
+import React, { useRef, useState, useEffect, useMemo } from 'react';
+import { 
+  Box, 
+  Button, 
+  CircularProgress, 
+  Divider, 
+  List, 
+  ListItem, 
+  ListItemText, 
+  Paper, 
+  TextField, 
+  Typography, 
+  Link,
+  IconButton,
+  Tooltip,
+  Popper 
+} from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
+import ReactMarkdown from 'react-markdown';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import ChatManager from './chat_manager';
+import ChatMessage from './chat_message';
 import ThoughtBubble from './thought_bubble';
-import Image from 'next/image'
-import LinkIcon from '@mui/icons-material/Link'
-import CircleIcon from '@mui/icons-material/Circle'
+import Image from 'next/image';
+import LinkIcon from '@mui/icons-material/Link';
+import CircleIcon from '@mui/icons-material/Circle';
+import { v4 as uuidv4 } from 'uuid';
+import { Note } from '../../types/note';
+import { useRouter } from 'next/router';
 
-import styles from '../../styles/chat_window.module.scss'
+import styles from '../../styles/chat_window.module.scss';
+import { AppDispatch } from '@/redux/store';
+import { useDispatch } from 'react-redux';
+import { createNote } from '../note/redux/notesSlice';
 
 const ChatWindow = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
+  // Add a new state variable to track note creation status
+  const [isCreatingNote, setIsCreatingNote] = useState(false);
   const colors = ['#80cbc4', '#b2dfdb']; // set up colors
-  const [boxMaxWidth, setBoxMaxWidth] = useState('70%')
-  const [boxPadding, setBoxPadding] = useState('8px 12px')
-  const [boxMargin, setBoxMargin] = useState('0 5%')
-  const activeSession = useRef(ChatManager.instance.activeSession)
-  const [messages, setMessages] = useState<ChatMessage[]>(ChatManager.instance.activeSession.messages.slice(0))
+  const [boxMaxWidth, setBoxMaxWidth] = useState('70%');
+  const [boxPadding, setBoxPadding] = useState('8px 12px');
+  const [boxMargin, setBoxMargin] = useState('0 5%');
+  const activeSession = useRef(ChatManager.instance.activeSession);
+  const [messages, setMessages] = useState<ChatMessage[]>(ChatManager.instance.activeSession.messages.slice(0));
 
-  const messageListRef = useRef<HTMLUListElement>(null)
-  const inputAreaRef = useRef<HTMLTextAreaElement>(null)
+  // For text selection
+  const [selectedText, setSelectedText] = useState('');
+  const [selectionPosition, setSelectionPosition] = useState<{ top: number, left: number } | null>(null);
+  const [showSelectionButton, setShowSelectionButton] = useState(false);
+  
+  // Create a virtual element for the Popper
+  const virtualElement = useMemo(() => {
+    if (!selectionPosition) return null;
+    
+    return {
+      getBoundingClientRect: () => ({
+        width: 0,
+        height: 0,
+        top: selectionPosition.top,
+        right: selectionPosition.left,
+        bottom: selectionPosition.top,
+        left: selectionPosition.left,
+        x: selectionPosition.left,
+        y: selectionPosition.top,
+        toJSON: () => {}
+      }),
+    };
+  }, [selectionPosition]);
+  
+  const messageListRef = useRef<HTMLUListElement>(null);
+  const inputAreaRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     function handleOrientationChange() {
@@ -68,16 +118,73 @@ const ChatWindow = () => {
       }, 0)
     }
 
+    // Add event listener for text selection
+    const handleTextSelection = () => {
+      const selection = window.getSelection();
+      
+      if (selection && selection.toString().trim() !== '' && selection.rangeCount > 0) {
+        // Only handle selections within bot messages (which have a class we can check)
+        const range = selection.getRangeAt(0);
+        const container = range.commonAncestorContainer;
+        
+        // Check if selection is within a bot message
+        let isInBotMessage = false;
+        let element: Node | null = container;
+        while (element && element !== document.body) {
+          if (element.nodeType === Node.ELEMENT_NODE && 
+             (element as Element).classList?.contains(styles['message-content'])) {
+            isInBotMessage = true;
+            break;
+          }
+          element = element.parentNode;
+        }
+        
+        if (isInBotMessage) {
+          const selectedText = selection.toString();
+          const rect = range.getBoundingClientRect();
+          
+          setSelectedText(selectedText);
+          setSelectionPosition({ 
+            top: rect.bottom + window.scrollY, 
+            left: rect.right + window.scrollX
+          });
+          setShowSelectionButton(true);
+        } else {
+          setShowSelectionButton(false);
+        }
+      } else {
+        setShowSelectionButton(false);
+      }
+    };
+
+    // Clear selection when clicking elsewhere
+    const handleClickOutside = (e: MouseEvent) => {
+      if (showSelectionButton) {
+        // Check if the click is on the selection button
+        const target = e.target as Element;
+        // Check if clicked element is the button or its children
+        if (target.closest('[data-selection-button="true"]')) {
+          // Don't hide if clicking on the button
+          return;
+        }
+        setShowSelectionButton(false);
+      }
+    };
+
+    document.addEventListener('selectionchange', handleTextSelection);
+    document.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('orientationchange', handleOrientationChange);
-    ChatManager.instance.addEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
-    ChatManager.instance.addEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+    ChatManager.instance.addEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler);
+    ChatManager.instance.addEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler);
 
     return () => {
+      document.removeEventListener('selectionchange', handleTextSelection);
+      document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('orientationchange', handleOrientationChange);
-      ChatManager.instance.removeEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler)
-      ChatManager.instance.removeEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler)
+      ChatManager.instance.removeEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler);
+      ChatManager.instance.removeEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler);
     };
-  }, []);
+  }, [showSelectionButton]);
 
   const sendMessage = async () => {
     console.log(`Current session name ${ChatManager.instance.activeSession.name}, id: ${ChatManager.instance.activeSession.id}`)
@@ -96,6 +203,70 @@ const ChatWindow = () => {
     ChatManager.instance.activeSession.clean()
   }
 
+  const handleCreateNote = () => {
+    console.log('handleCreateNote function called');
+    
+    if (!selectedText) {
+      console.log('No text selected, returning early');
+      return;
+    }
+    
+    try {
+      // Set the creating note state to true to show progress indicator
+      setIsCreatingNote(true);
+      console.log('Processing selected text: ', selectedText.substring(0, 20) + '...');
+      
+      // Format the current date and time for the title
+      const now = new Date();
+      const formattedDate = now.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+      
+      // Create a new note with the selected text
+      const newNote: Note = {
+        localId: uuidv4(),
+        title: `ai-assistant-${formattedDate}`,
+        content: `<p>${selectedText}</p>`,
+        date: now.toISOString(),
+        isDraft: true
+      };
+      
+      console.log('Created new note with ID:', newNote.localId);
+      
+      // Clear the text selection
+      if (window.getSelection) {
+        window.getSelection()?.removeAllRanges();
+        console.log('Selection cleared');
+      }
+      
+      // Hide the selection button
+      setShowSelectionButton(false);
+      console.log('Selection button hidden');
+      
+      // Directly create the note using Redux
+      dispatch(createNote(newNote))
+        .unwrap()
+        .then((createdNote) => {
+          console.log('Note created in Redux store with ID:', createdNote.localId);
+          // Signal to switch tabs with just the noteId
+          const switchTabsEvent = new CustomEvent('switchToNotesTab', {
+            detail: { noteId: createdNote.localId }
+          });
+          window.dispatchEvent(switchTabsEvent);
+          console.log('Dispatched tab switch event with note ID');
+        })
+        .catch((error) => {
+          console.error('Error creating note:', error);
+        })
+        .finally(() => {
+          // Reset creating state when operation completes (success or error)
+          setIsCreatingNote(false);
+        });
+    } catch (error) {
+      console.error('Error in handleCreateNote:', error);
+      // Also reset creating state if there's an error
+      setIsCreatingNote(false);
+    }
+  };
+
   return (
     <Box sx={{
       '&': {
@@ -111,7 +282,7 @@ const ChatWindow = () => {
         {activeSession.current.name || 'Session 0'}
       </Typography>
       <Divider />
-      <Box mt={2} p={0} style={{ flexGrow: '1', overflow: 'hidden' }}>
+      <Box mt={2} p={0} style={{ flexGrow: '1', overflow: 'hidden', position: 'relative' }}>
         <List
           ref={messageListRef}
           style={{
@@ -241,6 +412,54 @@ const ChatWindow = () => {
             </ListItem>
           ))}
         </List>
+        
+        {/* Floating button for creating a note from selected text */}
+        {showSelectionButton && virtualElement && (
+          <Popper
+            open={true}
+            anchorEl={virtualElement}
+            placement="bottom-start"
+            style={{ zIndex: 9999 }} // Ensure very high z-index
+            modifiers={[
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 2],
+                },
+              },
+            ]}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              startIcon={isCreatingNote ? null : <NoteAddIcon />}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Save as note button clicked");
+                handleCreateNote();
+              }}
+              disabled={isCreatingNote}
+              data-selection-button="true"
+              sx={{ 
+                p: 1, 
+                minWidth: 'auto',
+                borderRadius: 2,
+                boxShadow: 3
+              }}
+            >
+              {isCreatingNote ? (
+                <>
+                  <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                  Saving...
+                </>
+              ) : (
+                'Save as note'
+              )}
+            </Button>
+          </Popper>
+        )}
       </Box>
       <Box mt={2} display='flex' alignItems='center'>
         <TextField

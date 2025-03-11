@@ -26,6 +26,8 @@ const theme = createTheme({
 
 interface NoteAppProps {
     isSignedIn: boolean;
+    noteIdToOpen?: string | null;
+    setNoteIdToOpen: (noteId: string | null) => void;
 }
 
 const NoteApp: React.FC<NoteAppProps> = (props: NoteAppProps) => {
@@ -67,7 +69,7 @@ const NoteApp: React.FC<NoteAppProps> = (props: NoteAppProps) => {
         <Router>
           <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
             <Routes>
-              <Route path="/" element={<NoteExplorer />} />
+              <Route path="/" element={<NoteExplorer noteIdToOpen={props.noteIdToOpen} setNoteIdToOpen={props.setNoteIdToOpen} />} />
               {/* Keep these routes for direct URL access, but main interaction will be through modal */}
               <Route path="/note/:noteId" element={<NoteEditor />} />
               <Route path="/note/new" element={<NoteEditor />} />

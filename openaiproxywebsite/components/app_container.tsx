@@ -19,6 +19,7 @@ import UserManager from './auth/user_manager';
 import ChatApp from './chat/chat_app';
 import NoteApp from './note/note_app';
 import GraphClient from './graph/graph_manager';
+import { Note } from '../types/note';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -53,6 +54,7 @@ const AppContainer: React.FC = () => {
   const [userEmail, setUserEmail] = useState(UserManager.instance.email);
   const [userIcon, setUserIcon] = useState<string | undefined>(undefined);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [noteIdToOpen, setNoteIdToOpen] = useState<string | null>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -99,9 +101,21 @@ const AppContainer: React.FC = () => {
       )
 
     UserManager.instance.addEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler);
+    
+    // Add event listener for tab switching
+    const handleSwitchToNotesTab = (event: CustomEvent) => {
+      console.log('Switching to Notes tab with note ID:', event.detail?.noteId);
+      setTabValue(1); // Switch to Notes tab (index 1)
+      if (event.detail?.noteId) {
+        setNoteIdToOpen(event.detail.noteId);
+      }
+    };
+
+    window.addEventListener('switchToNotesTab', handleSwitchToNotesTab as EventListener);
 
     return () => {
       UserManager.instance.removeEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler);
+      window.removeEventListener('switchToNotesTab', handleSwitchToNotesTab as EventListener);
     };
   }
   , []);
@@ -177,7 +191,7 @@ const AppContainer: React.FC = () => {
           <ChatApp />
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
-          <NoteApp isSignedIn={userIsLogin} />
+          <NoteApp isSignedIn={userIsLogin} noteIdToOpen={noteIdToOpen} setNoteIdToOpen={setNoteIdToOpen} />
         </TabPanel>
       </Box>
     </Box>

@@ -27,7 +27,12 @@ const Layout = dynamic(() => import('react-masonry-list'), {
     ssr: false,
   });
 
-const NoteExplorer: React.FC = () => {
+interface NoteExplorerProps {
+  noteIdToOpen?: string | null;
+  setNoteIdToOpen?: (noteId: string | null) => void;
+}
+
+const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOpen }) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const notes = useSelector((state: RootState) => state.notes.notes);
@@ -37,6 +42,21 @@ const NoteExplorer: React.FC = () => {
   const [openEditor, setOpenEditor] = useState(false);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
 
+  // Handle opening a note when its ID is passed in
+  useEffect(() => {
+    if (noteIdToOpen) {
+      console.log('Opening note with ID:', noteIdToOpen);
+      setSelectedNoteId(noteIdToOpen);
+      setOpenEditor(true);
+      
+      // Reset the note ID in the parent to prevent reopening
+      if (setNoteIdToOpen) {
+        setNoteIdToOpen(null);
+      }
+    }
+  }, [noteIdToOpen, setNoteIdToOpen]);
+
+  // Fetch notes on component mount
   useEffect(() => {
     dispatch(fetchNotes());
   }, [dispatch]);
