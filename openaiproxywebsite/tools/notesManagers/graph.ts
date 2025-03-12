@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft.
 // Licensed under the MIT license.
 
-import {Client} from '@microsoft/microsoft-graph-client';
+import { Client } from '@microsoft/microsoft-graph-client';
 import * as msal from "@azure/msal-browser";
 import { RemoteNote } from '../../types/note';
 import { NotesManager } from './notesManager';

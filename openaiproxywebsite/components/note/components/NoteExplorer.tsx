@@ -12,8 +12,11 @@ import {
   Fab,
   CircularProgress,
   Modal,
+  Zoom,
+  Tooltip,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import MarkdownIcon from '@mui/icons-material/Code';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../redux/store';
 import { fetchNotes, createNote, updateNote, syncNotes, selectLocalNotes } from '../redux/notesSlice';
@@ -42,6 +45,7 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOp
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isCreating, setIsCreating] = useState<boolean>(false);
+  const [isFabHovered, setIsFabHovered] = useState<boolean>(false);
 
   // Handle opening a note when its ID is passed in
   useEffect(() => {
@@ -80,6 +84,30 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOp
       })
       .catch((error) => {
         console.error('Failed to create note:', error);
+      })
+      .finally(() => {
+        setIsCreating(false);
+      });
+  };
+
+  const handleCreateMarkdownNote = () => {
+    const newNote: Note = {
+      localId: uuidv4(),
+      title: 'Untitled Markdown Note',
+      content: '# Start writing here...',
+      date: new Date().toISOString(),
+      isDraft: true,
+      isMarkdown: true
+    };
+    setIsCreating(true);
+    dispatch(createNote(newNote))
+      .then((action) => {
+        const createdNote = action.payload as Note;
+        setSelectedNoteId(createdNote.localId);
+        setOpenEditor(true);
+      })
+      .catch((error) => {
+        console.error('Failed to create markdown note:', error);
       })
       .finally(() => {
         setIsCreating(false);
@@ -132,8 +160,8 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOp
       <Container 
         maxWidth="lg" 
         sx={{ 
-          mt: 0, 
-          mb: 0, 
+          mt: 1, 
+          mb: 1, 
           flexGrow: 1, 
           overflow: 'auto',
           filter: openEditor ? 'blur(5px)' : 'none',
@@ -184,19 +212,40 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOp
         />
       </Container>
       
-      <Fab 
-        color="secondary" 
-        aria-label="add" 
+      <Box 
         sx={{ 
           position: 'fixed', 
           bottom: 16, 
           right: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 1,
           zIndex: openEditor ? 0 : 1
         }}
-        onClick={handleCreateNote}
+        onMouseEnter={() => setIsFabHovered(true)}
+        onMouseLeave={() => setIsFabHovered(false)}
       >
-        {isCreating ? <CircularProgress color="inherit" size={24} /> : <AddIcon />}
-      </Fab>
+        <Zoom in={isFabHovered} timeout={300}>
+          <Tooltip title="Create Markdown Note" placement="left">
+            <Fab 
+              color="primary" 
+              aria-label="add markdown" 
+              size="medium"
+              onClick={handleCreateMarkdownNote}
+            >
+              <MarkdownIcon />
+            </Fab>
+          </Tooltip>
+        </Zoom>
+        <Fab 
+          color="secondary" 
+          aria-label="add" 
+          onClick={handleCreateNote}
+        >
+          {isCreating ? <CircularProgress color="inherit" size={24} /> : <AddIcon />}
+        </Fab>
+      </Box>
 
       {/* Modal for Note Editor */}
       <Modal

@@ -23,7 +23,8 @@ export const fetchNotes = createAsyncThunk(
       }
       
       const remoteNotes = await notesManager.GetMeNotes();
-      return remoteNotes.map(remoteToLocalNote);
+      const localNotes = remoteNotes.map(remoteToLocalNote);
+      return localNotes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to fetch notes');
     }
@@ -126,7 +127,8 @@ export const syncNotes = createAsyncThunk(
       
       // Get the final updated list
       const responseLater = await notesManager?.GetMeNotes();
-      return responseLater?.map(remote => remoteToLocalNote(remote)) || [];
+      const updatedNotes = responseLater?.map(remote => remoteToLocalNote(remote)) || [];
+      return updatedNotes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     } catch (error) {
       throw error;
     }

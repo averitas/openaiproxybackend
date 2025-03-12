@@ -7,7 +7,20 @@ export interface RemoteNote {
     };
     createdDateTime?: string;
     lastModifiedDateTime?: string;
+    categories?: string[];
+    importance?: string;
+    isDraft?: boolean;
+    isRead?: boolean;
+    hasAttachments?: boolean;
+    webLink?: string;
+    parentFolderId?: string;
+    conversationId?: string;
+    conversationIndex?: string;
 }
+
+export const HiddenCategoryPrefix = "#sys:"
+
+export const MarkdownCategory = `${HiddenCategoryPrefix}Markdown`;
 
 export interface Note {
     localId: string;
@@ -16,6 +29,8 @@ export interface Note {
     content: string;
     date: string;
     isDraft: boolean;
+    isMarkdown?: boolean;
+    categories?: string[];
 }
 
 export enum NotesActionTypes {
@@ -49,17 +64,24 @@ export const remoteToLocalNote = (remoteNote: RemoteNote): Note => {
         title: remoteNote.subject,
         content: remoteNote.body.content,
         date: remoteNote.lastModifiedDateTime || remoteNote.createdDateTime || new Date().toISOString(),
-        isDraft: false
+        isDraft: false,
+        isMarkdown: remoteNote.categories ? remoteNote.categories.includes(MarkdownCategory) : false,
+        categories: remoteNote.categories?.filter(c => !c.startsWith(HiddenCategoryPrefix)) ?? []
     };
 };
 
 export const localToRemoteNote = (note: Note): RemoteNote => {
+    let categories = note.categories ? note.categories.filter(c => !c.startsWith(HiddenCategoryPrefix)) : [];
+    if (note.isMarkdown) {
+        categories = [...categories, MarkdownCategory];
+    }
     return {
         id: note.remoteId || '',
         subject: note.title,
         body: {
             content: note.content,
             contentType: 'text'
-        }
+        },
+        categories: categories,
     };
 };

@@ -29,6 +29,9 @@ import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import parse from 'html-react-parser';
 import NoteChatBox from './NoteChatBox';
+import { Descendant } from 'slate';
+import { deserializeHTML, serializeHTML, slateToMarkdown } from '@/tools/textEditor/html-slate-utils';
+import MarkdownPreview from '@/tools/textEditor/markdown-slate';
 
 // Dynamically import ReactQuill with SSR disabled
 const ReactQuill = dynamic(
@@ -40,9 +43,10 @@ interface NoteEditorProps {
   noteId?: string;  // Optional for use with react-router
   onClose?: (note?: Note) => void;  // For modal usage
   isModal?: boolean;  // Flag to indicate if editor is in modal mode
+  useMarkdown?: boolean;  // Use markdown instead of HTML
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, isModal = false }) => {
+const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, isModal = false, useMarkdown = false }) => {
   const { noteId: routeNoteId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -60,12 +64,11 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
   const [isChatVisible, setIsChatVisible] = useState<boolean>(false);
   const [incomingText, setIncomingText] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const [isBrowser, setIsBrowser] = useState(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [noteContent, setNoteContent] = useState<Descendant[]>(deserializeHTML(note?.content ?? ""));
   
   useEffect(() => {
-    setIsBrowser(true);
   }, []);
   
   useEffect(() => {
@@ -98,10 +101,11 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
   const handleSave = () => {
     if (note) {
       setIsSaving(true);
-      const updatedNote = {
+      const updatedNote: Note = {
         ...note,
         date: new Date().toISOString(),
-        isDraft: false
+        isDraft: false,
+        content: useMarkdown || note.isMarkdown ? slateToMarkdown(noteContent) : note.content
       };
       
       dispatch(updateNote(updatedNote))
@@ -260,7 +264,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
           width: incomingText ? '50%' : '100%' 
         }}>
           {isEditing ? (
-            isBrowser ? (
+            !note.isMarkdown && !useMarkdown ? (
               <ReactQuill
                 theme="snow"
                 value={note.content}
@@ -268,7 +272,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
                 style={{ height: 'calc(100% - 42px)' }}
               />
             ) : (
-              <div>Loading editor...</div>
+              <MarkdownPreview value={note.content} onChange={setNoteContent} />
             )
           ) : (
             <Paper elevation={0} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
