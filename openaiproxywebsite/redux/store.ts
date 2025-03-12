@@ -1,5 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import notesReducer from '../components/note/redux/notesSlice';
+import chatReducer from '../components/chat/redux/chatSlice';
+import { chatMiddleware } from '../components/chat/redux/chatMiddleware';
 
 // Import other existing reducers
 // import authReducer from './authReducer';
@@ -11,11 +13,10 @@ export const store = configureStore({
     // auth: authReducer,
     // background: backgroundReducer
     // Add other reducers here
+    chat: chatReducer,
   },
-  middleware: (getDefaultMiddleware) => 
-    getDefaultMiddleware({
-      serializableCheck: false
-    })
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(chatMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
