@@ -67,7 +67,7 @@ const NoteApp: React.FC<NoteAppProps> = (props: NoteAppProps) => {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <Router>
-          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
             <Routes>
               <Route path="/" element={<NoteExplorer noteIdToOpen={props.noteIdToOpen} setNoteIdToOpen={props.setNoteIdToOpen} />} />
               {/* Keep these routes for direct URL access, but main interaction will be through modal */}

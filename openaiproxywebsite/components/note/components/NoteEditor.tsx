@@ -214,6 +214,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
                   setIsEditingTitle(false);
                 }
               }}
+              defaultValue={"Enter title here"}
               variant="standard"
               sx={{ flexGrow: 1, color: 'white' }}
               InputProps={{

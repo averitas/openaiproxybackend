@@ -121,31 +121,24 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOp
 
   if (loading && notes.length === 0) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 64px)' }}>
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            StickyNotes
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)' }}>
       <Container 
         maxWidth="lg" 
         sx={{ 
-          mt: 4, 
-          mb: 4, 
+          mt: 0, 
+          mb: 0, 
           flexGrow: 1, 
           overflow: 'auto',
           filter: openEditor ? 'blur(5px)' : 'none',
-          transition: 'filter 0.3s ease'
+          transition: 'filter 0.3s ease',
+          height: 'calc(100vh - 64px)'
         }}
       >
         <Layout
