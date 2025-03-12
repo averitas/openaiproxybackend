@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Note, NotesState, remoteToLocalNote, localToRemoteNote } from '../../../types/note';
 import { v4 as uuidv4 } from 'uuid';
 import NotesService from '../../../services/notesService';
+import { RootState } from '@/redux/store';
 
 // Get the notes manager instance
 const getNotesManager = () => {
@@ -99,6 +100,92 @@ export const deleteNote = createAsyncThunk(
   }
 );
 
+// Sync notes action to compare local and remote notes
+export const syncNotes = createAsyncThunk(
+  'notes/syncNotes',
+  async (_, { getState, dispatch }) => {
+    try {
+      console.log('Running sync')
+      const notesManager = getNotesManager();
+      const response = await notesManager?.GetMeNotes();
+      const remoteNotes = response?.map(remote => remoteToLocalNote(remote)) || [];
+      const localNotes = selectLocalNotes(getState() as RootState);
+      
+      // Compare local and remote notes
+      const mergedNotes = mergeNotes(localNotes, remoteNotes);
+      
+      // Update any out-of-sync notes with the server
+      for (const note of mergedNotes.notesToUpdate) {
+        await dispatch(updateNote(note))
+      }
+      
+      // Push any new local notes to the server
+      for (const note of mergedNotes.notesToCreate) {
+        await dispatch(createNote(note));
+      }
+      
+      // Get the final updated list
+      const responseLater = await notesManager?.GetMeNotes();
+      return responseLater?.map(remote => remoteToLocalNote(remote)) || [];
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+// Helper function to merge local and remote notes
+function mergeNotes(localNotes: Note[], remoteNotes: Note[]) {
+  const notesToUpdate: Note[] = [];
+  const notesToCreate: Note[] = [];
+  const finalNotes: Note[] = [];
+  
+  // Process local notes
+  localNotes.forEach(localNote => {
+    // Check if note exists on remote
+    const remoteNote = remoteNotes.find(remote => 
+      remote.remoteId && remote.remoteId === localNote.remoteId
+    );
+    
+    if (remoteNote) {
+      // Compare timestamps to see which is newer
+      const localDate = new Date(localNote.date).getTime();
+      const remoteDate = new Date(remoteNote.date).getTime();
+      
+      if (localDate > remoteDate) {
+        // Local is newer, update remote
+        notesToUpdate.push(localNote);
+        finalNotes.push(localNote);
+      } else {
+        // Remote is newer or same, use remote
+        finalNotes.push(remoteNote);
+      }
+    } else {
+      // Local note doesn't exist on remote, create it
+      if (!localNote.remoteId) {
+        notesToCreate.push(localNote);
+      }
+      finalNotes.push(localNote);
+    }
+  });
+  
+  // Check for remote notes that don't exist locally
+  remoteNotes.forEach(remoteNote => {
+    const exists = finalNotes.some(note => 
+      note.remoteId && note.remoteId === remoteNote.remoteId
+    );
+    
+    if (!exists) {
+      finalNotes.push(remoteNote);
+    }
+  });
+  
+  return {
+    finalNotes,
+    notesToUpdate,
+    notesToCreate
+  };
+}
+
 const initialState: NotesState = {
   notes: [],
   activeNote: null,
@@ -181,8 +268,23 @@ const notesSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string || action.error.message || null;
       })
+      
+      // Add cases for syncNotes
+      .addCase(syncNotes.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(syncNotes.fulfilled, (state, action) => {
+        state.notes = action.payload;
+        state.loading = false;
+      })
+      .addCase(syncNotes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || null;
+      });
   },
 });
+
+export const selectLocalNotes = (state: RootState) => state.notes.notes;
 
 export const { setActiveNote } = notesSlice.actions;
 export default notesSlice.reducer;

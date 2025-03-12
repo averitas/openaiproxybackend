@@ -12,12 +12,11 @@ import {
   Fab,
   CircularProgress,
   Modal,
-  Backdrop,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../redux/store';
-import { fetchNotes, createNote, updateNote } from '../redux/notesSlice';
+import { fetchNotes, createNote, updateNote, syncNotes, selectLocalNotes } from '../redux/notesSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { Note } from '../../../types/note';
 import dynamic from 'next/dynamic';
@@ -35,12 +34,14 @@ interface NoteExplorerProps {
 const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOpen }) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const notes = useSelector((state: RootState) => state.notes.notes);
+  const notes = useSelector(selectLocalNotes);
   const loading = useSelector((state: RootState) => state.notes.loading);
   
   // State for modal editor
   const [openEditor, setOpenEditor] = useState(false);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isCreating, setIsCreating] = useState<boolean>(false);
 
   // Handle opening a note when its ID is passed in
   useEffect(() => {
@@ -56,9 +57,9 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOp
     }
   }, [noteIdToOpen, setNoteIdToOpen]);
 
-  // Fetch notes on component mount
+  // Fetch notes on component mount and use syncNotes for better synchronization
   useEffect(() => {
-    dispatch(fetchNotes());
+    dispatch(syncNotes());
   }, [dispatch]);
 
   const handleCreateNote = () => {
@@ -69,11 +70,19 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOp
       date: new Date().toISOString(),
       isDraft: true
     };
-    
+    setIsCreating(true);
     dispatch(createNote(newNote))
-      .then(() => {
-        setSelectedNoteId(newNote.localId);
+      .then((action) => {
+        // Properly type the payload to fix the "unknown" type error
+        const createdNote = action.payload as Note;
+        setSelectedNoteId(createdNote.localId);
         setOpenEditor(true);
+      })
+      .catch((error) => {
+        console.error('Failed to create note:', error);
+      })
+      .finally(() => {
+        setIsCreating(false);
       });
   };
 
@@ -85,13 +94,29 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOp
   const handleCloseEditor = (note?: Note) => {
     // If note provided, save it before closing
     if (note) {
+      setIsSaving(true);
       dispatch(updateNote({
         ...note,
         date: new Date().toISOString()
-      }));
+      }))
+        .then(() => {
+          // Refresh notes when editor is closed
+          return dispatch(syncNotes());
+        })
+        .catch((error) => {
+          console.error('Failed to save note:', error);
+        })
+        .finally(() => {
+          setIsSaving(false);
+          setOpenEditor(false);
+          setSelectedNoteId(null);
+        });
+    } else {
+      // Just refresh notes and close editor if no save needed
+      dispatch(syncNotes());
+      setOpenEditor(false);
+      setSelectedNoteId(null);
     }
-    setOpenEditor(false);
-    setSelectedNoteId(null);
   };
 
   if (loading && notes.length === 0) {
@@ -177,18 +202,19 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({ noteIdToOpen, setNoteIdToOp
         }}
         onClick={handleCreateNote}
       >
-        <AddIcon />
+        {isCreating ? <CircularProgress color="inherit" size={24} /> : <AddIcon />}
       </Fab>
 
       {/* Modal for Note Editor */}
       <Modal
         open={openEditor}
-        onClose={() => handleCloseEditor()} // Will save current note state
+        onClose={() => !isSaving && handleCloseEditor()} // Prevent closing during save
         closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-          sx: { backgroundColor: 'rgba(0, 0, 0, 0.5)' }
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+            sx: { backgroundColor: 'rgba(0, 0, 0, 0.5)' }
+          }
         }}
         sx={{
           display: 'flex',
