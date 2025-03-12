@@ -30,22 +30,31 @@ import { Note } from '../../types/note';
 import { useRouter } from 'next/router';
 
 import styles from '../../styles/chat_window.module.scss';
-import { AppDispatch } from '@/redux/store';
-import { useDispatch } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
 import { createNote } from '../note/redux/notesSlice';
+import { 
+  selectActiveSession, 
+  selectMessages, 
+  selectLoading, 
+  sendChatMessage, 
+  cleanActiveSession 
+} from './redux/chatSlice';
 
 const ChatWindow = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [inputText, setInputText] = useState('');
-  const [loading, setLoading] = useState(false);
+  // Use Redux state instead of local state
+  const activeSession = useSelector(selectActiveSession);
+  const messages = useSelector(selectMessages);
+  const loading = useSelector(selectLoading);
+  
   // Add a new state variable to track note creation status
   const [isCreatingNote, setIsCreatingNote] = useState(false);
   const colors = ['#80cbc4', '#b2dfdb']; // set up colors
   const [boxMaxWidth, setBoxMaxWidth] = useState('70%');
   const [boxPadding, setBoxPadding] = useState('8px 12px');
   const [boxMargin, setBoxMargin] = useState('0 5%');
-  const activeSession = useRef(ChatManager.instance.activeSession);
-  const [messages, setMessages] = useState<ChatMessage[]>(ChatManager.instance.activeSession.messages.slice(0));
 
   // For text selection
   const [selectedText, setSelectedText] = useState('');
@@ -97,34 +106,12 @@ const ChatWindow = () => {
       updateViewportHeight();
     }
 
-    const messagesChangeHandler = () => {
-      const newMessages = activeSession.current.messages.slice(0)
-      setMessages(newMessages)
-
-      if (newMessages.length > 0 && newMessages[newMessages.length - 1].isWaiting) {
-        setLoading(true)
-      } else {
-        setLoading(false)
-      }
-
-      // Scroll to bottom whenever messages change, including streaming updates
-      setTimeout(() => {
-        messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
-        inputAreaRef.current?.focus();
-      }, 0)
-    }
-
-    const activeSessionChangeHandler = () => {
-      const newActiveSession = ChatManager.instance.activeSession
-
-      activeSession.current = newActiveSession
-      setMessages(newActiveSession.messages.slice(0))
-
-      setTimeout(() => {
-        messageListRef.current && messageListRef.current.scrollTo({ top: messageListRef.current.scrollHeight, behavior: 'smooth' });
-        inputAreaRef.current?.focus();
-      }, 0)
-    }
+    // Scroll to bottom whenever messages change, including streaming updates
+    messageListRef.current && messageListRef.current.scrollTo({ 
+      top: messageListRef.current.scrollHeight, 
+      behavior: 'smooth' 
+    });
+    inputAreaRef.current?.focus();
 
     // Add event listener for text selection
     const handleTextSelection = () => {
@@ -198,23 +185,22 @@ const ChatWindow = () => {
       ChatManager.instance.removeEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler);
       ChatManager.instance.removeEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler);
     };
-  }, [showSelectionButton]);
+  }, [messages, showSelectionButton]);
 
-  const sendMessage = async () => {
-    console.log(`Current session name ${ChatManager.instance.activeSession.name}, id: ${ChatManager.instance.activeSession.id}`)
+  const handleSendMessage = async () => {
+    console.log(`Current session name ${activeSession.name}, id: ${activeSession.id}`)
     const inputValue = inputText
     setInputText('')
-    // Use the streaming version by default (true parameter)
-    activeSession.current.sendMessage(inputValue, true)
-
+    // Dispatch the sendChatMessage action instead of directly calling the ChatManager
+    dispatch(sendChatMessage({ message: inputValue, stream: true }));
     // Focus the input field after sending
     setTimeout(() => {
       inputAreaRef.current?.focus();
     }, 100);
   }
 
-  const cleanActiveSession = () => {
-    ChatManager.instance.activeSession.clean()
+  const handleCleanActiveSession = () => {
+    dispatch(cleanActiveSession());
   }
 
   const handleCreateNote = () => {
@@ -293,7 +279,7 @@ const ChatWindow = () => {
       },
     }}>
       <Typography variant='h5' align='center' gutterBottom>
-        {activeSession.current.name || 'Session 0'}
+        {activeSession.name || 'Session 0'}
       </Typography>
       <Divider />
       <Box mt={2} p={0} style={{ flexGrow: '1', overflow: 'hidden', position: 'relative' }}>
@@ -492,7 +478,7 @@ const ChatWindow = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={sendMessage}
+            onClick={handleSendMessage}
             disabled={!inputText || loading}
             endIcon={<SendIcon />}>
             Send
@@ -500,7 +486,7 @@ const ChatWindow = () => {
           <Button
             variant="contained"
             color="warning"
-            onClick={cleanActiveSession}
+            onClick={handleCleanActiveSession}
             disabled={loading}
             endIcon={<DeleteForeverIcon />}>
             Clean

@@ -61,6 +61,8 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
   const [incomingText, setIncomingText] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [isBrowser, setIsBrowser] = useState(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   
   useEffect(() => {
     setIsBrowser(true);
@@ -95,6 +97,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
 
   const handleSave = () => {
     if (note) {
+      setIsSaving(true);
       const updatedNote = {
         ...note,
         date: new Date().toISOString(),
@@ -103,17 +106,25 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
       
       dispatch(updateNote(updatedNote))
         .unwrap()
-        .then((savedNote) => {
-          setNote(savedNote);
+        .then(() => {
+          if (isModal && onClose) {
+            onClose();
+          } else {
+            navigate('/');
+          }
         })
         .catch((err) => {
           setError(`Failed to save: ${err.message}`);
+        })
+        .finally(() => {
+          setIsSaving(false);
         });
     }
   };
 
   const handleDelete = () => {
     if (note) {
+      setIsDeleting(true);
       dispatch(deleteNote({ 
         localId: note.localId, 
         remoteId: note.remoteId 
@@ -128,6 +139,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
         })
         .catch((err) => {
           setError(`Failed to delete: ${err.message || 'Unknown error'}`);
+        })
+        .finally(() => {
+          setIsDeleting(false);
         });
     }
   };
@@ -217,8 +231,8 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
             </Typography>
           )}
           
-          <IconButton color="inherit" onClick={handleSave}>
-            <SaveIcon />
+          <IconButton color="inherit" onClick={handleSave} disabled={isSaving}>
+            {isSaving ? <CircularProgress color="inherit" size={24} /> : <SaveIcon />}
           </IconButton>
           
           <IconButton color="inherit" onClick={toggleEditingMode}>
@@ -276,8 +290,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
         aria-label="delete"
         sx={{ position: 'absolute', bottom: 16, right: 16 }}
         onClick={handleDelete}
+        disabled={isDeleting}
       >
-        <DeleteIcon />
+        {isDeleting ? <CircularProgress color="inherit" size={24} /> : <DeleteIcon />}
       </Fab>
 
       <NoteChatBox
