@@ -1,19 +1,19 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { 
-  Box, 
-  Button, 
-  CircularProgress, 
-  Divider, 
-  List, 
-  ListItem, 
-  ListItemText, 
-  Paper, 
-  TextField, 
-  Typography, 
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  TextField,
+  Typography,
   Link,
   IconButton,
   Tooltip,
-  Popper 
+  Popper
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import ReactMarkdown from 'react-markdown';
@@ -51,11 +51,11 @@ const ChatWindow = () => {
   const [selectedText, setSelectedText] = useState('');
   const [selectionPosition, setSelectionPosition] = useState<{ top: number, left: number } | null>(null);
   const [showSelectionButton, setShowSelectionButton] = useState(false);
-  
+
   // Create a virtual element for the Popper
   const virtualElement = useMemo(() => {
     if (!selectionPosition) return null;
-    
+
     return {
       getBoundingClientRect: () => ({
         width: 0,
@@ -66,16 +66,22 @@ const ChatWindow = () => {
         left: selectionPosition.left,
         x: selectionPosition.left,
         y: selectionPosition.top,
-        toJSON: () => {}
+        toJSON: () => { }
       }),
     };
   }, [selectionPosition]);
-  
+
   const messageListRef = useRef<HTMLUListElement>(null);
   const inputAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
 
   useEffect(() => {
+    // Update viewport height for mobile browsers
+    function updateViewportHeight() {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+
     function handleOrientationChange() {
       const isLandscape = window.matchMedia('(orientation: landscape)').matches;
       if (isLandscape) {
@@ -87,6 +93,8 @@ const ChatWindow = () => {
         setBoxMargin('1% 1%')
         setBoxPadding('4px 7px')
       }
+      // Update viewport height after orientation change
+      updateViewportHeight();
     }
 
     const messagesChangeHandler = () => {
@@ -121,31 +129,31 @@ const ChatWindow = () => {
     // Add event listener for text selection
     const handleTextSelection = () => {
       const selection = window.getSelection();
-      
+
       if (selection && selection.toString().trim() !== '' && selection.rangeCount > 0) {
         // Only handle selections within bot messages (which have a class we can check)
         const range = selection.getRangeAt(0);
         const container = range.commonAncestorContainer;
-        
+
         // Check if selection is within a bot message
         let isInBotMessage = false;
         let element: Node | null = container;
         while (element && element !== document.body) {
-          if (element.nodeType === Node.ELEMENT_NODE && 
-             (element as Element).classList?.contains(styles['message-content'])) {
+          if (element.nodeType === Node.ELEMENT_NODE &&
+            (element as Element).classList?.contains(styles['message-content'])) {
             isInBotMessage = true;
             break;
           }
           element = element.parentNode;
         }
-        
+
         if (isInBotMessage) {
           const selectedText = selection.toString();
           const rect = range.getBoundingClientRect();
-          
+
           setSelectedText(selectedText);
-          setSelectionPosition({ 
-            top: rect.bottom + window.scrollY, 
+          setSelectionPosition({
+            top: rect.bottom + window.scrollY,
             left: rect.right + window.scrollX
           });
           setShowSelectionButton(true);
@@ -173,7 +181,12 @@ const ChatWindow = () => {
 
     document.addEventListener('selectionchange', handleTextSelection);
     document.addEventListener('mousedown', handleClickOutside);
+    // Initial viewport height calculation
+    updateViewportHeight();
+
+    // Add event listeners for viewport height updates
     window.addEventListener('orientationchange', handleOrientationChange);
+    window.addEventListener('resize', updateViewportHeight);
     ChatManager.instance.addEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler);
     ChatManager.instance.addEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler);
 
@@ -181,6 +194,7 @@ const ChatWindow = () => {
       document.removeEventListener('selectionchange', handleTextSelection);
       document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('orientationchange', handleOrientationChange);
+      window.removeEventListener('resize', updateViewportHeight);
       ChatManager.instance.removeEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler);
       ChatManager.instance.removeEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler);
     };
@@ -192,7 +206,7 @@ const ChatWindow = () => {
     setInputText('')
     // Use the streaming version by default (true parameter)
     activeSession.current.sendMessage(inputValue, true)
-    
+
     // Focus the input field after sending
     setTimeout(() => {
       inputAreaRef.current?.focus();
@@ -205,21 +219,21 @@ const ChatWindow = () => {
 
   const handleCreateNote = () => {
     console.log('handleCreateNote function called');
-    
+
     if (!selectedText) {
       console.log('No text selected, returning early');
       return;
     }
-    
+
     try {
       // Set the creating note state to true to show progress indicator
       setIsCreatingNote(true);
       console.log('Processing selected text: ', selectedText.substring(0, 20) + '...');
-      
+
       // Format the current date and time for the title
       const now = new Date();
       const formattedDate = now.toISOString().replace(/T/, ' ').replace(/\..+/, '');
-      
+
       // Create a new note with the selected text
       const newNote: Note = {
         localId: uuidv4(),
@@ -228,19 +242,19 @@ const ChatWindow = () => {
         date: now.toISOString(),
         isDraft: true
       };
-      
+
       console.log('Created new note with ID:', newNote.localId);
-      
+
       // Clear the text selection
       if (window.getSelection) {
         window.getSelection()?.removeAllRanges();
         console.log('Selection cleared');
       }
-      
+
       // Hide the selection button
       setShowSelectionButton(false);
       console.log('Selection button hidden');
-      
+
       // Directly create the note using Redux
       dispatch(createNote(newNote))
         .unwrap()
@@ -274,7 +288,7 @@ const ChatWindow = () => {
         flexDirection: 'column',
         margin: boxMargin, // sets margin for the root element of ListItem
         paddingBottom: '2px',
-        height: 'calc(100vh - 80px)',
+        height: 'calc(calc(var(--vh, 1vh) * 100) - 80px)',
         overflow: 'hidden'
       },
     }}>
@@ -334,7 +348,7 @@ const ChatWindow = () => {
                 }}>
                   {new Date(message.timestamp).toLocaleTimeString()}
                 </p>
-                
+
                 {/* Always show thought bubble and message content */}
                 {message.thought && message.type === 0 && (
                   <ThoughtBubble thought={message.thought} defaultExpanded={message.isWaiting} />
@@ -342,10 +356,10 @@ const ChatWindow = () => {
                 <ReactMarkdown className={styles['message-content']}>
                   {message.content}
                 </ReactMarkdown>
-                
+
                 {/* Display references if they exist */}
                 {message.references && message.references.length > 0 && (
-                  <Box 
+                  <Box
                     sx={{
                       mt: 2,
                       pt: 1,
@@ -358,18 +372,18 @@ const ChatWindow = () => {
                     </Typography>
                     <List dense sx={{ py: 0, mt: 0.5 }}>
                       {message.references.map((ref, idx) => (
-                        <ListItem 
-                          key={idx} 
-                          sx={{ 
-                            py: 0.25, 
+                        <ListItem
+                          key={idx}
+                          sx={{
+                            py: 0.25,
                             px: 0,
                             display: 'flex',
                             alignItems: 'center'
                           }}
                         >
                           <CircleIcon sx={{ fontSize: 8, mr: 1, color: 'text.secondary' }} />
-                          {ref.url ? 
-                            <Link 
+                          {ref.url ?
+                            <Link
                               href={ref.url}
                               underline="hover"
                               color="primary"
@@ -377,7 +391,7 @@ const ChatWindow = () => {
                             >
                               {(ref.id ?? '') + ' ' + (ref.name ?? '')}
                             </Link>
-                            : 
+                            :
                             <Typography variant="body2">
                               {(ref.id ?? '') + ' ' + (ref.name ?? '')}
                             </Typography>
@@ -387,7 +401,7 @@ const ChatWindow = () => {
                     </List>
                   </Box>
                 )}
-                
+
                 {/* Show CircularProgress overlay when waiting */}
                 {message.isWaiting && (
                   <Box
@@ -412,7 +426,7 @@ const ChatWindow = () => {
             </ListItem>
           ))}
         </List>
-        
+
         {/* Floating button for creating a note from selected text */}
         {showSelectionButton && virtualElement && (
           <Popper
@@ -442,8 +456,8 @@ const ChatWindow = () => {
               }}
               disabled={isCreatingNote}
               data-selection-button="true"
-              sx={{ 
-                p: 1, 
+              sx={{
+                p: 1,
                 minWidth: 'auto',
                 borderRadius: 2,
                 boxShadow: 3
@@ -461,7 +475,7 @@ const ChatWindow = () => {
           </Popper>
         )}
       </Box>
-      <Box mt={2} display='flex' alignItems='center'>
+      <Box mt={2} display='flex' alignItems='center' sx={{ position: 'sticky', bottom: 0, backgroundColor: '#fff', zIndex: 1000, paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <TextField
           inputRef={inputAreaRef}
           disabled={loading}
