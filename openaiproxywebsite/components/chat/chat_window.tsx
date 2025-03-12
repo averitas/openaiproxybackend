@@ -174,16 +174,12 @@ const ChatWindow = () => {
     // Add event listeners for viewport height updates
     window.addEventListener('orientationchange', handleOrientationChange);
     window.addEventListener('resize', updateViewportHeight);
-    ChatManager.instance.addEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler);
-    ChatManager.instance.addEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler);
 
     return () => {
       document.removeEventListener('selectionchange', handleTextSelection);
       document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('orientationchange', handleOrientationChange);
       window.removeEventListener('resize', updateViewportHeight);
-      ChatManager.instance.removeEventListener(ChatManager.ACTIVE_SESSION_CHANGE_EVENT, activeSessionChangeHandler);
-      ChatManager.instance.removeEventListener(ChatManager.MESSAGES_CHANGE_EVENT, messagesChangeHandler);
     };
   }, [messages, showSelectionButton]);
 

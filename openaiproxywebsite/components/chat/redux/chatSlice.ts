@@ -3,22 +3,54 @@ import { RootState } from '../../../redux/store';
 import ChatManager from '../chat_manager';
 import ChatMessage from '../chat_message';
 
-// Define the chat state interface
+// Define a serializable message type (plain object version of ChatMessage)
+export interface SerializableChatMessage {
+  id: number;
+  content: string;
+  type: number;
+  timestamp: number;
+  isWaiting: boolean;
+  thought?: string | null | undefined;
+  references?: Array<{
+    id?: string;
+    name?: string;
+    url?: string;
+  }>;
+}
+
+// Define the chat state interface with serializable messages
 interface ChatState {
   activeSession: {
     id: string;
     name: string;
-    messages: ChatMessage[];
+    messages: SerializableChatMessage[];
   };
   loading: boolean;
 }
+
+// Helper function to convert ChatMessage instances to serializable objects
+const serializeMessages = (messages: ChatMessage[]) => {
+  return messages.map(message => ({
+    id: message.id,
+    content: message.content,
+    type: message.type,
+    timestamp: message.timestamp,
+    isWaiting: message.isWaiting,
+    thought: message.thought,
+    references: message.references ? message.references.map(ref => ({
+      id: ref.id,
+      name: ref.name,
+      url: ref.url
+    })) : undefined
+  }));
+};
 
 // Initial state
 const initialState: ChatState = {
   activeSession: {
     id: ChatManager.instance.activeSession.id,
     name: ChatManager.instance.activeSession.name,
-    messages: ChatManager.instance.activeSession.messages.slice(0),
+    messages: serializeMessages(ChatManager.instance.activeSession.messages),
   },
   loading: false,
 };
@@ -51,11 +83,11 @@ const chatSlice = createSlice({
     activeSessionChanged: (state, action: PayloadAction<{
       id: string;
       name: string;
-      messages: ChatMessage[];
+      messages: SerializableChatMessage[];
     }>) => {
       state.activeSession = action.payload;
     },
-    messagesUpdated: (state, action: PayloadAction<ChatMessage[]>) => {
+    messagesUpdated: (state, action: PayloadAction<SerializableChatMessage[]>) => {
       state.activeSession.messages = action.payload;
       
       // Update loading state based on last message

@@ -1,6 +1,24 @@
 import { Middleware } from '@reduxjs/toolkit';
 import ChatManager from '../chat_manager';
 import { activeSessionChanged, messagesUpdated } from './chatSlice';
+import ChatMessage from '../chat_message';
+
+// Helper function to convert ChatMessage instances to plain serializable objects
+const serializeChatMessages = (messages: ChatMessage[]) => {
+  return messages.map(message => ({
+    id: message.id,
+    content: message.content,
+    type: message.type,
+    timestamp: message.timestamp,
+    isWaiting: message.isWaiting,
+    thought: message.thought,
+    references: message.references ? message.references.map(ref => ({
+      id: ref.id,
+      name: ref.name,
+      url: ref.url
+    })) : undefined
+  }));
+};
 
 export const chatMiddleware: Middleware = store => {
   // Set up event listeners when middleware is created
@@ -9,13 +27,13 @@ export const chatMiddleware: Middleware = store => {
     store.dispatch(activeSessionChanged({
       id: newActiveSession.id,
       name: newActiveSession.name,
-      messages: newActiveSession.messages.slice(0),
+      messages: serializeChatMessages(newActiveSession.messages),
     }));
   };
 
   const messagesChangeHandler = () => {
-    const newMessages = ChatManager.instance.activeSession.messages.slice(0);
-    store.dispatch(messagesUpdated(newMessages));
+    const newMessages = ChatManager.instance.activeSession.messages;
+    store.dispatch(messagesUpdated(serializeChatMessages(newMessages)));
   };
 
   // Add event listeners

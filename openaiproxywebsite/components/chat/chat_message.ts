@@ -32,7 +32,7 @@ class ChatMessage {
     /**
      * thought process from the AI
      */
-    thought: string | null
+    thought?: string | null | undefined
     
     /**
      * references from the AI
