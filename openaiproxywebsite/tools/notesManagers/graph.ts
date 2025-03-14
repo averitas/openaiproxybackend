@@ -70,6 +70,9 @@ export class GraphNotesManager implements NotesManager {
     }
 
     public async CreateMeNotes(note: RemoteNote): Promise<RemoteNote> {
+        if (!note.subject) {
+            note.subject = "Untitled Note";
+        }
         const resp: RemoteNote = await this.graphClient
             .api('me/MailFolders/notes/messages')
             .post(note);
