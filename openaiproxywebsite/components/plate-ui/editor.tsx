@@ -44,7 +44,7 @@ export const EditorContainer = ({
   return (
     <div
       id={editor.uid}
-      ref={containerRef}
+      ref={containerRef as React.RefObject<HTMLDivElement>}
       className={cn(
         'ignore-click-outside/toolbar',
         editorContainerVariants({ variant }),
