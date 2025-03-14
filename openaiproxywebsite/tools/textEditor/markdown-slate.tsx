@@ -15,7 +15,7 @@ interface MarkdownPreviewProps {
 
 const MarkdownPreview = ({ value, onChange }: MarkdownPreviewProps) => {
   // Convert the string value to Slate nodes or use initialValue
-  const [slateValue, setSlateValue] = useState<Descendant[]>(() => 
+  const [slateValue, setSlateValue] = useState<Descendant[]>(() =>
     value ? markdownToSlate(value) : initialValue
   );
 
@@ -26,7 +26,7 @@ const MarkdownPreview = ({ value, onChange }: MarkdownPreviewProps) => {
       setSlateValue(newSlateValue);
     }
   }, [value]);
-  
+
   const renderLeaf = useCallback(
     (props: RenderLeafProps) => <Leaf {...props} />,
     []
@@ -79,7 +79,7 @@ const MarkdownPreview = ({ value, onChange }: MarkdownPreviewProps) => {
   // Handle changes to the editor
   const handleChange = useCallback((newSlateValue: Descendant[]) => {
     setSlateValue(newSlateValue);
-    
+
     if (onChange) {
       onChange(newSlateValue);
     }
