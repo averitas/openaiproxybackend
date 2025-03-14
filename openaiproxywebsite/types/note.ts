@@ -3,7 +3,7 @@ export interface RemoteNote {
     subject: string;
     body: {
         content: string;
-        contentType: string;
+        contentType: string; // text or html
     };
     createdDateTime?: string;
     lastModifiedDateTime?: string;
