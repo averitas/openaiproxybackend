@@ -1791,11 +1791,6 @@
   resolved "https://registry.npmmirror.com/@udecode/plate-code-block/-/plate-code-block-44.0.0.tgz#64a36eb7e4cd45ffe252ae216e35a31f4f1e6cf9"
   integrity sha512-8Y/n1OEi3UsRx/dQ7taZ1fhvfpDi0oVjpSn8cf9nzE2xpZCXPEhlYZkAew8Z73Wg+u5Q0eqv+DNm4z78YYoPIw==
 
-"@udecode/plate-code-block@^46.0.4":
-  version "46.0.4"
-  resolved "https://registry.yarnpkg.com/@udecode/plate-code-block/-/plate-code-block-46.0.4.tgz#e3cb12d84f858b659039fe8d88d8c19968f7937d"
-  integrity sha512-pAZromeppt+7su9iSC4v3Br9RfpU17Z7GXOTEObocknF8FpkBu+C7zbmNtun/k7adrPQmRFL9yTUtAB/bQTomA==
-
 "@udecode/plate-combobox@44.0.0", "@udecode/plate-combobox@^44.0.0":
   version "44.0.0"
   resolved "https://registry.yarnpkg.com/@udecode/plate-combobox/-/plate-combobox-44.0.0.tgz#b09e1743cbbe7f4026b694d0ecc6ae7739981c64"
@@ -1879,7 +1874,7 @@
 
 "@udecode/plate-excalidraw@^44.0.0":
   version "44.0.0"
-  resolved "https://registry.yarnpkg.com/@udecode/plate-excalidraw/-/plate-excalidraw-44.0.0.tgz#c52284a9de0cfe708ae7b48ce8c5ca03a16c8693"
+  resolved "https://registry.npmmirror.com/@udecode/plate-excalidraw/-/plate-excalidraw-44.0.0.tgz#c52284a9de0cfe708ae7b48ce8c5ca03a16c8693"
   integrity sha512-LgaXdROzMaa+mYfriIJPnKjpLWqLO4nhUyknVW6eh+4nktC/mFaGD0hSIiaLD14InOzJVyvze8daQkD79YG6Kw==
   dependencies:
     "@excalidraw/excalidraw" "0.16.4"

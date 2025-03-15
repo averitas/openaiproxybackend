@@ -22,17 +22,13 @@ import { TrailingBlockPlugin } from '@udecode/plate-trailing-block';
 
 import { FixedToolbarPlugin } from '@/components/editor/plugins/fixed-toolbar-plugin';
 import { FloatingToolbarPlugin } from '@/components/editor/plugins/floating-toolbar-plugin';
-import { BlockDiscussion } from '@/components/plate-ui/block-discussion';
-import { SuggestionBelowNodes } from '@/components/plate-ui/suggestion-line-break';
 
 import { alignPlugin } from './align-plugin';
 import { autoformatPlugin } from './autoformat-plugin';
 import { basicNodesPlugins } from './basic-nodes-plugins';
 import { blockMenuPlugins } from './block-menu-plugins';
-import { commentsPlugin } from './comments-plugin';
 import { cursorOverlayPlugin } from './cursor-overlay-plugin';
 import { deletePlugins } from './delete-plugins';
-import { dndPlugins } from './dnd-plugins';
 import { exitBreakPlugin } from './exit-break-plugin';
 import { indentListPlugins } from './indent-list-plugins';
 import { lineHeightPlugin } from './line-height-plugin';
@@ -41,7 +37,6 @@ import { mentionPlugin } from './mention-plugin';
 import { resetBlockTypePlugin } from './reset-block-type-plugin';
 import { skipMarkPlugin } from './skip-mark-plugin';
 import { softBreakPlugin } from './soft-break-plugin';
-import { suggestionPlugin } from './suggestion-plugin';
 import { tablePlugin } from './table-plugin';
 import { tocPlugin } from './toc-plugin';
 
@@ -69,14 +64,6 @@ export const viewPlugins = [
   alignPlugin,
   ...indentListPlugins,
   lineHeightPlugin,
-
-  // Collaboration
-  commentsPlugin.configure({
-    render: { aboveNodes: BlockDiscussion as any },
-  }),
-  suggestionPlugin.configure({
-    render: { belowNodes: SuggestionBelowNodes as any },
-  }),
 ] as const;
 
 export const editorPlugins = [
@@ -88,7 +75,6 @@ export const editorPlugins = [
   autoformatPlugin,
   cursorOverlayPlugin,
   ...blockMenuPlugins,
-  ...dndPlugins,
   EmojiPlugin.configure({ options: { data: emojiMartData as any } }),
   exitBreakPlugin,
   resetBlockTypePlugin,

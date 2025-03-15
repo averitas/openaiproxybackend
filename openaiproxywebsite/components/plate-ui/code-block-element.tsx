@@ -11,7 +11,6 @@ import { PlateElement } from '@udecode/plate/react';
 import { BracesIcon } from 'lucide-react';
 
 import { Button } from './button';
-import { CodeBlockCombobox } from './code-block-combobox';
 
 export const CodeBlockElement = withRef<typeof PlateElement>(
   ({ children, className, ...props }, ref) => {
@@ -35,7 +34,6 @@ export const CodeBlockElement = withRef<typeof PlateElement>(
             contentEditable={false}
           >
             <CodeBlockFormatButton {...props} />
-            <CodeBlockCombobox />
           </div>
         )}
       </PlateElement>

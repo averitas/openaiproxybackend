@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { LegacyRef } from 'react';
 
 import type { PlateContentProps } from '@udecode/plate/react';
 import type { VariantProps } from 'class-variance-authority';
@@ -50,7 +50,7 @@ export const EditorContainer = ({
   return (
     <div
       id={editor.uid}
-      ref={containerRef}
+      ref={containerRef as LegacyRef<HTMLDivElement>}
       className={cn(
         'ignore-click-outside/toolbar',
         editorContainerVariants({ variant }),

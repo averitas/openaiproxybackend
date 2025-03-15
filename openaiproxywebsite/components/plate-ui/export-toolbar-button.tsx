@@ -75,7 +75,6 @@ import { CodeLineElementStatic } from '@/components/plate-ui/code-line-element-s
 import { CodeSyntaxLeafStatic } from '@/components/plate-ui/code-syntax-leaf-static';
 import { ColumnElementStatic } from '@/components/plate-ui/column-element-static';
 import { ColumnGroupElementStatic } from '@/components/plate-ui/column-group-element-static';
-import { CommentLeafStatic } from '@/components/plate-ui/comment-leaf-static';
 import { DateElementStatic } from '@/components/plate-ui/date-element-static';
 import { HeadingElementStatic } from '@/components/plate-ui/heading-element-static';
 import { HighlightLeafStatic } from '@/components/plate-ui/highlight-leaf-static';
@@ -184,7 +183,6 @@ export function ExportToolbarButton({ children, ...props }: DropdownMenuProps) {
       [BaseCodeSyntaxPlugin.key]: CodeSyntaxLeafStatic,
       [BaseColumnItemPlugin.key]: ColumnElementStatic,
       [BaseColumnPlugin.key]: ColumnGroupElementStatic,
-      [BaseCommentsPlugin.key]: CommentLeafStatic,
       [BaseDatePlugin.key]: DateElementStatic,
       [BaseHighlightPlugin.key]: HighlightLeafStatic,
       [BaseHorizontalRulePlugin.key]: HrElementStatic,

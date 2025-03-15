@@ -60,7 +60,6 @@ import { CodeLineElement } from '@/components/plate-ui/code-line-element';
 import { CodeSyntaxLeaf } from '@/components/plate-ui/code-syntax-leaf';
 import { ColumnElement } from '@/components/plate-ui/column-element';
 import { ColumnGroupElement } from '@/components/plate-ui/column-group-element';
-import { CommentLeaf } from '@/components/plate-ui/comment-leaf';
 import { DateElement } from '@/components/plate-ui/date-element';
 import { EmojiInputElement } from '@/components/plate-ui/emoji-input-element';
 import { HeadingElement } from '@/components/plate-ui/heading-element';
@@ -92,7 +91,6 @@ export const viewComponents = {
   [CodeSyntaxPlugin.key]: CodeSyntaxLeaf,
   [ColumnItemPlugin.key]: ColumnElement,
   [ColumnPlugin.key]: ColumnGroupElement,
-  [CommentsPlugin.key]: CommentLeaf,
   [DatePlugin.key]: DateElement,
   [HEADING_KEYS.h1]: withProps(HeadingElement, { variant: 'h1' }),
   [HEADING_KEYS.h2]: withProps(HeadingElement, { variant: 'h2' }),

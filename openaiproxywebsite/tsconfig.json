@@ -40,11 +40,17 @@
       "@udecode/plate-basic-elements/react": [
         "./node_modules/@udecode/plate-basic-elements/dist/react/index.d.ts"
       ],
+      "@udecode/plate-break/react": [
+        "./node_modules/@udecode/plate-break/dist/react/index.d.ts"
+      ],
       "@udecode/plate-block-quote/react": [
         "./node_modules/@udecode/plate-block-quote/dist/react/index.d.ts"
       ],
       "@udecode/plate-callout/react": [
         "./node_modules/@udecode/plate-callout/dist/react/index.d.ts"
+      ],
+      "@udecode/plate-caption/react": [
+        "./node_modules/@udecode/plate-caption/dist/react/index.d.ts"
       ],
       "@udecode/plate-code-block/react": [
         "./node_modules/@udecode/plate-code-block/dist/react/index.d.ts"
@@ -73,8 +79,14 @@
       "@udecode/plate-horizontal-rule/react": [
         "./node_modules/@udecode/plate-horizontal-rule/dist/react/index.d.ts"
       ],
+      "@udecode/plate-indent/react": [
+        "./node_modules/@udecode/plate-indent/dist/react/index.d.ts"
+      ],
       "@udecode/plate-indent-list/react": [
         "./node_modules/@udecode/plate-indent-list/dist/react/index.d.ts"
+      ],
+      "@udecode/plate-line-height/react": [
+        "./node_modules/@udecode/plate-line-height/dist/react/index.d.ts"
       ],
       "@udecode/plate-media/react": [
         "./node_modules/@udecode/plate-media/dist/react/index.d.ts"
@@ -96,6 +108,9 @@
       ],
       "@udecode/plate-math/react": [
         "./node_modules/@udecode/plate-math/dist/react/index.d.ts"
+      ],
+      "@udecode/plate-reset-node/react": [
+        "./node_modules/@udecode/plate-reset-node/dist/react/index.d.ts"
       ],
       "@udecode/plate-selection/react": [
         "./node_modules/@udecode/plate-selection/dist/react/index.d.ts"

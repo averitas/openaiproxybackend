@@ -19,7 +19,6 @@ import {
   WandSparklesIcon,
 } from 'lucide-react';
 
-import { CommentToolbarButton } from './comment-toolbar-button';
 import { LinkToolbarButton } from './link-toolbar-button';
 import { MarkToolbarButton } from './mark-toolbar-button';
 import { MoreDropdownMenu } from './more-dropdown-menu';
@@ -72,7 +71,6 @@ export function FloatingToolbarButtons() {
       )}
 
       <ToolbarGroup>
-        <CommentToolbarButton />
         <SuggestionToolbarButton />
 
         {!readOnly && <MoreDropdownMenu />}

@@ -9,8 +9,6 @@ import type {
   CodeLinePlugin,
 } from '@udecode/plate-code-block/react';
 import type { TCommentText } from '@udecode/plate-comments';
-import type { TExcalidrawElement } from '@udecode/plate-excalidraw';
-import type { ExcalidrawPlugin } from '@udecode/plate-excalidraw/react';
 import type { HEADING_KEYS } from '@udecode/plate-heading';
 import type { HorizontalRulePlugin } from '@udecode/plate-horizontal-rule/react';
 import type { TLinkElement } from '@udecode/plate-link';
@@ -47,8 +45,8 @@ export interface MyAlignProps {
 
 export interface MyBlockElement
   extends MyIndentListProps,
-    MyLineHeightProps,
-    TElement {
+  MyLineHeightProps,
+  TElement {
   id?: string;
 }
 
@@ -67,13 +65,6 @@ export interface MyCodeBlockElement extends MyBlockElement {
 export interface MyCodeLineElement extends TElement {
   children: PlainText[];
   type: typeof CodeLinePlugin.key;
-}
-
-export interface MyExcalidrawElement
-  extends MyBlockElement,
-    TExcalidrawElement {
-  children: [EmptyText];
-  type: typeof ExcalidrawPlugin.key;
 }
 
 export interface MyH1Element extends MyBlockElement {
@@ -135,7 +126,7 @@ export interface MyLinkElement extends TLinkElement {
 
 export interface MyMediaEmbedElement
   extends MyBlockElement,
-    TMediaEmbedElement {
+  TMediaEmbedElement {
   children: [EmptyText];
   type: typeof MediaEmbedPlugin.key;
 }
@@ -160,7 +151,6 @@ export interface MyParagraphElement extends MyBlockElement {
 export type MyRootBlock =
   | MyBlockquoteElement
   | MyCodeBlockElement
-  | MyExcalidrawElement
   | MyH1Element
   | MyH2Element
   | MyH3Element
