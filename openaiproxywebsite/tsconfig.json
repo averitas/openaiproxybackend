@@ -73,8 +73,14 @@
       "@udecode/plate-horizontal-rule/react": [
         "./node_modules/@udecode/plate-horizontal-rule/dist/react/index.d.ts"
       ],
+      "@udecode/plate-indent-list/react": [
+        "./node_modules/@udecode/plate-indent-list/dist/react/index.d.ts"
+      ],
       "@udecode/plate-media/react": [
         "./node_modules/@udecode/plate-media/dist/react/index.d.ts"
+      ],
+      "@udecode/plate-mention/react": [
+        "./node_modules/@udecode/plate-mention/dist/react/index.d.ts"
       ],
       "@udecode/plate-kbd/react": [
         "./node_modules/@udecode/plate-kbd/dist/react/index.d.ts"
