@@ -135,7 +135,6 @@ export function Comment(props: {
     discussionStore.set('discussions', updatedDiscussions);
   };
 
-  // @ts-ignore
   const { tf } = useEditorPlugin(CommentsPlugin);
 
   // Replace to your own backend or refer to potion
@@ -153,7 +152,6 @@ export function Comment(props: {
 
   const onCancel = () => {
     setEditingId(null);
-    // @ts-ignore
     commentEditor.tf.replaceNodes(initialValue, {
       at: [],
       children: true,
@@ -163,7 +161,6 @@ export function Comment(props: {
   const onSave = () => {
     void updateComment({
       id: comment.id,
-      // @ts-ignore
       contentRich: commentEditor.children,
       discussionId: comment.discussionId,
       isEdited: true,
@@ -221,7 +218,6 @@ export function Comment(props: {
             <CommentMoreDropdown
               onCloseAutoFocus={() => {
                 setTimeout(() => {
-                  // @ts-ignore
                   commentEditor.tf.focus({ edge: 'endEditor' });
                 }, 0);
               }}

@@ -16,7 +16,6 @@ import { suggestionPlugin } from '@/components/editor/plugins/suggestion-plugin'
 export function SuggestionLeaf(props: PlateLeafProps) {
   const { children, className, leaf } = props;
 
-  // @ts-ignore
   const { api, setOption } = useEditorPlugin(suggestionPlugin);
 
   const leafId: string = api.suggestion.nodeId(leaf as TSuggestionText) ?? '';

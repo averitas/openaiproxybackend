@@ -50,6 +50,10 @@ import { BaseLineHeightPlugin } from '@udecode/plate-line-height';
 import { BaseLinkPlugin } from '@udecode/plate-link';
 import { MarkdownPlugin } from '@udecode/plate-markdown';
 import {
+  BaseEquationPlugin,
+  BaseInlineEquationPlugin,
+} from '@udecode/plate-math';
+import {
   BaseAudioPlugin,
   BaseFilePlugin,
   BaseImagePlugin,
@@ -75,10 +79,12 @@ import { CodeLineElementStatic } from '@/components/plate-ui/code-line-element-s
 import { CodeSyntaxLeafStatic } from '@/components/plate-ui/code-syntax-leaf-static';
 import { ColumnElementStatic } from '@/components/plate-ui/column-element-static';
 import { ColumnGroupElementStatic } from '@/components/plate-ui/column-group-element-static';
+import { CommentLeafStatic } from '@/components/plate-ui/comment-leaf-static';
 import { DateElementStatic } from '@/components/plate-ui/date-element-static';
 import { HeadingElementStatic } from '@/components/plate-ui/heading-element-static';
 import { HighlightLeafStatic } from '@/components/plate-ui/highlight-leaf-static';
 import { HrElementStatic } from '@/components/plate-ui/hr-element-static';
+import { ImageElementStatic } from '@/components/plate-ui/image-element-static';
 import {
   FireLiComponent,
   FireMarker,
@@ -89,6 +95,9 @@ import {
 } from '@/components/plate-ui/indent-todo-marker-static';
 import { KbdLeafStatic } from '@/components/plate-ui/kbd-leaf-static';
 import { LinkElementStatic } from '@/components/plate-ui/link-element-static';
+import { MediaAudioElementStatic } from '@/components/plate-ui/media-audio-element-static';
+import { MediaFileElementStatic } from '@/components/plate-ui/media-file-element-static';
+import { MediaVideoElementStatic } from '@/components/plate-ui/media-video-element-static';
 import { MentionElementStatic } from '@/components/plate-ui/mention-element-static';
 import { ParagraphElementStatic } from '@/components/plate-ui/paragraph-element-static';
 import {
@@ -109,6 +118,8 @@ import {
   useOpenState,
 } from './dropdown-menu';
 import { EditorStatic } from './editor-static';
+import { EquationElementStatic } from './equation-element-static';
+import { InlineEquationElementStatic } from './inline-equation-element-static';
 import { ToolbarButton } from './toolbar';
 
 const siteUrl = 'https://platejs.org';
@@ -175,6 +186,7 @@ export function ExportToolbarButton({ children, ...props }: DropdownMenuProps) {
 
   const exportToHtml = async () => {
     const components = {
+      [BaseAudioPlugin.key]: MediaAudioElementStatic,
       [BaseBlockquotePlugin.key]: BlockquoteElementStatic,
       [BaseBoldPlugin.key]: withProps(SlateLeaf, { as: 'strong' }),
       [BaseCodeBlockPlugin.key]: CodeBlockElementStatic,
@@ -183,9 +195,14 @@ export function ExportToolbarButton({ children, ...props }: DropdownMenuProps) {
       [BaseCodeSyntaxPlugin.key]: CodeSyntaxLeafStatic,
       [BaseColumnItemPlugin.key]: ColumnElementStatic,
       [BaseColumnPlugin.key]: ColumnGroupElementStatic,
+      [BaseCommentsPlugin.key]: CommentLeafStatic,
       [BaseDatePlugin.key]: DateElementStatic,
+      [BaseEquationPlugin.key]: EquationElementStatic,
+      [BaseFilePlugin.key]: MediaFileElementStatic,
       [BaseHighlightPlugin.key]: HighlightLeafStatic,
       [BaseHorizontalRulePlugin.key]: HrElementStatic,
+      [BaseImagePlugin.key]: ImageElementStatic,
+      [BaseInlineEquationPlugin.key]: InlineEquationElementStatic,
       [BaseItalicPlugin.key]: withProps(SlateLeaf, { as: 'em' }),
       [BaseKbdPlugin.key]: KbdLeafStatic,
       [BaseLinkPlugin.key]: LinkElementStatic,
@@ -202,6 +219,7 @@ export function ExportToolbarButton({ children, ...props }: DropdownMenuProps) {
       [BaseTocPlugin.key]: TocElementStatic,
       [BaseTogglePlugin.key]: ToggleElementStatic,
       [BaseUnderlinePlugin.key]: withProps(SlateLeaf, { as: 'u' }),
+      [BaseVideoPlugin.key]: MediaVideoElementStatic,
       [HEADING_KEYS.h1]: withProps(HeadingElementStatic, { variant: 'h1' }),
       [HEADING_KEYS.h2]: withProps(HeadingElementStatic, { variant: 'h2' }),
       [HEADING_KEYS.h3]: withProps(HeadingElementStatic, { variant: 'h3' }),
@@ -229,7 +247,13 @@ export function ExportToolbarButton({ children, ...props }: DropdownMenuProps) {
         BaseUnderlinePlugin,
         BaseBlockquotePlugin,
         BaseDatePlugin,
-        BaseCodeBlockPlugin,
+        BaseEquationPlugin,
+        BaseInlineEquationPlugin,
+        BaseCodeBlockPlugin.configure({
+          options: {
+            prism: Prism,
+          },
+        }),
         BaseIndentPlugin.extend({
           inject: {
             targetPlugins: [

@@ -92,8 +92,8 @@ export function useSettings() {
         uploadthing: '',
       },
       model: models[0],
-      setKey: () => { },
-      setModel: () => { },
+      setKey: () => {},
+      setModel: () => {},
     }
   );
 }
@@ -105,12 +105,25 @@ export function SettingsDialog() {
   const [open, setOpen] = useState(false);
   const [openModel, setOpenModel] = useState(false);
 
+  const { getOptions, setOption } = useEditorPlugin(CopilotPlugin);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     Object.entries(tempKeys).forEach(([service, key]) => {
       setKey(service, key);
     });
     setOpen(false);
+
+    // Update AI options if needed
+    const completeOptions = getOptions().completeOptions ?? {};
+    setOption('completeOptions', {
+      ...completeOptions,
+      body: {
+        ...completeOptions.body,
+        apiKey: tempKeys.openai,
+        model: model.value,
+      },
+    });
   };
 
   const toggleKeyVisibility = (key: string) => {

@@ -9,6 +9,6 @@ import Prism from 'prismjs';
 export const basicNodesPlugins = [
   HeadingPlugin.configure({ options: { levels: 3 } }),
   BlockquotePlugin,
-  CodeBlockPlugin,
+  CodeBlockPlugin.configure({ options: { prism: Prism } }),
   BasicMarksPlugin,
 ] as const;

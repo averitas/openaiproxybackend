@@ -120,7 +120,6 @@ export function CommentCreateForm({
 
   useEffect(() => {
     if (commentEditor && focusOnMount) {
-      // @ts-ignore
       commentEditor.tf.focus();
     }
   }, [commentEditor, focusOnMount]);
@@ -247,7 +246,6 @@ export function CommentCreateForm({
       <div className="relative flex grow gap-2">
         <Plate
           onChange={({ value }) => {
-            // @ts-ignore
             setCommentValue(value);
           }}
           editor={commentEditor}

@@ -23,7 +23,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../redux/store';
 import { fetchNotes, updateNote, setActiveNote, deleteNote } from '../redux/notesSlice';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Note } from '../../../types/note';
 import { v4 as uuidv4 } from 'uuid';
 import dynamic from 'next/dynamic';
@@ -31,14 +30,17 @@ import 'react-quill/dist/quill.snow.css';
 import parse from 'html-react-parser';
 import NoteChatBox from './NoteChatBox';
 import { Descendant } from 'slate';
-import { PlateEditor } from '@/components/editor/plate-editor';
-import { serializeHtml, Value } from '@udecode/plate';
-import { editorComponents, useCreateEditor } from '@/components/editor/use-create-editor';
-import { Plate } from '@udecode/plate/react';
-import { Editor, EditorContainer } from '@/components/plate-ui/editor';
-import { SettingsDialog } from '@/components/editor/settings';
+import { deserializeHTML, serializeHTML, slateToMarkdown } from '@/tools/textEditor/html-slate-utils';
+
 import { DndProvider } from 'react-dnd';
-import { EditorStatic, StaticComponents } from '@/components/plate-ui/editor-static';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
+import { Plate } from '@udecode/plate/react';
+
+import { useCreateEditor } from '@/components/editor/use-create-editor';
+import { SettingsDialog } from '@/components/editor/settings';
+import { Editor, EditorContainer } from '@/components/plate-ui/editor';
+import { Value } from '@udecode/plate';
 
 // Dynamically import ReactQuill with SSR disabled
 const ReactQuill = dynamic(
@@ -77,24 +79,29 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
 
   const editor = useCreateEditor();
 
-  const exportHtmlFromEditor = async () => {
-    console.log('Exporting note, exported value importedValue', noteContent);
-    const exportedValue = await serializeHtml(
-      editor,
-      {
-        components: StaticComponents,
-        editorComponent: EditorStatic,
-        props: { variant: 'none' },
-      },
-    );
-    setNoteContent(exportedValue);
-    console.log('Saving note, exported value importedValue', noteContent);
+  const editorChangeHandler = (obj) => {
+    const valueJson = JSON.stringify(obj.value);
+    window.localStorage.setItem('editorContent', valueJson);
   }
 
-  const importHtmlIntoEditor = (note: Note) => {
-    const importedValue = editor.api.html.deserialize({element: note?.content || '', collapseWhiteSpace: true});
-    console.log('Use effect got note importedValue', importedValue, "origin value", note?.content);
-    editor.children = importedValue as Value;
+  const editorToJson = () => {
+    return window.localStorage.getItem('editorContent') || '[]';
+  }
+
+  const noteToEditor = (note: Note) => {
+    let content = [{ children: [{ text: note.content }] }];
+
+    try {
+      content = JSON.parse(note.content);
+
+      if (!Array.isArray(content)) {
+        throw new Error('Invalid content format');
+      }
+    } catch (err) {
+      console.error('Error parsing note content:', err);
+    }
+
+    editor.children = content as unknown as Value;
   }
 
   useEffect(() => {
@@ -112,9 +119,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
       if (foundNote) {
         setNote(foundNote);
         dispatch(setActiveNote(foundNote));
-
-        // set for plate editor
-        importHtmlIntoEditor(foundNote);
+        noteToEditor(foundNote);
       } else {
         // If note not found, create a new one
         const newNote: Note = {
@@ -126,22 +131,22 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
         };
         setNote(newNote);
         dispatch(setActiveNote(newNote));
-
-        // set for plate editor
-        importHtmlIntoEditor(newNote);
+        noteToEditor(newNote);
       }
     }
   }, [noteId, notes, dispatch]);
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (note) {
       setIsSaving(true);
-      await exportHtmlFromEditor();
+
+      const newContent = editorToJson();
+
       const updatedNote: Note = {
         ...note,
         date: new Date().toISOString(),
         isDraft: false,
-        content: noteContent,
+        content: newContent
       };
 
       dispatch(updateNote(updatedNote))
@@ -186,20 +191,13 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
     }
   };
 
-  const handleBackToList = async () => {
+  const handleBackToList = () => {
     // Save current note state before going back
     if (note) {
       if (isModal && onClose) {
-        await exportHtmlFromEditor();
-        const updatedNote: Note = {
-          ...note,
-          date: new Date().toISOString(),
-          isDraft: false,
-          content: noteContent,
-        };
-        onClose(updatedNote);
+        onClose(note);
       } else {
-        await handleSave();
+        handleSave();
         navigate('/');
       }
     } else {
@@ -307,9 +305,8 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
           width: incomingText ? '50%' : '100%'
         }}>
           {isEditing ? (
-            // @ts-ignore
             <DndProvider backend={HTML5Backend}>
-              <Plate editor={editor}>
+              <Plate editor={editor} onChange={editorChangeHandler}>
                 <EditorContainer>
                   <Editor variant="demo" />
                 </EditorContainer>
