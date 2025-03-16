@@ -38,7 +38,7 @@ import { Plate } from '@udecode/plate/react';
 import { Editor, EditorContainer } from '@/components/plate-ui/editor';
 import { SettingsDialog } from '@/components/editor/settings';
 import { DndProvider } from 'react-dnd';
-import { EditorStatic } from '@/components/plate-ui/editor-static';
+import { EditorStatic, StaticComponents } from '@/components/plate-ui/editor-static';
 
 // Dynamically import ReactQuill with SSR disabled
 const ReactQuill = dynamic(
@@ -82,7 +82,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
     const exportedValue = await serializeHtml(
       editor,
       {
-        components: editorComponents,
+        components: StaticComponents,
         editorComponent: EditorStatic,
         props: { variant: 'none' },
       },

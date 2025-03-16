@@ -287,6 +287,7 @@ const notesSlice = createSlice({
 });
 
 export const selectLocalNotes = (state: RootState) => state.notes.notes;
+export const selectActiveNote = (state: RootState) => state.notes.activeNote;
 
 export const { setActiveNote } = notesSlice.actions;
 export default notesSlice.reducer;
