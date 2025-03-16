@@ -7,11 +7,16 @@ import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import { BlockquotePlugin } from '@udecode/plate-block-quote/react';
 import { CodeBlockPlugin } from '@udecode/plate-code-block/react';
 import { DatePlugin } from '@udecode/plate-date/react';
+import { ExcalidrawPlugin } from '@udecode/plate-excalidraw/react';
 import { HEADING_KEYS } from '@udecode/plate-heading';
 import { TocPlugin } from '@udecode/plate-heading/react';
 import { HorizontalRulePlugin } from '@udecode/plate-horizontal-rule/react';
 import { INDENT_LIST_KEYS, ListStyleType } from '@udecode/plate-indent-list';
 import { LinkPlugin } from '@udecode/plate-link/react';
+import {
+  EquationPlugin,
+  InlineEquationPlugin,
+} from '@udecode/plate-math/react';
 import { ImagePlugin, MediaEmbedPlugin } from '@udecode/plate-media/react';
 import { TablePlugin } from '@udecode/plate-table/react';
 import { TogglePlugin } from '@udecode/plate-toggle/react';
@@ -166,6 +171,11 @@ const groups: Group[] = [
         label: 'Embed',
         value: MediaEmbedPlugin.key,
       },
+      {
+        icon: <PenToolIcon />,
+        label: 'Excalidraw',
+        value: ExcalidrawPlugin.key,
+      },
     ].map((item) => ({
       ...item,
       onSelect: (editor, value) => {
@@ -185,6 +195,12 @@ const groups: Group[] = [
         icon: <Columns3Icon />,
         label: '3 columns',
         value: 'action_three_columns',
+      },
+      {
+        focusEditor: false,
+        icon: <RadicalIcon />,
+        label: 'Equation',
+        value: EquationPlugin.key,
       },
     ].map((item) => ({
       ...item,
@@ -206,6 +222,12 @@ const groups: Group[] = [
         icon: <CalendarIcon />,
         label: 'Date',
         value: DatePlugin.key,
+      },
+      {
+        focusEditor: false,
+        icon: <RadicalIcon />,
+        label: 'Inline Equation',
+        value: InlineEquationPlugin.key,
       },
     ].map((item) => ({
       ...item,

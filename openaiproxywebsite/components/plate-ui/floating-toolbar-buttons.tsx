@@ -19,6 +19,9 @@ import {
   WandSparklesIcon,
 } from 'lucide-react';
 
+import { AIToolbarButton } from './ai-toolbar-button';
+import { CommentToolbarButton } from './comment-toolbar-button';
+import { InlineEquationToolbarButton } from './inline-equation-toolbar-button';
 import { LinkToolbarButton } from './link-toolbar-button';
 import { MarkToolbarButton } from './mark-toolbar-button';
 import { MoreDropdownMenu } from './more-dropdown-menu';
@@ -33,6 +36,13 @@ export function FloatingToolbarButtons() {
     <>
       {!readOnly && (
         <>
+          <ToolbarGroup>
+            <AIToolbarButton tooltip="AI commands">
+              <WandSparklesIcon />
+              Ask AI
+            </AIToolbarButton>
+          </ToolbarGroup>
+
           <ToolbarGroup>
             <TurnIntoDropdownMenu />
 
@@ -65,12 +75,15 @@ export function FloatingToolbarButtons() {
               <Code2Icon />
             </MarkToolbarButton>
 
+            <InlineEquationToolbarButton />
+
             <LinkToolbarButton />
           </ToolbarGroup>
         </>
       )}
 
       <ToolbarGroup>
+        <CommentToolbarButton />
         <SuggestionToolbarButton />
 
         {!readOnly && <MoreDropdownMenu />}

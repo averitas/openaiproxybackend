@@ -32,7 +32,6 @@ export const TableCellElement = withRef<
     isHeader?: boolean;
   }
 >(({ children, className, isHeader, style, ...props }, ref) => {
-  // @ts-ignore
   const { api } = useEditorPlugin(TablePlugin);
   const readOnly = useReadOnly();
   const element = props.element as TTableCellElement;

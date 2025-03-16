@@ -459,7 +459,6 @@ export const useResolvedDiscussion = (
   commentNodes: NodeEntry<TCommentText>[],
   blockPath: Path
 ) => {
-  // @ts-ignore
   const { api, getOption, setOption } = useEditorPlugin(commentsPlugin);
 
   const discussions = useStoreValue(discussionStore, 'discussions');

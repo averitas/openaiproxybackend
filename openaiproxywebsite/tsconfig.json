@@ -41,10 +41,7 @@
     "exactOptionalPropertyTypes": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
-
-
     "checkJs": false,
-
     "allowImportingTsExtensions": false,
     "declaration": false,
     "declarationMap": false,
@@ -56,5 +53,8 @@
     "**/*.ts",
     "**/*.tsx"
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
