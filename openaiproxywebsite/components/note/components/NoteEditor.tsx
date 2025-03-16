@@ -31,7 +31,16 @@ import parse from 'html-react-parser';
 import NoteChatBox from './NoteChatBox';
 import { Descendant } from 'slate';
 import { deserializeHTML, serializeHTML, slateToMarkdown } from '@/tools/textEditor/html-slate-utils';
-import { PlateEditor } from '@/components/editor/plate-editor';
+
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
+import { Plate } from '@udecode/plate/react';
+
+import { useCreateEditor } from '@/components/editor/use-create-editor';
+import { SettingsDialog } from '@/components/editor/settings';
+import { Editor, EditorContainer } from '@/components/plate-ui/editor';
+import { Value } from '@udecode/plate';
 
 // Dynamically import ReactQuill with SSR disabled
 const ReactQuill = dynamic(
@@ -66,7 +75,34 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [noteContent, setNoteContent] = useState<Descendant[]>(deserializeHTML(note?.content ?? ""));
+  const [noteContent, setNoteContent] = useState<string>(note?.content ?? "");
+
+  const editor = useCreateEditor();
+
+  const editorChangeHandler = (obj) => {
+    const valueJson = JSON.stringify(obj.value);
+    window.localStorage.setItem('editorContent', valueJson);
+  }
+
+  const editorToJson = () => {
+    return window.localStorage.getItem('editorContent') || '[]';
+  }
+
+  const noteToEditor = (note: Note) => {
+    let content = [{ children: [{ text: note.content }] }];
+
+    try {
+      content = JSON.parse(note.content);
+
+      if (!Array.isArray(content)) {
+        throw new Error('Invalid content format');
+      }
+    } catch (err) {
+      console.error('Error parsing note content:', err);
+    }
+
+    editor.children = content as unknown as Value;
+  }
 
   useEffect(() => {
   }, []);
@@ -83,6 +119,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
       if (foundNote) {
         setNote(foundNote);
         dispatch(setActiveNote(foundNote));
+        noteToEditor(foundNote);
       } else {
         // If note not found, create a new one
         const newNote: Note = {
@@ -94,6 +131,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
         };
         setNote(newNote);
         dispatch(setActiveNote(newNote));
+        noteToEditor(newNote);
       }
     }
   }, [noteId, notes, dispatch]);
@@ -101,11 +139,14 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
   const handleSave = () => {
     if (note) {
       setIsSaving(true);
+
+      const newContent = editorToJson();
+
       const updatedNote: Note = {
         ...note,
         date: new Date().toISOString(),
         isDraft: false,
-        content: useMarkdown || note.isMarkdown ? slateToMarkdown(noteContent) : note.content
+        content: newContent
       };
 
       dispatch(updateNote(updatedNote))
@@ -264,12 +305,15 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
           width: incomingText ? '50%' : '100%'
         }}>
           {isEditing ? (
-            (!!!note.isMarkdown && !!!useMarkdown) ? (
-              <>fuck<PlateEditor data-registry="plate" value={note.content} onChange={(content) => setNote({ ...note, content })} /></>
-            ) : (
-              // @ts-ignore
-              <>fuck<PlateEditor data-registry="plate" value={note.content} onChange={(content) => setNote({ ...note, content })} /></>
-            )
+            <DndProvider backend={HTML5Backend}>
+              <Plate editor={editor} onChange={editorChangeHandler}>
+                <EditorContainer>
+                  <Editor variant="demo" />
+                </EditorContainer>
+
+                <SettingsDialog />
+              </Plate>
+            </DndProvider>
           ) : (
             <Paper elevation={0} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
               {parse(note.content)}
