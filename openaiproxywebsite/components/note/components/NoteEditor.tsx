@@ -52,8 +52,8 @@ interface NoteEditorProps {
   onClose?: (note?: Note) => void;  // For modal usage
   isModal?: boolean;  // Flag to indicate if editor is in modal mode
   useMarkdown?: boolean;  // Use markdown instead of HTML
-  isSaving: boolean;
-  setIsSaving: (isSaving: boolean) => void;
+  isSaving?: boolean;
+  setIsSaving?: (isSaving: boolean) => void;
 }
 
 const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
@@ -72,6 +72,7 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [noteContent, setNoteContent] = useState<string>(activeNote?.content || '');
+  const [insiderSaving, setInsideSaving] = useState<boolean>(false);
 
   useEffect(() => {
   }, []);
@@ -85,7 +86,12 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
   const handleSave = () => {
     if (activeNote) {
       console.log('NoteEditor Start saving note');
-      props.setIsSaving(true);
+      if (props.setIsSaving) {
+        props.setIsSaving(true);
+      }
+      else{
+        setInsideSaving(true);
+      }
 
       const updatedNote: Note = {
         ...activeNote,
@@ -108,6 +114,7 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
         })
         .finally(() => {
           console.log('NoteEditor Finished saving note');
+          setInsideSaving(false);
         });
     }
   };
@@ -230,7 +237,7 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
           )}
 
           <IconButton color="inherit" onClick={handleSave} disabled={props.isSaving}>
-            {props.isSaving ? <CircularProgress color="inherit" size={24} /> : <SaveIcon />}
+            {props.isSaving || insiderSaving ? <CircularProgress color="inherit" size={24} /> : <SaveIcon />}
           </IconButton>
 
           <IconButton color="inherit" onClick={toggleEditingMode}>
