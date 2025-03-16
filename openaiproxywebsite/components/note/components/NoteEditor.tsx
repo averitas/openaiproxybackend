@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -22,7 +22,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../redux/store';
-import { fetchNotes, updateNote, setActiveNote, deleteNote } from '../redux/notesSlice';
+import { fetchNotes, updateNote, setActiveNote, deleteNote, updateActiveNoteContent } from '../redux/notesSlice';
 import { Note } from '../../../types/note';
 import { v4 as uuidv4 } from 'uuid';
 import dynamic from 'next/dynamic';
@@ -30,7 +30,6 @@ import 'react-quill/dist/quill.snow.css';
 import parse from 'html-react-parser';
 import NoteChatBox from './NoteChatBox';
 import { Descendant } from 'slate';
-import { deserializeHTML, serializeHTML, slateToMarkdown } from '@/tools/textEditor/html-slate-utils';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -41,6 +40,7 @@ import { useCreateEditor } from '@/components/editor/use-create-editor';
 import { SettingsDialog } from '@/components/editor/settings';
 import { Editor, EditorContainer } from '@/components/plate-ui/editor';
 import { Value } from '@udecode/plate';
+import { PlateEditor } from '@/components/editor/plate-editor';
 
 // Dynamically import ReactQuill with SSR disabled
 const ReactQuill = dynamic(
@@ -49,19 +49,17 @@ const ReactQuill = dynamic(
 );
 
 interface NoteEditorProps {
-  noteId?: string;  // Optional for use with react-router
   onClose?: (note?: Note) => void;  // For modal usage
   isModal?: boolean;  // Flag to indicate if editor is in modal mode
   useMarkdown?: boolean;  // Use markdown instead of HTML
+  isSaving: boolean;
+  setIsSaving: (isSaving: boolean) => void;
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, isModal = false, useMarkdown = false }) => {
+const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
   const { noteId: routeNoteId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-
-  // Use either the prop noteId or the route param
-  const noteId = propNoteId || routeNoteId;
 
   const notes = useSelector((state: RootState) => state.notes.notes);
   const activeNote = useSelector((state: RootState) => state.notes.activeNote);
@@ -69,40 +67,11 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
 
   const [isEditing, setIsEditing] = useState<boolean>(true);
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
-  const [note, setNote] = useState<Note | null>(null);
   const [isChatVisible, setIsChatVisible] = useState<boolean>(false);
   const [incomingText, setIncomingText] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [noteContent, setNoteContent] = useState<string>(note?.content ?? "");
-
-  const editor = useCreateEditor();
-
-  const editorChangeHandler = (obj) => {
-    const valueJson = JSON.stringify(obj.value);
-    window.localStorage.setItem('editorContent', valueJson);
-  }
-
-  const editorToJson = () => {
-    return window.localStorage.getItem('editorContent') || '[]';
-  }
-
-  const noteToEditor = (note: Note) => {
-    let content = [{ children: [{ text: note.content }] }];
-
-    try {
-      content = JSON.parse(note.content);
-
-      if (!Array.isArray(content)) {
-        throw new Error('Invalid content format');
-      }
-    } catch (err) {
-      console.error('Error parsing note content:', err);
-    }
-
-    editor.children = content as unknown as Value;
-  }
+  const [noteContent, setNoteContent] = useState<string>(activeNote?.content || '');
 
   useEffect(() => {
   }, []);
@@ -111,49 +80,25 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
     if (notes.length === 0) {
       dispatch(fetchNotes());
     }
-  }, [dispatch, notes.length]);
-
-  useEffect(() => {
-    if (noteId && notes.length > 0) {
-      const foundNote = notes.find(n => n.localId === noteId);
-      if (foundNote) {
-        setNote(foundNote);
-        dispatch(setActiveNote(foundNote));
-        noteToEditor(foundNote);
-      } else {
-        // If note not found, create a new one
-        const newNote: Note = {
-          localId: uuidv4(),
-          title: 'Untitled Note',
-          content: '<p>Start writing here...</p>',
-          date: new Date().toISOString(),
-          isDraft: true
-        };
-        setNote(newNote);
-        dispatch(setActiveNote(newNote));
-        noteToEditor(newNote);
-      }
-    }
-  }, [noteId, notes, dispatch]);
+  }, [activeNote, dispatch, notes.length]);
 
   const handleSave = () => {
-    if (note) {
-      setIsSaving(true);
-
-      const newContent = editorToJson();
+    if (activeNote) {
+      console.log('NoteEditor Start saving note');
+      props.setIsSaving(true);
 
       const updatedNote: Note = {
-        ...note,
+        ...activeNote,
         date: new Date().toISOString(),
+        content: noteContent,
         isDraft: false,
-        content: newContent
       };
 
       dispatch(updateNote(updatedNote))
         .unwrap()
         .then(() => {
-          if (isModal && onClose) {
-            onClose();
+          if (props.isModal && props.onClose) {
+            props.onClose(updatedNote);
           } else {
             navigate('/');
           }
@@ -162,22 +107,22 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
           setError(`Failed to save: ${err.message}`);
         })
         .finally(() => {
-          setIsSaving(false);
+          console.log('NoteEditor Finished saving note');
         });
     }
   };
 
   const handleDelete = () => {
-    if (note) {
+    if (activeNote) {
       setIsDeleting(true);
       dispatch(deleteNote({
-        localId: note.localId,
-        remoteId: note.remoteId
+        localId: activeNote.localId,
+        remoteId: activeNote.remoteId
       }))
         .unwrap()
         .then(() => {
-          if (isModal && onClose) {
-            onClose();
+          if (props.isModal && props.onClose) {
+            props.onClose();
           } else {
             navigate('/');
           }
@@ -193,16 +138,23 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
 
   const handleBackToList = () => {
     // Save current note state before going back
-    if (note) {
-      if (isModal && onClose) {
-        onClose(note);
+    if (activeNote) {
+      if (props.isModal && props.onClose) {
+        const updatedNote: Note = {
+          ...activeNote,
+          date: new Date().toISOString(),
+          content: noteContent,
+          isDraft: false
+        };
+        
+        props.onClose(updatedNote);
       } else {
         handleSave();
         navigate('/');
       }
     } else {
-      if (isModal && onClose) {
-        onClose();
+      if (props.isModal && props.onClose) {
+        props.onClose();
       } else {
         navigate('/');
       }
@@ -217,7 +169,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
     setIsChatVisible(!isChatVisible);
   };
 
-  if (loading && !note) {
+  if (loading && !activeNote) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
@@ -225,7 +177,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
     );
   }
 
-  if (!note) {
+  if (!activeNote) {
     return <Typography>Note not found</Typography>;
   }
 
@@ -233,9 +185,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
     <Box sx={{
       display: 'flex',
       flexDirection: 'column',
-      height: isModal ? '100%' : '100vh',
+      height: props.isModal ? '100%' : '100vh',
       bgcolor: 'background.paper',
-      borderRadius: isModal ? 1 : 0
+      borderRadius: props.isModal ? 1 : 0
     }}>
       <AppBar position="static">
         <Toolbar>
@@ -245,14 +197,14 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
             onClick={handleBackToList}
             aria-label="back"
           >
-            {isModal ? <CloseIcon /> : <ArrowBackIcon />}
+            {props.isModal ? <CloseIcon /> : <ArrowBackIcon />}
           </IconButton>
 
           {isEditingTitle ? (
             <TextField
               autoFocus
-              value={note.title}
-              onChange={(e) => setNote({ ...note, title: e.target.value })}
+              value={activeNote.title}
+              onChange={(e) => dispatch(setActiveNote({ ...activeNote, title: e.target.value }))}
               onBlur={() => setIsEditingTitle(false)}
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
@@ -273,12 +225,12 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
               sx={{ flexGrow: 1, cursor: 'pointer' }}
               onClick={() => setIsEditingTitle(true)}
             >
-              {note.title || "Untitled Note"}
+              {activeNote.title || "Untitled Note"}
             </Typography>
           )}
 
-          <IconButton color="inherit" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? <CircularProgress color="inherit" size={24} /> : <SaveIcon />}
+          <IconButton color="inherit" onClick={handleSave} disabled={props.isSaving}>
+            {props.isSaving ? <CircularProgress color="inherit" size={24} /> : <SaveIcon />}
           </IconButton>
 
           <IconButton color="inherit" onClick={toggleEditingMode}>
@@ -305,18 +257,10 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
           width: incomingText ? '50%' : '100%'
         }}>
           {isEditing ? (
-            <DndProvider backend={HTML5Backend}>
-              <Plate editor={editor} onChange={editorChangeHandler}>
-                <EditorContainer>
-                  <Editor variant="demo" />
-                </EditorContainer>
-
-                <SettingsDialog />
-              </Plate>
-            </DndProvider>
+            <PlateEditor data-registry="plate" noteContent={noteContent} setNoteContent={setNoteContent} />
           ) : (
             <Paper elevation={0} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
-              {parse(note.content)}
+              {activeNote?.content ? parse(activeNote.content) : 'No content'}
             </Paper>
           )}
         </Box>
@@ -343,7 +287,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
       <NoteChatBox
         visible={isChatVisible}
         onClose={toggleChat}
-        noteContent={note.content}
+        noteContent={activeNote.content}
         setError={setError}
         setOutputText={setIncomingText}
       />
