@@ -12,14 +12,12 @@ import {
   Tabs,
   Tab
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChatIcon from '@mui/icons-material/Chat';
 import NoteIcon from '@mui/icons-material/Note';
 import UserManager from './auth/user_manager';
 import ChatApp from './chat/chat_app';
 import NoteApp from './note/note_app';
 import GraphClient from './graph/graph_manager';
-import { Note } from '../types/note';
 
 interface TabPanelProps {
   children?: React.ReactNode;

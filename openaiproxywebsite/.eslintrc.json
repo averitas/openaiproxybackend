@@ -42,5 +42,14 @@
     ],
     "unused-imports/no-unused-imports": "error",
     "unused-imports/no-unused-vars": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/node_modules/**"],
+      "rules": {
+        "react-hooks/rules-of-hooks": "off",
+        "react-hooks/exhaustive-deps": "off"
+      }
+    }
+  ]
 }

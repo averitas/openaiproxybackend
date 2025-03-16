@@ -39,6 +39,7 @@ import { skipMarkPlugin } from './skip-mark-plugin';
 import { softBreakPlugin } from './soft-break-plugin';
 import { tablePlugin } from './table-plugin';
 import { tocPlugin } from './toc-plugin';
+import { CodeBlockPlugin } from '@udecode/plate-code-block/react';
 
 export const viewPlugins = [
   ...basicNodesPlugins,
@@ -71,7 +72,15 @@ export const editorPlugins = [
   ...viewPlugins,
 
   // Functionality
-  SlashPlugin,
+  SlashPlugin.extend({
+    options: {
+      triggerQuery(editor) {
+        return !editor.api.some({
+          match: { type: editor.getType(CodeBlockPlugin) },
+        });
+      },
+    },
+  }),
   autoformatPlugin,
   cursorOverlayPlugin,
   ...blockMenuPlugins,
