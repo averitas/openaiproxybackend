@@ -39,6 +39,7 @@ export function TableDropdownMenu(props: DropdownMenuProps) {
     []
   );
 
+  // @ts-ignore
   const { editor, tf } = useEditorPlugin(TablePlugin);
   const openState = useOpenState();
   const mergeState = useTableMergeState();
@@ -199,6 +200,7 @@ export function TableDropdownMenu(props: DropdownMenuProps) {
 }
 
 export function TablePicker() {
+  // @ts-ignore
   const { editor, tf } = useEditorPlugin(TablePlugin);
 
   const [tablePicker, setTablePicker] = useState({

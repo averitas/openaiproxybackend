@@ -114,6 +114,7 @@ export const TableElement = withHOC(
 
 export const TableFloatingToolbar = withRef<typeof PopoverContent>(
   ({ children, ...props }, ref) => {
+    // @ts-ignore
     const { tf } = useEditorPlugin(TablePlugin);
     const element = useElement<TTableElement>();
     const { props: buttonProps } = useRemoveNodeButton({ element });

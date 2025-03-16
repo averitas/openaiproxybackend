@@ -22,6 +22,9 @@ body {
   overflow: hidden;
 }
 
+/* Remove the direct KaTeX import that's causing issues */
+/* @import 'katex/dist/katex.min.css'; */
+
 @import 'tailwindcss';
 
 @plugin 'tailwind-scrollbar-hide';

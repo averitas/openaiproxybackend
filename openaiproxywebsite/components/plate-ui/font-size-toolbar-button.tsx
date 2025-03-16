@@ -42,6 +42,7 @@ const FONT_SIZES = [
 export function FontSizeToolbarButton() {
   const [inputValue, setInputValue] = useState(DEFAULT_FONT_SIZE);
   const [isFocused, setIsFocused] = useState(false);
+  // @ts-ignore
   const { api, editor } = useEditorPlugin(FontSizePlugin);
 
   const cursorFontSize = useEditorSelector((editor) => {

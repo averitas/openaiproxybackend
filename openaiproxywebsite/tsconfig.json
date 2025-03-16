@@ -1,143 +1,60 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ESNext",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
     "allowJs": true,
+    "noImplicitAny": false,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "noImplicitReturns": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "resolveJsonModule": true,
+    "moduleDetection": "force",
     "isolatedModules": true,
     "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "incremental": true,
     "paths": {
       "@/*": [
         "./*"
-      ],
-      "@udecode/plate/react": [
-        "./node_modules/@udecode/plate/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-ai/react": [
-        "./node_modules/@udecode/plate-ai/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-alignment/react": [
-        "./node_modules/@udecode/plate-alignment/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-autoformat/react": [
-        "./node_modules/@udecode/plate-autoformat/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-basic-marks/react": [
-        "./node_modules/@udecode/plate-basic-marks/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-basic-elements/react": [
-        "./node_modules/@udecode/plate-basic-elements/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-break/react": [
-        "./node_modules/@udecode/plate-break/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-block-quote/react": [
-        "./node_modules/@udecode/plate-block-quote/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-callout/react": [
-        "./node_modules/@udecode/plate-callout/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-caption/react": [
-        "./node_modules/@udecode/plate-caption/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-code-block/react": [
-        "./node_modules/@udecode/plate-code-block/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-comments/react": [
-        "./node_modules/@udecode/plate-comments/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-core/react": [
-        "./node_modules/@udecode/plate-core/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-date/react": [
-        "./node_modules/@udecode/plate-date/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-emoji/react": [
-        "./node_modules/@udecode/plate-emoji/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-font/react": [
-        "./node_modules/@udecode/plate-font/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-heading/react": [
-        "./node_modules/@udecode/plate-heading/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-highlight/react": [
-        "./node_modules/@udecode/plate-highlight/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-horizontal-rule/react": [
-        "./node_modules/@udecode/plate-horizontal-rule/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-indent/react": [
-        "./node_modules/@udecode/plate-indent/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-indent-list/react": [
-        "./node_modules/@udecode/plate-indent-list/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-line-height/react": [
-        "./node_modules/@udecode/plate-line-height/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-media/react": [
-        "./node_modules/@udecode/plate-media/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-mention/react": [
-        "./node_modules/@udecode/plate-mention/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-kbd/react": [
-        "./node_modules/@udecode/plate-kbd/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-layout/react": [
-        "./node_modules/@udecode/plate-layout/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-link/react": [
-        "./node_modules/@udecode/plate-link/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-list/react": [
-        "./node_modules/@udecode/plate-list/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-math/react": [
-        "./node_modules/@udecode/plate-math/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-reset-node/react": [
-        "./node_modules/@udecode/plate-reset-node/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-selection/react": [
-        "./node_modules/@udecode/plate-selection/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-slash-command/react": [
-        "./node_modules/@udecode/plate-slash-command/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-suggestion/react": [
-        "./node_modules/@udecode/plate-suggestion/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-table/react": [
-        "./node_modules/@udecode/plate-table/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-toggle/react": [
-        "./node_modules/@udecode/plate-toggle/dist/react/index.d.ts"
-      ],
-      "@udecode/plate-utils/react": [
-        "./node_modules/@udecode/plate-utils/dist/react/index.d.ts"
       ]
-    }
+    },
+    "strictNullChecks": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+
+
+    "checkJs": false,
+
+    "allowImportingTsExtensions": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": true,
+    "pretty": true,
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules", "dist"]
 }

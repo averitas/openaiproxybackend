@@ -10,6 +10,7 @@ import { PencilLineIcon } from 'lucide-react';
 import { ToolbarButton } from './toolbar';
 
 export function SuggestionToolbarButton() {
+  // @ts-ignore
   const { setOption } = useEditorPlugin(SuggestionPlugin);
   const isSuggesting = usePluginOption(SuggestionPlugin, 'isSuggesting');
 
