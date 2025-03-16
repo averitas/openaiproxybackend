@@ -264,7 +264,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
           width: incomingText ? '50%' : '100%'
         }}>
           {isEditing ? (
-            <PlateEditor data-registry="plate"></PlateEditor>
+            <PlateEditor data-registry="plate" />
           ) : (
             <Paper elevation={0} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
               {parse(note.content)}
