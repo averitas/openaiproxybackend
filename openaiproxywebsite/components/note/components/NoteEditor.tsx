@@ -277,7 +277,7 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
           }}
         >
           {isEditing ? (
-            <PlateEditor data-registry="plate" noteContent={noteContent} setNoteContent={setNoteContent} />
+            <PlateEditor dataRegistry="plate" noteContent={noteContent} setNoteContent={setNoteContent} />
           ) : (
             <Paper elevation={0} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
               {activeNote?.content ? parse(activeNote.content) : 'No content'}

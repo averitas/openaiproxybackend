@@ -4,7 +4,7 @@ import React, { act, useEffect, useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { Plate } from '@udecode/plate/react';
+import { Box, Plate } from '@udecode/plate/react';
 
 import { useCreateEditor } from '@/components/editor/use-create-editor';
 import { SettingsDialog } from '@/components/editor/settings';
@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Value } from '@udecode/plate';
 
 export interface PlateEditorProps {
+  dataRegistry: string;
   noteContent: string;
   setNoteContent: (content: string) => void;
 }
@@ -66,13 +67,15 @@ export function PlateEditor(props: PlateEditorProps) {
   }
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Plate editor={editor} onValueChange={editorChangeHandler} >
-        <EditorContainer>
-          <Editor variant="demo" />
-        </EditorContainer>
-        <SettingsDialog />
-      </Plate>
-    </DndProvider>
+    <Box data-registry={props.dataRegistry}>
+      <DndProvider backend={HTML5Backend}>
+        <Plate editor={editor} onValueChange={editorChangeHandler} >
+          <EditorContainer>
+            <Editor variant="demo" />
+          </EditorContainer>
+          <SettingsDialog />
+        </Plate>
+      </DndProvider>
+    </Box>
   );
 }
