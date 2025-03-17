@@ -1,6 +1,7 @@
 'use client';
 
 import React, { memo } from 'react';
+import { Box, styled } from '@mui/material';
 
 import { withProps } from '@udecode/cn';
 import { BaseParagraphPlugin, SlateLeaf } from '@udecode/plate';
@@ -41,6 +42,14 @@ import { HeadingElementStatic } from './heading-element-static';
 import { HrElementStatic } from './hr-element-static';
 import { LinkElementStatic } from './link-element-static';
 import { ParagraphElementStatic } from './paragraph-element-static';
+
+// Use Material UI's styling system
+const EditorStaticStyled = styled(EditorStatic)(({ theme }) => ({
+  '& .ProseMirror': {
+    padding: theme.spacing(2),
+    backgroundColor: theme.palette.background.paper,
+  }
+}));
 
 const components = {
   [BaseBlockquotePlugin.key]: BlockquoteElementStatic,
@@ -104,6 +113,10 @@ export const AIChatEditor = memo(({ content }: { content: string }) => {
   useAIChatEditor(aiEditor, content);
 
   return (
-    <EditorStatic variant="aiChat" components={components} editor={aiEditor} />
+    <Box sx={{ maxHeight: '300px', overflowY: 'auto' }}>
+      <EditorStaticStyled variant="aiChat" components={components} editor={aiEditor} />
+    </Box>
   );
 });
+
+AIChatEditor.displayName = 'AIChatEditor';

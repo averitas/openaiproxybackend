@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
+import { List, ListItem, ListItemIcon, ListItemText, ListSubheader, styled } from '@mui/material';
 
 import { type SlateEditor, NodeApi } from '@udecode/plate';
 import { AIChatPlugin, AIPlugin } from '@udecode/plate-ai/react';
@@ -25,7 +26,20 @@ import {
   X,
 } from 'lucide-react';
 
-import { CommandGroup, CommandItem } from './command';
+// Styled components for menu items
+const StyledListItem = styled(ListItem)(({ theme }) => ({
+  cursor: 'pointer',
+  borderRadius: theme.shape.borderRadius,
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  padding: theme.spacing(1, 2),
+}));
+
+const StyledListItemIcon = styled(ListItemIcon)(({ theme }) => ({
+  minWidth: '32px',
+  color: theme.palette.text.secondary,
+}));
 
 export type EditorChatState =
   | 'cursorCommand'
@@ -284,24 +298,29 @@ export const AIMenuItems = ({
   return (
     <>
       {menuGroups.map((group, index) => (
-        <CommandGroup key={index} heading={group.heading}>
+        <List 
+          key={index}
+          subheader={group.heading && 
+            <ListSubheader>{group.heading}</ListSubheader>
+          }
+          sx={{ py: 0 }}
+        >
           {group.items.map((menuItem) => (
-            <CommandItem
+            <StyledListItem
               key={menuItem.value}
-              className="[&_svg]:text-muted-foreground"
               value={menuItem.value}
-              onSelect={() => {
+              onClick={() => {
                 menuItem.onSelect?.({
                   aiEditor,
                   editor: editor,
                 });
               }}
             >
-              {menuItem.icon}
-              <span>{menuItem.label}</span>
-            </CommandItem>
+              <StyledListItemIcon>{menuItem.icon}</StyledListItemIcon>
+              <ListItemText primary={menuItem.label} />
+            </StyledListItem>
           ))}
-        </CommandGroup>
+        </List>
       ))}
     </>
   );
