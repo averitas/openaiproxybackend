@@ -173,6 +173,7 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
 
     try {
       const contentObj = JSON.parse(note.content);
+
       dfs({ children: contentObj });
       return result;
     } catch (error) {

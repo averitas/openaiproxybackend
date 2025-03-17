@@ -49,7 +49,7 @@ import { Plate } from "@udecode/plate/react";
 import { useCreateEditor } from "@/components/editor/use-create-editor";
 import { SettingsDialog } from "@/components/editor/settings";
 import { Editor, EditorContainer } from "@/components/plate-ui/editor";
-import { Value } from "@udecode/plate";
+import { type Value } from "@udecode/plate";
 
 // Dynamically import ReactQuill with SSR disabled
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
