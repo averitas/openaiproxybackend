@@ -305,15 +305,17 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
           width: incomingText ? '50%' : '100%'
         }}>
           {isEditing ? (
-            <DndProvider backend={HTML5Backend}>
-              <Plate editor={editor} onChange={editorChangeHandler}>
-                <EditorContainer>
-                  <Editor variant="demo" />
-                </EditorContainer>
+            <Box data-registry="plate">
+              <DndProvider backend={HTML5Backend}>
+                <Plate editor={editor} onChange={editorChangeHandler}>
+                  <EditorContainer>
+                    <Editor variant="demo" />
+                  </EditorContainer>
 
-                <SettingsDialog />
-              </Plate>
-            </DndProvider>
+                  <SettingsDialog />
+                </Plate>
+              </DndProvider>
+            </Box>
           ) : (
             <Paper elevation={0} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
               {parse(note.content)}
