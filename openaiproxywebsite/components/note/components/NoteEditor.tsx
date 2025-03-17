@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   AppBar,
@@ -12,50 +12,61 @@ import {
   Fab,
   Snackbar,
   Alert,
-} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import SaveIcon from '@mui/icons-material/Save';
-import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import EditIcon from '@mui/icons-material/Edit';
-import ChatIcon from '@mui/icons-material/Chat';
-import CloseIcon from '@mui/icons-material/Close';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../../../redux/store';
-import { fetchNotes, updateNote, setActiveNote, deleteNote } from '../redux/notesSlice';
-import { Note } from '../../../types/note';
-import { v4 as uuidv4 } from 'uuid';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
-import parse from 'html-react-parser';
-import NoteChatBox from './NoteChatBox';
-import { Descendant } from 'slate';
-import { deserializeHTML, serializeHTML, slateToMarkdown } from '@/tools/textEditor/html-slate-utils';
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SaveIcon from "@mui/icons-material/Save";
+import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import ChatIcon from "@mui/icons-material/Chat";
+import CloseIcon from "@mui/icons-material/Close";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "../../../redux/store";
+import {
+  fetchNotes,
+  updateNote,
+  setActiveNote,
+  deleteNote,
+} from "../redux/notesSlice";
+import { Note } from "../../../types/note";
+import { v4 as uuidv4 } from "uuid";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css";
+import parse from "html-react-parser";
+import NoteChatBox from "./NoteChatBox";
+import { Descendant } from "slate";
+import {
+  deserializeHTML,
+  serializeHTML,
+  slateToMarkdown,
+} from "@/tools/textEditor/html-slate-utils";
 
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
-import { Plate } from '@udecode/plate/react';
+import { Plate } from "@udecode/plate/react";
 
-import { useCreateEditor } from '@/components/editor/use-create-editor';
-import { SettingsDialog } from '@/components/editor/settings';
-import { Editor, EditorContainer } from '@/components/plate-ui/editor';
-import { Value } from '@udecode/plate';
+import { useCreateEditor } from "@/components/editor/use-create-editor";
+import { SettingsDialog } from "@/components/editor/settings";
+import { Editor, EditorContainer } from "@/components/plate-ui/editor";
+import { Value } from "@udecode/plate";
 
 // Dynamically import ReactQuill with SSR disabled
-const ReactQuill = dynamic(
-  () => import('react-quill'),
-  { ssr: false }
-);
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 interface NoteEditorProps {
-  noteId?: string;  // Optional for use with react-router
-  onClose?: (note?: Note) => void;  // For modal usage
-  isModal?: boolean;  // Flag to indicate if editor is in modal mode
-  useMarkdown?: boolean;  // Use markdown instead of HTML
+  noteId?: string; // Optional for use with react-router
+  onClose?: (note?: Note) => void; // For modal usage
+  isModal?: boolean; // Flag to indicate if editor is in modal mode
+  useMarkdown?: boolean; // Use markdown instead of HTML
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, isModal = false, useMarkdown = false }) => {
+const NoteEditor: React.FC<NoteEditorProps> = ({
+  noteId: propNoteId,
+  onClose,
+  isModal = false,
+  useMarkdown = false,
+}) => {
   const { noteId: routeNoteId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -71,7 +82,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
   const [note, setNote] = useState<Note | null>(null);
   const [isChatVisible, setIsChatVisible] = useState<boolean>(false);
-  const [incomingText, setIncomingText] = useState<string>('');
+  const [incomingText, setIncomingText] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -81,12 +92,12 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
 
   const editorChangeHandler = (obj) => {
     const valueJson = JSON.stringify(obj.value);
-    window.localStorage.setItem('editorContent', valueJson);
-  }
+    window.localStorage.setItem("editorContent", valueJson);
+  };
 
   const editorToJson = () => {
-    return window.localStorage.getItem('editorContent') || '[]';
-  }
+    return window.localStorage.getItem("editorContent") || "[]";
+  };
 
   const noteToEditor = (note: Note) => {
     let content = [{ children: [{ text: note.content }] }];
@@ -95,17 +106,16 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
       content = JSON.parse(note.content);
 
       if (!Array.isArray(content)) {
-        throw new Error('Invalid content format');
+        throw new Error("Invalid content format");
       }
     } catch (err) {
-      console.error('Error parsing note content:', err);
+      console.error("Error parsing note content:", err);
     }
 
     editor.children = content as unknown as Value;
-  }
+  };
 
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (notes.length === 0) {
@@ -115,7 +125,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
 
   useEffect(() => {
     if (noteId && notes.length > 0) {
-      const foundNote = notes.find(n => n.localId === noteId);
+      const foundNote = notes.find((n) => n.localId === noteId);
       if (foundNote) {
         setNote(foundNote);
         dispatch(setActiveNote(foundNote));
@@ -124,10 +134,10 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
         // If note not found, create a new one
         const newNote: Note = {
           localId: uuidv4(),
-          title: 'Untitled Note',
-          content: '<p>Start writing here...</p>',
+          title: "Untitled Note",
+          content: "<p>Start writing here...</p>",
           date: new Date().toISOString(),
-          isDraft: true
+          isDraft: true,
         };
         setNote(newNote);
         dispatch(setActiveNote(newNote));
@@ -146,7 +156,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
         ...note,
         date: new Date().toISOString(),
         isDraft: false,
-        content: newContent
+        content: newContent,
       };
 
       dispatch(updateNote(updatedNote))
@@ -155,7 +165,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
           if (isModal && onClose) {
             onClose();
           } else {
-            navigate('/');
+            navigate("/");
           }
         })
         .catch((err) => {
@@ -170,20 +180,22 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
   const handleDelete = () => {
     if (note) {
       setIsDeleting(true);
-      dispatch(deleteNote({
-        localId: note.localId,
-        remoteId: note.remoteId
-      }))
+      dispatch(
+        deleteNote({
+          localId: note.localId,
+          remoteId: note.remoteId,
+        })
+      )
         .unwrap()
         .then(() => {
           if (isModal && onClose) {
             onClose();
           } else {
-            navigate('/');
+            navigate("/");
           }
         })
         .catch((err) => {
-          setError(`Failed to delete: ${err.message || 'Unknown error'}`);
+          setError(`Failed to delete: ${err.message || "Unknown error"}`);
         })
         .finally(() => {
           setIsDeleting(false);
@@ -198,19 +210,19 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
         onClose(note);
       } else {
         handleSave();
-        navigate('/');
+        navigate("/");
       }
     } else {
       if (isModal && onClose) {
         onClose();
       } else {
-        navigate('/');
+        navigate("/");
       }
     }
   };
 
   const toggleEditingMode = () => {
-    setIsEditing(prev => !prev);
+    setIsEditing((prev) => !prev);
   };
 
   const toggleChat = () => {
@@ -219,7 +231,14 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
 
   if (loading && !note) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -230,13 +249,15 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
   }
 
   return (
-    <Box sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: isModal ? '100%' : '100vh',
-      bgcolor: 'background.paper',
-      borderRadius: isModal ? 1 : 0
-    }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: isModal ? "100%" : "100vh",
+        bgcolor: "background.paper",
+        borderRadius: isModal ? 1 : 0,
+      }}
+    >
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -255,22 +276,22 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
               onChange={(e) => setNote({ ...note, title: e.target.value })}
               onBlur={() => setIsEditingTitle(false)}
               onKeyPress={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   setIsEditingTitle(false);
                 }
               }}
               defaultValue={"Enter title here"}
               variant="standard"
-              sx={{ flexGrow: 1, color: 'white' }}
+              sx={{ flexGrow: 1, color: "white" }}
               InputProps={{
-                sx: { color: 'white', fontSize: '1.25rem' }
+                sx: { color: "white", fontSize: "1.25rem" },
               }}
             />
           ) : (
             <Typography
               variant="h6"
               component="div"
-              sx={{ flexGrow: 1, cursor: 'pointer' }}
+              sx={{ flexGrow: 1, cursor: "pointer" }}
               onClick={() => setIsEditingTitle(true)}
             >
               {note.title || "Untitled Note"}
@@ -278,7 +299,11 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
           )}
 
           <IconButton color="inherit" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? <CircularProgress color="inherit" size={24} /> : <SaveIcon />}
+            {isSaving ? (
+              <CircularProgress color="inherit" size={24} />
+            ) : (
+              <SaveIcon />
+            )}
           </IconButton>
 
           <IconButton color="inherit" onClick={toggleEditingMode}>
@@ -291,19 +316,23 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
         </Toolbar>
       </AppBar>
 
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        flexGrow: 1,
-        overflow: 'hidden'
-      }}>
-        <Box sx={{
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
           flexGrow: 1,
-          p: 2,
-          overflow: 'auto',
-          height: '100%',
-          width: incomingText ? '50%' : '100%'
-        }}>
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            flexGrow: 1,
+            p: 2,
+            overflow: "auto",
+            height: "100%",
+            width: incomingText ? "50%" : "100%",
+          }}
+        >
           {isEditing ? (
             <Box data-registry="plate">
               <DndProvider backend={HTML5Backend}>
@@ -317,15 +346,21 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
               </DndProvider>
             </Box>
           ) : (
-            <Paper elevation={0} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
+            <Paper
+              elevation={0}
+              sx={{ p: 2, height: "100%", overflow: "auto" }}
+            >
               {parse(note.content)}
             </Paper>
           )}
         </Box>
 
         {incomingText && (
-          <Box sx={{ width: '50%', p: 2, overflow: 'auto', height: '100%' }}>
-            <Paper elevation={1} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
+          <Box sx={{ width: "50%", p: 2, overflow: "auto", height: "100%" }}>
+            <Paper
+              elevation={1}
+              sx={{ p: 2, height: "100%", overflow: "auto" }}
+            >
               {parse(incomingText)}
             </Paper>
           </Box>
@@ -335,11 +370,15 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
       <Fab
         color="secondary"
         aria-label="delete"
-        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        sx={{ position: "absolute", bottom: 16, right: 16 }}
         onClick={handleDelete}
         disabled={isDeleting}
       >
-        {isDeleting ? <CircularProgress color="inherit" size={24} /> : <DeleteIcon />}
+        {isDeleting ? (
+          <CircularProgress color="inherit" size={24} />
+        ) : (
+          <DeleteIcon />
+        )}
       </Fab>
 
       <NoteChatBox
