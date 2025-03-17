@@ -1,48 +1,43 @@
 'use client';
 
 import React, { useState } from 'react';
-
 import type { Value } from '@udecode/plate';
-
-import { cn } from '@udecode/cn';
 import { CommentsPlugin } from '@udecode/plate-comments/react';
 import { Plate, useEditorPlugin, useStoreValue } from '@udecode/plate/react';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import {
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
-  format,
-} from 'date-fns';
+  Check as CheckIcon,
+  MoreHoriz as MoreHorizontalIcon,
+  Edit as PencilIcon,
+  Delete as TrashIcon,
+  Close as XIcon,
+} from '@mui/icons-material';
 import {
-  CheckIcon,
-  MoreHorizontalIcon,
-  PencilIcon,
-  TrashIcon,
-  XIcon,
-} from 'lucide-react';
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  Box,
+} from '@mui/material';
 
-import { Avatar, AvatarFallback, AvatarImage } from './avatar';
 import {
   discussionStore,
   useFakeCurrentUserId,
   useFakeUserInfo,
 } from './block-discussion';
-import { Button } from './button';
 import { useCommentEditor } from './comment-create-form';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './dropdown-menu';
 import { Editor, EditorContainer } from './editor';
 
+dayjs.extend(relativeTime);
+
 export const formatCommentDate = (date: Date) => {
-  const now = new Date();
-  const diffMinutes = differenceInMinutes(now, date);
-  const diffHours = differenceInHours(now, date);
-  const diffDays = differenceInDays(now, date);
+  const now = dayjs();
+  const commentDate = dayjs(date);
+  const diffMinutes = now.diff(commentDate, 'minute');
+  const diffHours = now.diff(commentDate, 'hour');
+  const diffDays = now.diff(commentDate, 'day');
 
   if (diffMinutes < 60) {
     return `${diffMinutes}m`;
@@ -54,7 +49,7 @@ export const formatCommentDate = (date: Date) => {
     return `${diffDays}d`;
   }
 
-  return format(date, 'MM/dd/yyyy');
+  return commentDate.format('MM/DD/YYYY');
 };
 
 export interface TComment {
@@ -86,7 +81,6 @@ export function Comment(props: {
     showDocumentContent = false,
     onEditorClick,
   } = props;
-  // const { user } = comment;
 
   const discussions = useStoreValue(discussionStore, 'discussions');
   const userInfo = useFakeUserInfo(comment.userId);
@@ -137,7 +131,6 @@ export function Comment(props: {
 
   const { tf } = useEditorPlugin(CommentsPlugin);
 
-  // Replace to your own backend or refer to potion
   const isMyComment = currentUserId === comment.userId;
 
   const initialValue = comment.contentRich;
@@ -173,82 +166,106 @@ export function Comment(props: {
     tf.comment.unsetMark({ id: comment.discussionId });
   };
 
+  const onRemoveComment = () => {
+    if (discussionLength === 1) {
+      tf.comment.unsetMark({ id: comment.discussionId });
+      void removeDiscussion(comment.discussionId);
+    }
+  };
+
   const isFirst = index === 0;
   const isLast = index === discussionLength - 1;
   const isEditing = editingId && editingId === comment.id;
 
   const [hovering, setHovering] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorEl);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <div
+    <Box
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
+      sx={{ position: 'relative', mb: 2 }}
     >
-      <div className="relative flex items-center">
-        <Avatar className="size-6">
-          <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
-          <AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
+      <Box display="flex" alignItems="center">
+        <Avatar src={userInfo?.avatarUrl} sx={{ width: 24, height: 24 }}>
+          {userInfo?.name?.[0]}
         </Avatar>
-        <h4 className="mx-2 text-sm leading-none font-semibold">
-          {/* Replace to your own backend or refer to potion */}
+        <Typography variant="subtitle2" sx={{ mx: 1 }}>
           {userInfo?.name}
-        </h4>
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {formatCommentDate(comment.createdAt)}
+          {comment.isEdited && ' (edited)'}
+        </Typography>
 
-        <div className="text-xs leading-none text-muted-foreground/80">
-          <span className="mr-1">
-            {formatCommentDate(new Date(comment.createdAt))}
-          </span>
-          {comment.isEdited && <span>(edited)</span>}
-        </div>
-
-        {isMyComment && (hovering || dropdownOpen) && (
-          <div className="absolute top-0 right-0 flex space-x-1">
+        {isMyComment && (hovering || openMenu) && (
+          <Box sx={{ position: 'absolute', top: 0, right: 0 }}>
             {index === 0 && (
-              <Button
-                variant="ghost"
-                className="h-6 p-1 text-muted-foreground"
-                onClick={onResolveComment}
-                type="button"
-              >
-                <CheckIcon className="size-4" />
-              </Button>
+              <IconButton size="small" onClick={onResolveComment}>
+                <CheckIcon fontSize="small" />
+              </IconButton>
             )}
-
-            <CommentMoreDropdown
-              onCloseAutoFocus={() => {
-                setTimeout(() => {
-                  commentEditor.tf.focus({ edge: 'endEditor' });
-                }, 0);
-              }}
-              onRemoveComment={() => {
-                if (discussionLength === 1) {
-                  tf.comment.unsetMark({ id: comment.discussionId });
-                  void removeDiscussion(comment.discussionId);
-                }
-              }}
-              comment={comment}
-              dropdownOpen={dropdownOpen}
-              setDropdownOpen={setDropdownOpen}
-              setEditingId={setEditingId}
-            />
-          </div>
+            <IconButton size="small" onClick={handleMenuOpen}>
+              <MoreHorizontalIcon fontSize="small" />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={openMenu}
+              onClose={handleMenuClose}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MenuItem
+                onClick={() => {
+                  setEditingId(comment.id);
+                  handleMenuClose();
+                }}
+              >
+                <PencilIcon fontSize="small" sx={{ mr: 1 }} />
+                Edit comment
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  onRemoveComment?.();
+                  handleMenuClose();
+                }}
+              >
+                <TrashIcon fontSize="small" sx={{ mr: 1 }} />
+                Delete comment
+              </MenuItem>
+            </Menu>
+          </Box>
         )}
-      </div>
+      </Box>
 
-      {isFirst && showDocumentContent && (
-        <div className="text-subtle-foreground relative mt-1 flex pl-[32px] text-sm">
-          {discussionLength > 1 && (
-            <div className="absolute top-[5px] left-3 h-full w-0.5 shrink-0 bg-muted" />
-          )}
-          <div className="my-px w-0.5 shrink-0 bg-highlight" />
-          {documentContent && <div className="ml-2">{documentContent}</div>}
-        </div>
+      {isFirst && showDocumentContent && documentContent && (
+        <Box sx={{ pl: 4, mt: 1, borderLeft: '2px solid', borderColor: 'divider' }}>
+          <Typography variant="body2" color="text.secondary">
+            {documentContent}
+          </Typography>
+        </Box>
       )}
 
-      <div className="relative my-1 pl-[26px]">
+      <Box sx={{ pl: 4, mt: 1, position: 'relative' }}>
         {!isLast && (
-          <div className="absolute top-0 left-3 h-full w-0.5 shrink-0 bg-muted" />
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 12,
+              height: '100%',
+              width: '2px',
+              bgcolor: 'divider',
+            }}
+          />
         )}
         <Plate readOnly={!isEditing} editor={commentEditor}>
           <EditorContainer variant="comment">
@@ -257,139 +274,19 @@ export function Comment(props: {
               className="w-auto grow"
               onClick={() => onEditorClick?.()}
             />
-
             {isEditing && (
-              <div className="ml-auto flex shrink-0 gap-1">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="size-[28px]"
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.stopPropagation();
-                    void onCancel();
-                  }}
-                >
-                  <div className="flex size-5 shrink-0 items-center justify-center rounded-[50%] bg-primary/40">
-                    <XIcon className="size-3 stroke-[3px] text-background" />
-                  </div>
-                </Button>
-
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.stopPropagation();
-                    void onSave();
-                  }}
-                >
-                  <div className="flex size-5 shrink-0 items-center justify-center rounded-[50%] bg-brand">
-                    <CheckIcon className="size-3 stroke-[3px] text-background" />
-                  </div>
-                </Button>
-              </div>
+              <Box sx={{ ml: 'auto', display: 'flex', gap: 1 }}>
+                <IconButton size="small" onClick={onCancel}>
+                  <XIcon fontSize="small" />
+                </IconButton>
+                <IconButton size="small" color="primary" onClick={onSave}>
+                  <CheckIcon fontSize="small" />
+                </IconButton>
+              </Box>
             )}
           </EditorContainer>
         </Plate>
-      </div>
-    </div>
-  );
-}
-interface CommentMoreDropdownProps {
-  comment: TComment;
-  dropdownOpen: boolean;
-  setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setEditingId: React.Dispatch<React.SetStateAction<string | null>>;
-  onCloseAutoFocus?: () => void;
-  onRemoveComment?: () => void;
-}
-
-export function CommentMoreDropdown(props: CommentMoreDropdownProps) {
-  const {
-    comment,
-    dropdownOpen,
-    setDropdownOpen,
-    setEditingId,
-    onCloseAutoFocus,
-    onRemoveComment,
-  } = props;
-
-  const discussions = useStoreValue(discussionStore, 'discussions');
-
-  const selectedEditCommentRef = React.useRef<boolean>(false);
-
-  const onDeleteComment = React.useCallback(() => {
-    if (!comment.id)
-      return alert('You are operating too quickly, please try again later.');
-
-    // Find and update the discussion
-    const updatedDiscussions = discussions.map((discussion: any) => {
-      if (discussion.id !== comment.discussionId) {
-        return discussion;
-      }
-
-      const commentIndex = discussion.comments.findIndex(
-        (c: any) => c.id === comment.id
-      );
-      if (commentIndex === -1) {
-        return discussion;
-      }
-
-      return {
-        ...discussion,
-        comments: [
-          ...discussion.comments.slice(0, commentIndex),
-          ...discussion.comments.slice(commentIndex + 1),
-        ],
-      };
-    });
-
-    // Save back to session storage
-    discussionStore.set('discussions', updatedDiscussions);
-    onRemoveComment?.();
-  }, [comment.discussionId, comment.id, discussions, onRemoveComment]);
-
-  const onEditComment = React.useCallback(() => {
-    selectedEditCommentRef.current = true;
-
-    if (!comment.id)
-      return alert('You are operating too quickly, please try again later.');
-
-    setEditingId(comment.id);
-  }, [comment.id, setEditingId]);
-
-  return (
-    <DropdownMenu
-      open={dropdownOpen}
-      onOpenChange={setDropdownOpen}
-      modal={false}
-    >
-      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-        <Button variant="ghost" className={cn('h-6 p-1 text-muted-foreground')}>
-          <MoreHorizontalIcon className="size-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-48"
-        onCloseAutoFocus={(e) => {
-          if (selectedEditCommentRef.current) {
-            onCloseAutoFocus?.();
-            selectedEditCommentRef.current = false;
-          }
-
-          return e.preventDefault();
-        }}
-      >
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={onEditComment}>
-            <PencilIcon className="size-4" />
-            Edit comment
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={onDeleteComment}>
-            <TrashIcon className="size-4" />
-            Delete comment
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </Box>
+    </Box>
   );
 }
