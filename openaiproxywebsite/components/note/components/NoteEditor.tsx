@@ -31,10 +31,10 @@ import parse from 'html-react-parser';
 import NoteChatBox from './NoteChatBox';
 import { Descendant } from 'slate';
 
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
-import { Plate } from '@udecode/plate/react';
+import { Plate } from "@udecode/plate/react";
 
 import { useCreateEditor } from '@/components/editor/use-create-editor';
 import { SettingsDialog } from '@/components/editor/settings';
@@ -43,10 +43,7 @@ import { Value } from '@udecode/plate';
 import { PlateEditor } from '@/components/editor/plate-editor';
 
 // Dynamically import ReactQuill with SSR disabled
-const ReactQuill = dynamic(
-  () => import('react-quill'),
-  { ssr: false }
-);
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 interface NoteEditorProps {
   onClose?: (note?: Note) => void;  // For modal usage
@@ -68,14 +65,13 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(true);
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
   const [isChatVisible, setIsChatVisible] = useState<boolean>(false);
-  const [incomingText, setIncomingText] = useState<string>('');
+  const [incomingText, setIncomingText] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [noteContent, setNoteContent] = useState<string>(activeNote?.content || '');
   const [insiderSaving, setInsideSaving] = useState<boolean>(false);
 
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (notes.length === 0) {
@@ -106,7 +102,7 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
           if (props.isModal && props.onClose) {
             props.onClose(updatedNote);
           } else {
-            navigate('/');
+            navigate("/");
           }
         })
         .catch((err) => {
@@ -122,20 +118,22 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
   const handleDelete = () => {
     if (activeNote) {
       setIsDeleting(true);
-      dispatch(deleteNote({
-        localId: activeNote.localId,
-        remoteId: activeNote.remoteId
-      }))
+      dispatch(
+        deleteNote({
+          localId: activeNote.localId,
+          remoteId: activeNote.remoteId,
+        })
+      )
         .unwrap()
         .then(() => {
           if (props.isModal && props.onClose) {
             props.onClose();
           } else {
-            navigate('/');
+            navigate("/");
           }
         })
         .catch((err) => {
-          setError(`Failed to delete: ${err.message || 'Unknown error'}`);
+          setError(`Failed to delete: ${err.message || "Unknown error"}`);
         })
         .finally(() => {
           setIsDeleting(false);
@@ -157,19 +155,19 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
         props.onClose(updatedNote);
       } else {
         handleSave();
-        navigate('/');
+        navigate("/");
       }
     } else {
       if (props.isModal && props.onClose) {
         props.onClose();
       } else {
-        navigate('/');
+        navigate("/");
       }
     }
   };
 
   const toggleEditingMode = () => {
-    setIsEditing(prev => !prev);
+    setIsEditing((prev) => !prev);
   };
 
   const toggleChat = () => {
@@ -178,7 +176,14 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
 
   if (loading && !activeNote) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -214,22 +219,22 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
               onChange={(e) => dispatch(setActiveNote({ ...activeNote, title: e.target.value }))}
               onBlur={() => setIsEditingTitle(false)}
               onKeyPress={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   setIsEditingTitle(false);
                 }
               }}
               defaultValue={"Enter title here"}
               variant="standard"
-              sx={{ flexGrow: 1, color: 'white' }}
+              sx={{ flexGrow: 1, color: "white" }}
               InputProps={{
-                sx: { color: 'white', fontSize: '1.25rem' }
+                sx: { color: "white", fontSize: "1.25rem" },
               }}
             />
           ) : (
             <Typography
               variant="h6"
               component="div"
-              sx={{ flexGrow: 1, cursor: 'pointer' }}
+              sx={{ flexGrow: 1, cursor: "pointer" }}
               onClick={() => setIsEditingTitle(true)}
             >
               {activeNote.title || "Untitled Note"}
@@ -237,7 +242,11 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
           )}
 
           <IconButton color="inherit" onClick={handleSave} disabled={props.isSaving}>
-            {props.isSaving || insiderSaving ? <CircularProgress color="inherit" size={24} /> : <SaveIcon />}
+            {props.isSaving ? (
+              <CircularProgress color="inherit" size={24} />
+            ) : (
+              <SaveIcon />
+            )}
           </IconButton>
 
           <IconButton color="inherit" onClick={toggleEditingMode}>
@@ -250,19 +259,23 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
         </Toolbar>
       </AppBar>
 
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        flexGrow: 1,
-        overflow: 'hidden'
-      }}>
-        <Box sx={{
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
           flexGrow: 1,
-          p: 2,
-          overflow: 'auto',
-          height: '100%',
-          width: incomingText ? '50%' : '100%'
-        }}>
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            flexGrow: 1,
+            p: 2,
+            overflow: "auto",
+            height: "100%",
+            width: incomingText ? "50%" : "100%",
+          }}
+        >
           {isEditing ? (
             <PlateEditor data-registry="plate" noteContent={noteContent} setNoteContent={setNoteContent} />
           ) : (
@@ -273,8 +286,11 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
         </Box>
 
         {incomingText && (
-          <Box sx={{ width: '50%', p: 2, overflow: 'auto', height: '100%' }}>
-            <Paper elevation={1} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
+          <Box sx={{ width: "50%", p: 2, overflow: "auto", height: "100%" }}>
+            <Paper
+              elevation={1}
+              sx={{ p: 2, height: "100%", overflow: "auto" }}
+            >
               {parse(incomingText)}
             </Paper>
           </Box>
@@ -284,11 +300,15 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
       <Fab
         color="secondary"
         aria-label="delete"
-        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        sx={{ position: "absolute", bottom: 16, right: 16 }}
         onClick={handleDelete}
         disabled={isDeleting}
       >
-        {isDeleting ? <CircularProgress color="inherit" size={24} /> : <DeleteIcon />}
+        {isDeleting ? (
+          <CircularProgress color="inherit" size={24} />
+        ) : (
+          <DeleteIcon />
+        )}
       </Fab>
 
       <NoteChatBox
