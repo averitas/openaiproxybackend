@@ -1,8 +1,6 @@
 'use client';
 
-import React from 'react';
-
-import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
+import React, { useState } from 'react';
 
 import { BlockquotePlugin } from '@udecode/plate-block-quote/react';
 import { CodeBlockPlugin } from '@udecode/plate-code-block/react';
@@ -49,20 +47,23 @@ import {
   TableOfContentsIcon,
 } from 'lucide-react';
 
+// Material UI imports
+import { 
+  Button,
+  IconButton, 
+  Menu, 
+  MenuItem, 
+  ListItemIcon, 
+  ListItemText,
+  Typography,
+  Divider
+} from '@mui/material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+
 import {
   insertBlock,
   insertInlineElement,
 } from '@/components/editor/transforms';
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  useOpenState,
-} from './dropdown-menu';
-import { ToolbarButton } from './toolbar';
 
 type Group = {
   group: string;
@@ -238,40 +239,85 @@ const groups: Group[] = [
   },
 ];
 
-export function InsertDropdownMenu(props: DropdownMenuProps) {
+export function InsertDropdownMenu() {
   const editor = useEditorRef();
-  const openState = useOpenState();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <DropdownMenu modal={false} {...openState} {...props}>
-      <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={openState.open} tooltip="Insert" isDropdown>
-          <PlusIcon />
-        </ToolbarButton>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent
-        className="flex max-h-[500px] min-w-0 flex-col overflow-y-auto"
-        align="start"
+    <>
+      <IconButton
+        aria-label="Insert"
+        aria-controls={open ? 'insert-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+        size="small"
+        sx={{
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 1,
+          padding: '4px',
+          '&:hover': {
+            backgroundColor: 'action.hover',
+          },
+        }}
       >
-        {groups.map(({ group, items: nestedItems }) => (
-          <DropdownMenuGroup key={group} label={group}>
+        <PlusIcon />
+        <ArrowDropDownIcon fontSize="small" />
+      </IconButton>
+
+      <Menu
+        id="insert-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'insert-button',
+          sx: { maxHeight: '500px', overflow: 'auto', minWidth: '180px' }
+        }}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        {groups.map(({ group, items: nestedItems }, groupIndex) => (
+          <React.Fragment key={group}>
+            {groupIndex > 0 && <Divider />}
+            <Typography variant="caption" sx={{ px: 2, pt: 1, pb: 0.5, display: 'block', color: 'text.secondary' }}>
+              {group}
+            </Typography>
             {nestedItems.map(({ icon, label, value, onSelect }) => (
-              <DropdownMenuItem
+              <MenuItem 
                 key={value}
-                className="min-w-[180px]"
-                onSelect={() => {
+                onClick={() => {
                   onSelect(editor, value);
                   editor.tf.focus();
+                  handleClose();
                 }}
+                sx={{ minWidth: '180px' }}
               >
-                {icon}
-                {label}
-              </DropdownMenuItem>
+                <ListItemIcon sx={{ minWidth: '24px', mr: 1 }}>
+                  {icon}
+                </ListItemIcon>
+                <ListItemText>{label}</ListItemText>
+              </MenuItem>
             ))}
-          </DropdownMenuGroup>
+          </React.Fragment>
         ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </Menu>
+    </>
   );
 }
