@@ -37,7 +37,7 @@ export function FloatingToolbarButtons() {
       {!readOnly && (
         <>
           <ToolbarGroup>
-            <AIToolbarButton tooltip="AI commands">
+            <AIToolbarButton name="AI commands">
               <WandSparklesIcon />
               Ask AI
             </AIToolbarButton>

@@ -1,15 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { 
-  Popover, 
-  TextField, 
-  Box, 
-  Paper, 
-  Typography, 
-  CircularProgress, 
-  styled 
-} from '@mui/material';
 
 import { type NodeEntry, isHotkey } from '@udecode/plate';
 import {
@@ -26,44 +17,14 @@ import {
   useHotkeys,
   usePluginOption,
 } from '@udecode/plate/react';
+import { Loader2Icon } from 'lucide-react';
 
 import { useChat } from '@/components/editor/use-chat';
 
 import { AIChatEditor } from './ai-chat-editor';
 import { AIMenuItems } from './ai-menu-items';
-
-// Styled components
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  width: '100%',
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: theme.shadows[3],
-  overflow: 'hidden',
-}));
-
-// Fix: Use Box instead of non-existent Command component
-const CommandContainer = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-});
-
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: 0,
-    borderBottom: '1px solid',
-    borderBottomColor: theme.palette.divider,
-    '& fieldset': {
-      border: 'none',
-    },
-  }
-}));
-
-const LoaderContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: theme.spacing(1),
-  padding: theme.spacing(1),
-}));
+import { Command, CommandList, InputCommand } from './command';
+import { Popover, PopoverAnchor, PopoverContent } from './popover';
 
 export function AIMenu() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
@@ -75,9 +36,7 @@ export function AIMenu() {
 
   const chat = useChat();
 
-  // Fix: Store isLoading in a local variable to avoid deprecation warning
-  const { input, messages, setInput } = chat;
-  const isLoading = chat.isLoading;
+  const { input, isLoading, messages, setInput } = chat;
   const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(
     null
   );
@@ -132,85 +91,71 @@ export function AIMenu() {
     { enableOnContentEditable: true, enableOnFormTags: true }
   );
 
-  // Calculate anchorEl position for the popover
-  const anchorPosition = React.useMemo(() => {
-    if (!anchorElement) return undefined;
-    
-    return {
-      top: anchorElement.getBoundingClientRect().bottom,
-      left: anchorElement.getBoundingClientRect().left,
-    };
-  }, [anchorElement]);
-
   return (
-    <Popover
-      open={Boolean(open && anchorElement)}
-      anchorReference="anchorPosition"
-      anchorPosition={anchorPosition}
-      onClose={() => setOpen(false)}
-      // Fix: Replace deprecated PaperProps with slotProps
-      slotProps={{
-        paper: {
-          sx: {
-            width: anchorElement?.offsetWidth || 'auto',
-            backgroundColor: 'transparent',
-            boxShadow: 'none',
-            overflow: 'visible',
+    <Popover open={open} onOpenChange={setOpen} modal={false}>
+      <PopoverAnchor virtualRef={{ current: anchorElement! }} />
+
+      <PopoverContent
+        className="border-none bg-transparent p-0 shadow-none"
+        style={{
+          width: anchorElement?.offsetWidth,
+        }}
+        onEscapeKeyDown={(e) => {
+          e.preventDefault();
+
+          if (isLoading) {
+            api.aiChat.stop();
+          } else {
+            api.aiChat.hide();
           }
-        }
-      }}
-      sx={{
-        pointerEvents: 'none',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'center',
-      }}
-      keepMounted
-    >
-      <StyledPaper sx={{ pointerEvents: 'auto' }}>
-        {/* Fix: Remove value and onChange from CommandContainer */}
-        <CommandContainer>
-          <Box>
-            {mode === 'chat' && isSelecting && content && (
-              <AIChatEditor content={content} />
-            )}
+        }}
+        align="center"
+        // avoidCollisions={false}
+        side="bottom"
+      >
+        <Command
+          className="w-full rounded-lg border shadow-md"
+          value={value}
+          onValueChange={setValue}
+        >
+          {mode === 'chat' && isSelecting && content && (
+            <AIChatEditor content={content} />
+          )}
 
-            {isLoading ? (
-              <LoaderContainer>
-                <CircularProgress size={16} />
-                <Typography variant="body2" color="textSecondary">
-                  {messages.length > 1 ? 'Editing...' : 'Thinking...'}
-                </Typography>
-              </LoaderContainer>
-            ) : (
-              <StyledTextField
-                variant="outlined"
-                fullWidth
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (isHotkey('backspace')(e as any) && input.length === 0) {
-                    e.preventDefault();
-                    api.aiChat.hide();
-                  }
-                  if (isHotkey('enter')(e as any) && !e.shiftKey && !value) {
-                    e.preventDefault();
-                    void api.aiChat.submit();
-                  }
-                }}
-                placeholder="Ask AI anything..."
-                autoFocus
-                InputProps={{
-                  sx: { px: 2, py: 1 }
-                }}
-              />
-            )}
-          </Box>
+          {isLoading ? (
+            <div className="flex grow items-center gap-2 p-2 text-sm text-muted-foreground select-none">
+              <Loader2Icon className="size-4 animate-spin" />
+              {messages.length > 1 ? 'Editing...' : 'Thinking...'}
+            </div>
+          ) : (
+            <InputCommand
+              variant="ghost"
+              className="rounded-none border-b border-solid border-border [&_svg]:hidden"
+              value={input}
+              onKeyDown={(e) => {
+                if (isHotkey('backspace')(e) && input.length === 0) {
+                  e.preventDefault();
+                  api.aiChat.hide();
+                }
+                if (isHotkey('enter')(e) && !e.shiftKey && !value) {
+                  e.preventDefault();
+                  void api.aiChat.submit();
+                }
+              }}
+              onValueChange={setInput}
+              placeholder="Ask AI anything..."
+              data-plate-focus
+              autoFocus
+            />
+          )}
 
-          {!isLoading && <AIMenuItems setValue={setValue} />}
-        </CommandContainer>
-      </StyledPaper>
+          {!isLoading && (
+            <CommandList>
+              <AIMenuItems setValue={setValue} />
+            </CommandList>
+          )}
+        </Command>
+      </PopoverContent>
     </Popover>
   );
 }

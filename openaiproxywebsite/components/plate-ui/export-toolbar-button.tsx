@@ -120,13 +120,18 @@ import {
 import { EditorStatic } from './editor-static';
 import { EquationElementStatic } from './equation-element-static';
 import { InlineEquationElementStatic } from './inline-equation-element-static';
-import { ToolbarButton } from './toolbar';
+import { ToolbarButton, ToolbarSplitButton, ToolbarSplitButtonPrimary, ToolbarSplitButtonSecondary } from './toolbar';
 
 const siteUrl = 'https://platejs.org';
 
 export function ExportToolbarButton({ children, ...props }: DropdownMenuProps) {
   const editor = useEditorRef();
   const openState = useOpenState();
+
+  // Log state changes
+  React.useEffect(() => {
+    console.log('Export dropdown open state:', openState.open);
+  }, [openState.open]);
 
   const getCanvas = async () => {
     const { default: html2canvas } = await import('html2canvas');
@@ -367,29 +372,36 @@ export function ExportToolbarButton({ children, ...props }: DropdownMenuProps) {
   };
 
   return (
-    <DropdownMenu modal={false} {...openState} {...props}>
-      <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={openState.open} tooltip="Export" isDropdown>
-          <ArrowDownToLineIcon className="size-4" />
-        </ToolbarButton>
-      </DropdownMenuTrigger>
+    <ToolbarSplitButton pressed={openState.open}>
+      <ToolbarSplitButtonPrimary
+        tooltip="Export"
+        onClick={exportToHtml} // Default action for primary button
+      >
+        <ArrowDownToLineIcon className="size-4" />
+      </ToolbarSplitButtonPrimary>
 
-      <DropdownMenuContent align="start">
-        <DropdownMenuGroup>
-          <DropdownMenuItem onSelect={exportToHtml}>
-            Export as HTML
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={exportToPdf}>
-            Export as PDF
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={exportToImage}>
-            Export as Image
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={exportToMarkdown}>
-            Export as Markdown
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      <DropdownMenu {...openState} modal={false}>
+        <DropdownMenuTrigger asChild>
+          <ToolbarSplitButtonSecondary />
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent align="start" alignOffset={-32}>
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={exportToHtml}>
+              Export as HTML
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={exportToPdf}>
+              Export as PDF
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={exportToImage}>
+              Export as Image
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={exportToMarkdown}>
+              Export as Markdown
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </ToolbarSplitButton>
   );
 }

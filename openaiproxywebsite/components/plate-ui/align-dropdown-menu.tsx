@@ -1,9 +1,7 @@
 'use client';
 
-import React from 'react';
-
-import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
-
+import React, { useState } from 'react';
+import { Button, Menu, MenuItem, Tooltip } from '@mui/material';
 import { setAlign } from '@udecode/plate-alignment';
 import { useEditorRef, useSelectionFragmentProp } from '@udecode/plate/react';
 import {
@@ -14,16 +12,6 @@ import {
 } from 'lucide-react';
 
 import { STRUCTURAL_TYPES } from '@/components/editor/transforms';
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-  useOpenState,
-} from './dropdown-menu';
-import { ToolbarButton } from './toolbar';
 
 const items = [
   {
@@ -44,41 +32,77 @@ const items = [
   },
 ];
 
-export function AlignDropdownMenu({ children, ...props }: DropdownMenuProps) {
+export function AlignDropdownMenu({  ...props }) {
   const editor = useEditorRef();
   const value = useSelectionFragmentProp({
     defaultValue: 'start',
     structuralTypes: STRUCTURAL_TYPES,
     getProp: (node) => node.align,
   });
-
-  const openState = useOpenState();
-  const IconValue =
-    items.find((item) => item.value === value)?.icon ?? AlignLeftIcon;
+  
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  
+  const IconValue = items.find((item) => item.value === value)?.icon ?? AlignLeftIcon;
+  
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  
+  const handleMenuItemClick = (itemValue) => {
+    setAlign(editor, { value: itemValue });
+    editor.tf.focus();
+    handleClose();
+  };
 
   return (
-    <DropdownMenu modal={false} {...openState} {...props}>
-      <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={openState.open} tooltip="Align" isDropdown>
-          <IconValue />
-        </ToolbarButton>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent className="min-w-0" align="start">
-        <DropdownMenuRadioGroup
-          value={value}
-          onValueChange={(value: any) => {
-            setAlign(editor, { value: value });
-            editor.tf.focus();
+    <>
+      <Tooltip title="Align">
+        <Button
+          aria-controls={open ? 'align-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleClick}
+          sx={{ 
+            minWidth: 'auto', 
+            padding: '6px',
+            color: open ? 'primary.main' : 'inherit'
           }}
         >
-          {items.map(({ icon: Icon, value: itemValue }) => (
-            <DropdownMenuRadioItem key={itemValue} value={itemValue} hideIcon>
-              <Icon />
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <IconValue scale={0.8} />
+        </Button>
+      </Tooltip>
+      
+      <Menu
+        id="align-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'align-button',
+          sx: { display: 'flex', padding: '4px' }
+        }}
+      >
+        {items.map(({ icon: Icon, value: itemValue }) => (
+          <MenuItem 
+            key={itemValue}
+            selected={value === itemValue}
+            onClick={() => handleMenuItemClick(itemValue)}
+            sx={{ 
+              minWidth: 'auto',
+              padding: '6px',
+              marginRight: '2px',
+              borderRadius: '4px'
+            }}
+          >
+            <Icon scale={0.8} />
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
   );
 }

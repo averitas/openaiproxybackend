@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
   useOpenState,
 } from './dropdown-menu';
-import { ToolbarButton } from './toolbar';
+import { ToolbarButton, ToolbarSplitButton, ToolbarSplitButtonPrimary, ToolbarSplitButtonSecondary } from './toolbar';
 
 type ImportType = 'html' | 'markdown';
 
@@ -57,34 +57,44 @@ export function ImportToolbarButton({ children, ...props }: DropdownMenuProps) {
   });
 
   return (
-    <DropdownMenu modal={false} {...openState} {...props}>
-      <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={openState.open} tooltip="Import" isDropdown>
-          <ArrowUpToLineIcon className="size-4" />
-        </ToolbarButton>
-      </DropdownMenuTrigger>
+    <ToolbarSplitButton pressed={openState.open}>
+      <ToolbarSplitButtonPrimary
+        tooltip="Import"
+        onClick={() => {
+          setType('html');
+          openFilePicker();
+        }}
+      >
+        <ArrowUpToLineIcon className="size-4" />
+      </ToolbarSplitButtonPrimary>
 
-      <DropdownMenuContent align="start">
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            onSelect={() => {
-              setType('html');
-              openFilePicker();
-            }}
-          >
-            Import from HTML
-          </DropdownMenuItem>
+      <DropdownMenu {...openState} modal={false}>
+        <DropdownMenuTrigger asChild>
+          <ToolbarSplitButtonSecondary />
+        </DropdownMenuTrigger>
 
-          <DropdownMenuItem
-            onSelect={() => {
-              setType('markdown');
-              openFilePicker();
-            }}
-          >
-            Import from Markdown
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        <DropdownMenuContent align="start" alignOffset={-32}>
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={() => {
+                setType('html');
+                openFilePicker();
+              }}
+            >
+              Import from HTML
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => {
+                setType('markdown');
+                openFilePicker();
+              }}
+            >
+              Import from Markdown
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </ToolbarSplitButton>
   );
 }

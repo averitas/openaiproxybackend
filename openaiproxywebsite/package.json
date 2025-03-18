@@ -96,6 +96,7 @@
     "class-variance-authority": "0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "escape-html": "^1.0.3",
     "html-react-parser": "^5.2.2",

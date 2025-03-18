@@ -333,7 +333,7 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
           alignItems: "center",
           justifyContent: "center",
           // The modal content needs to be above the backdrop
-          zIndex: 1300,
+          zIndex: 2,
         }}
       >
         <Box
@@ -350,7 +350,7 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
             backgroundColor: "white",
             // Apply a higher z-index to appear above the backdrop
             position: "relative",
-            zIndex: 1301,
+            zIndex: 3,
           }}
         >
           {activeNote && (

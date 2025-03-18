@@ -1,17 +1,19 @@
 'use client';
 
 import React from 'react';
-import { IconButton } from '@mui/material';
+
 import { withRef } from '@udecode/cn';
 import { AIChatPlugin } from '@udecode/plate-ai/react';
 import { useEditorPlugin } from '@udecode/plate/react';
 
-export const AIToolbarButton = withRef<typeof IconButton>(
+import { ToolbarButton } from './toolbar';
+
+export const AIToolbarButton = withRef<typeof ToolbarButton>(
   ({ children, ...rest }, ref) => {
     const { api } = useEditorPlugin(AIChatPlugin);
 
     return (
-      <IconButton
+      <ToolbarButton
         ref={ref}
         {...rest}
         onClick={() => {
@@ -20,12 +22,9 @@ export const AIToolbarButton = withRef<typeof IconButton>(
         onMouseDown={(e) => {
           e.preventDefault();
         }}
-        size="medium"
       >
         {children}
-      </IconButton>
+      </ToolbarButton>
     );
   }
 );
-
-AIToolbarButton.displayName = 'AIToolbarButton';
