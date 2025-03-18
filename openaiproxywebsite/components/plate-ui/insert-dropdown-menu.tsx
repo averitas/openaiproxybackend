@@ -264,8 +264,12 @@ export function InsertDropdownMenu() {
         sx={{
           border: '1px solid',
           borderColor: 'divider',
-          borderRadius: 1,
           padding: '4px',
+          borderRadius: 1,
+          '& svg': {
+            width: '18px',
+            height: '18px'
+          },
           '&:hover': {
             backgroundColor: 'action.hover',
           },

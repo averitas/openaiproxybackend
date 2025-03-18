@@ -1,55 +1,101 @@
 'use client';
 
 import React from 'react';
-
-import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
-
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Tooltip,
+} from '@mui/material';
 import {
   useLineHeightDropdownMenu,
   useLineHeightDropdownMenuState,
 } from '@udecode/plate-line-height/react';
 import { WrapText } from 'lucide-react';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-  useOpenState,
-} from './dropdown-menu';
-import { ToolbarButton } from './toolbar';
-
-export function LineHeightDropdownMenu({ ...props }: DropdownMenuProps) {
-  const openState = useOpenState();
+export function LineHeightDropdownMenu() {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  
   const state = useLineHeightDropdownMenuState();
   const { radioGroupProps } = useLineHeightDropdownMenu(state);
 
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    radioGroupProps.onValueChange?.(event.target.value);
+    handleClose();
+  };
+
   return (
-    <DropdownMenu modal={false} {...openState} {...props}>
-      <DropdownMenuTrigger asChild>
-        <ToolbarButton
-          pressed={openState.open}
-          tooltip="Line height"
-          isDropdown
+    <>
+      <Tooltip title="Line height">
+        <IconButton
+          onClick={handleClick}
+          color={open ? "primary" : "default"}
+          size="small"
+          sx={{ 
+            padding: '4px',
+            '& svg': {
+              width: '18px',
+              height: '18px'
+            }
+          }}
         >
           <WrapText />
-        </ToolbarButton>
-      </DropdownMenuTrigger>
+        </IconButton>
+      </Tooltip>
 
-      <DropdownMenuContent className="min-w-0" align="start">
-        <DropdownMenuRadioGroup {...radioGroupProps}>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        <RadioGroup 
+          value={radioGroupProps.value || ''}
+          onChange={handleChange}
+        >
           {state.values.map((_value) => (
-            <DropdownMenuRadioItem
-              key={_value}
-              className="min-w-[180px]"
-              value={_value}
+            <MenuItem 
+              key={_value} 
+              sx={{ 
+                minWidth: '140px',
+                padding: '4px 8px',
+                fontSize: '0.875rem'
+              }}
             >
-              {_value}
-            </DropdownMenuRadioItem>
+              <FormControlLabel
+                value={_value}
+                control={<Radio size="small" />}
+                label={_value}
+                sx={{ 
+                  margin: 0,
+                  '& .MuiFormControlLabel-label': {
+                    fontSize: '0.875rem'
+                  }
+                }}
+              />
+            </MenuItem>
           ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </RadioGroup>
+      </Menu>
+    </>
   );
 }

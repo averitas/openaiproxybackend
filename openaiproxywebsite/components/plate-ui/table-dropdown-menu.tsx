@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Menu, MenuItem, IconButton, Box, Typography } from '@mui/material';
+import { Button, Menu, MenuItem, IconButton, Box, Typography, Tooltip } from '@mui/material';
 import { cn } from '@udecode/cn';
 import { TablePlugin, useTableMergeState } from '@udecode/plate-table/react';
 import { useEditorPlugin, useEditorSelector } from '@udecode/plate/react';
@@ -48,13 +48,23 @@ export function TableDropdownMenu() {
 
   return (
     <>
-      <IconButton
-        onClick={handleClick}
-        color={Boolean(anchorEl) ? 'primary' : 'default'}
-        size="small"
-      >
-        <Table />
-      </IconButton>
+      <Tooltip title="Table">
+        <IconButton
+          onClick={handleClick}
+          color={Boolean(anchorEl) ? 'primary' : 'default'}
+          size="small"
+          sx={{ 
+            padding: '4px',
+            '& svg': {
+              width: '18px',
+              height: '18px'
+            }
+          }}
+          title='Table'
+        >
+          <Table />
+        </IconButton>
+      </Tooltip>
 
       <Menu
         anchorEl={anchorEl}
@@ -139,7 +149,11 @@ export function TableDropdownMenu() {
                 handleClose();
               }}
               disabled={!mergeState.canMerge}
-              sx={{ minWidth: '180px' }}
+              sx={{ 
+                minWidth: '140px',
+                padding: '4px 8px',
+                fontSize: '0.875rem'
+              }}
             >
               <Combine />
               <Typography sx={{ ml: 1 }}>Merge cells</Typography>
@@ -151,7 +165,11 @@ export function TableDropdownMenu() {
                 handleClose();
               }}
               disabled={!mergeState.canSplit}
-              sx={{ minWidth: '180px' }}
+              sx={{ 
+                minWidth: '140px',
+                padding: '4px 8px',
+                fontSize: '0.875rem'
+              }}
             >
               <Ungroup />
               <Typography sx={{ ml: 1 }}>Split cell</Typography>
@@ -167,7 +185,11 @@ export function TableDropdownMenu() {
                 editor.tf.focus();
                 handleClose();
               }}
-              sx={{ minWidth: '180px' }}
+              sx={{ 
+                minWidth: '140px',
+                padding: '4px 8px',
+                fontSize: '0.875rem'
+              }}
             >
               <ArrowUp />
               <Typography sx={{ ml: 1 }}>Insert row before</Typography>
@@ -189,7 +211,11 @@ export function TableDropdownMenu() {
                 editor.tf.focus();
                 handleClose();
               }}
-              sx={{ minWidth: '180px' }}
+              sx={{ 
+                minWidth: '140px',
+                padding: '4px 8px',
+                fontSize: '0.875rem'
+              }}
             >
               <XIcon />
               <Typography sx={{ ml: 1 }}>Delete row</Typography>
@@ -205,7 +231,11 @@ export function TableDropdownMenu() {
                 editor.tf.focus();
                 handleClose();
               }}
-              sx={{ minWidth: '180px' }}
+              sx={{ 
+                minWidth: '140px',
+                padding: '4px 8px',
+                fontSize: '0.875rem'
+              }}
             >
               <ArrowLeft />
               <Typography sx={{ ml: 1 }}>Insert column before</Typography>
@@ -216,7 +246,11 @@ export function TableDropdownMenu() {
                 editor.tf.focus();
                 handleClose();
               }}
-              sx={{ minWidth: '180px' }}
+              sx={{ 
+                minWidth: '140px',
+                padding: '4px 8px',
+                fontSize: '0.875rem'
+              }}
             >
               <ArrowRight />
               <Typography sx={{ ml: 1 }}>Insert column after</Typography>
@@ -227,7 +261,11 @@ export function TableDropdownMenu() {
                 editor.tf.focus();
                 handleClose();
               }}
-              sx={{ minWidth: '180px' }}
+              sx={{ 
+                minWidth: '140px',
+                padding: '4px 8px',
+                fontSize: '0.875rem'
+              }}
             >
               <XIcon />
               <Typography sx={{ ml: 1 }}>Delete column</Typography>

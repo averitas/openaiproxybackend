@@ -56,6 +56,14 @@ export function ColorDropdownMenu({
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
         title={tooltip}
+        size="small"
+          sx={{ 
+            padding: '4px',
+            '& svg': {
+              width: '18px',
+              height: '18px'
+            }
+          }}
         {...buttonProps}
       >
         {children}

@@ -40,6 +40,14 @@ export function EmojiDropdownMenu({
         <IconButton
           onClick={handleClick}
           color={isOpen ? 'primary' : 'default'}
+          size="small"
+          sx={{ 
+            padding: '4px',
+            '& svg': {
+              width: '18px',
+              height: '18px'
+            }
+          }}
           {...props}
         >
           <Smile />

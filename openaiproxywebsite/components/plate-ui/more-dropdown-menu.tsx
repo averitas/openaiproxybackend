@@ -1,9 +1,7 @@
 'use client';
 
-import React from 'react';
-
-import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
-
+import React, { useState } from 'react';
+import { IconButton, Menu, MenuItem } from '@mui/material';
 import {
   SubscriptPlugin,
   SuperscriptPlugin,
@@ -11,76 +9,120 @@ import {
 import { KbdPlugin } from '@udecode/plate-kbd/react';
 import { useEditorRef } from '@udecode/plate/react';
 import {
-  KeyboardIcon,
-  MoreHorizontalIcon,
-  SubscriptIcon,
-  SuperscriptIcon,
-} from 'lucide-react';
+  Keyboard as KeyboardIcon,
+  MoreHoriz as MoreHorizontalIcon,
+  Subscript as SubscriptIcon,
+  Superscript as SuperscriptIcon,
+} from '@mui/icons-material';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  useOpenState,
-} from './dropdown-menu';
-import { ToolbarButton } from './toolbar';
-
-export function MoreDropdownMenu(props: DropdownMenuProps) {
+export function MoreDropdownMenu() {
   const editor = useEditorRef();
-  const openState = useOpenState();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <DropdownMenu modal={false} {...openState} {...props}>
-      <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={openState.open} tooltip="Insert">
-          <MoreHorizontalIcon />
-        </ToolbarButton>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent
-        className="ignore-click-outside/toolbar flex max-h-[500px] min-w-[180px] flex-col overflow-y-auto"
-        align="start"
+    <>
+      <IconButton
+        onClick={handleClick}
+        color={open ? 'primary' : 'default'}
+        size="small"
+        sx={{ 
+          padding: '4px',
+          '& svg': {
+            width: '18px',
+            height: '18px'
+          }
+        }}
+        aria-label="more options"
+        aria-controls={open ? 'more-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
       >
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            onSelect={() => {
-              editor.tf.toggleMark(KbdPlugin.key);
-              editor.tf.collapse({ edge: 'end' });
-              editor.tf.focus();
-            }}
-          >
-            <KeyboardIcon />
-            Keyboard input
-          </DropdownMenuItem>
+        <MoreHorizontalIcon />
+      </IconButton>
 
-          <DropdownMenuItem
-            onSelect={() => {
-              editor.tf.toggleMark(SuperscriptPlugin.key, {
-                remove: SubscriptPlugin.key,
-              });
-              editor.tf.focus();
-            }}
-          >
-            <SuperscriptIcon />
-            Superscript
-            {/* (⌘+,) */}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={() => {
-              editor.tf.toggleMark(SubscriptPlugin.key, {
-                remove: SuperscriptPlugin.key,
-              });
-              editor.tf.focus();
-            }}
-          >
-            <SubscriptIcon />
-            Subscript
-            {/* (⌘+.) */}
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      <Menu
+        id="more-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        sx={{ minWidth: '180px' }}
+      >
+        <MenuItem
+          onClick={() => {
+            editor.tf.toggleMark(KbdPlugin.key);
+            editor.tf.collapse({ edge: 'end' });
+            editor.tf.focus();
+            handleClose();
+          }}
+          sx={{ 
+            padding: '4px',
+            '& svg': {
+              width: '18px',
+              height: '18px'
+            }
+          }}
+        >
+          <KeyboardIcon sx={{ mr: 1 }} />
+          Keyboard input
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            editor.tf.toggleMark(SuperscriptPlugin.key, {
+              remove: SubscriptPlugin.key,
+            });
+            editor.tf.focus();
+            handleClose();
+          }}
+          sx={{ 
+            padding: '4px',
+            '& svg': {
+              width: '18px',
+              height: '18px'
+            }
+          }}
+        >
+          <SuperscriptIcon sx={{ mr: 1 }} />
+          Superscript
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            editor.tf.toggleMark(SubscriptPlugin.key, {
+              remove: SuperscriptPlugin.key,
+            });
+            editor.tf.focus();
+            handleClose();
+          }}
+          sx={{ 
+            padding: '4px',
+            '& svg': {
+              width: '18px',
+              height: '18px'
+            }
+          }}
+        >
+          <SubscriptIcon sx={{ mr: 1 }} />
+          Subscript
+        </MenuItem>
+      </Menu>
+    </>
   );
 }
