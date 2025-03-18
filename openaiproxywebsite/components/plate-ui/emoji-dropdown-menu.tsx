@@ -7,14 +7,14 @@ import {
   useEmojiDropdownMenuState,
 } from '@udecode/plate-emoji/react';
 import { Smile } from 'lucide-react';
+import { IconButton, Menu, Tooltip } from '@mui/material';
 
 import { emojiCategoryIcons, emojiSearchIcons } from './emoji-icons';
 import { EmojiPicker } from './emoji-picker';
-import { EmojiToolbarDropdown } from './emoji-toolbar-dropdown';
-import { ToolbarButton } from './toolbar';
+
 type EmojiDropdownMenuProps = {
   options?: EmojiDropdownMenuOptions;
-} & React.ComponentPropsWithoutRef<typeof ToolbarButton>;
+} & Omit<React.ComponentProps<typeof IconButton>, 'children'>;
 
 export function EmojiDropdownMenu({
   options,
@@ -22,27 +22,46 @@ export function EmojiDropdownMenu({
 }: EmojiDropdownMenuProps) {
   const { emojiPickerState, isOpen, setIsOpen } =
     useEmojiDropdownMenuState(options);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setIsOpen(false);
+  };
 
   return (
-    <EmojiToolbarDropdown
-      control={
-        <ToolbarButton pressed={isOpen} tooltip="Emoji" isDropdown {...props}>
+    <>
+      <Tooltip title="Emoji">
+        <IconButton
+          onClick={handleClick}
+          color={isOpen ? 'primary' : 'default'}
+          {...props}
+        >
           <Smile />
-        </ToolbarButton>
-      }
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-    >
-      <EmojiPicker
-        {...emojiPickerState}
-        icons={{
-          categories: emojiCategoryIcons,
-          search: emojiSearchIcons,
-        }}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        settings={options?.settings}
-      />
-    </EmojiToolbarDropdown>
+        </IconButton>
+      </Tooltip>
+      <Menu
+        anchorEl={anchorEl}
+        open={isOpen}
+        onClose={handleClose}
+        sx={{ zIndex: 100 }}
+      >
+        <EmojiPicker
+          {...emojiPickerState}
+          icons={{
+            categories: emojiCategoryIcons,
+            search: emojiSearchIcons,
+          }}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          settings={options?.settings}
+        />
+      </Menu>
+    </>
   );
 }
