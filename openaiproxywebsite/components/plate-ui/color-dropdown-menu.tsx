@@ -1,6 +1,14 @@
 'use client';
 
-import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
+import { useState } from 'react';
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
+import { Clear as ClearIcon } from '@mui/icons-material';
 
 import {
   useColorDropdownMenu,
@@ -9,17 +17,12 @@ import {
 
 import { DEFAULT_COLORS, DEFAULT_CUSTOM_COLORS } from './color-constants';
 import { ColorPicker } from './color-picker';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from './dropdown-menu';
-import { ToolbarButton } from './toolbar';
 
 type ColorDropdownMenuProps = {
   nodeType: string;
   tooltip?: string;
-} & DropdownMenuProps;
+  children?: React.ReactNode;
+};
 
 export function ColorDropdownMenu({
   children,
@@ -34,16 +37,39 @@ export function ColorDropdownMenu({
   });
 
   const { buttonProps, menuProps } = useColorDropdownMenu(state);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <DropdownMenu modal={false} {...menuProps}>
-      <DropdownMenuTrigger asChild>
-        <ToolbarButton tooltip={tooltip} {...buttonProps}>
-          {children}
-        </ToolbarButton>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent align="start">
+    <>
+      <IconButton
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+        title={tooltip}
+        {...buttonProps}
+      >
+        {children}
+      </IconButton>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+        sx={{ width: '60%' }}
+      >
         <ColorPicker
           color={state.selectedColor || state.color}
           clearColor={state.clearColor}
@@ -51,8 +77,9 @@ export function ColorDropdownMenu({
           customColors={state.customColors}
           updateColor={state.updateColorAndClose}
           updateCustomColor={state.updateColor}
+          onClose={handleClose}
         />
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </Menu>
+    </>
   );
 }
