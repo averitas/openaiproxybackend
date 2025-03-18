@@ -41,6 +41,7 @@ import { SettingsDialog } from '@/components/editor/settings';
 import { Editor, EditorContainer } from '@/components/plate-ui/editor';
 import { Value } from '@udecode/plate';
 import { PlateEditor } from '@/components/editor/plate-editor';
+import { ExtractContentToHtml } from '@/components/editor/utils';
 
 // Dynamically import ReactQuill with SSR disabled
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -68,6 +69,9 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
   const [incomingText, setIncomingText] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  const [editor, setEditor] = useState(null);
+
   const [noteContent, setNoteContent] = useState<string>(activeNote?.content || '');
   const [insiderSaving, setInsideSaving] = useState<boolean>(false);
 
@@ -79,7 +83,17 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
     }
   }, [activeNote, dispatch, notes.length]);
 
-  const handleSave = () => {
+  const extractContent = async (): Promise<string> => {
+    if (activeNote?.isMarkdown) {
+      return noteContent;
+    }
+
+    // for html, need to use editor to serialize the content
+    const serialized = await ExtractContentToHtml(editor);
+    return serialized;
+  }
+
+  const handleSave = async () => {
     if (activeNote) {
       console.log('NoteEditor Start saving note');
       if (props.setIsSaving) {
@@ -92,7 +106,7 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
       const updatedNote: Note = {
         ...activeNote,
         date: new Date().toISOString(),
-        content: noteContent,
+        content: await extractContent(),
         isDraft: false,
       };
 
@@ -141,14 +155,14 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
     }
   };
 
-  const handleBackToList = () => {
+  const handleBackToList = async () => {
     // Save current note state before going back
     if (activeNote) {
       if (props.isModal && props.onClose) {
         const updatedNote: Note = {
           ...activeNote,
           date: new Date().toISOString(),
-          content: noteContent,
+          content: await extractContent(),
           isDraft: false
         };
         
@@ -277,7 +291,12 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
           }}
         >
           {isEditing ? (
-            <PlateEditor dataRegistry="plate" noteContent={noteContent} setNoteContent={setNoteContent} />
+            <PlateEditor
+              dataRegistry="plate"
+              noteContent={!!!activeNote.isMarkdown ? activeNote.content.toString() : noteContent}
+              setNoteContent={setNoteContent}
+              contentIsHtml={!!!activeNote.isMarkdown}
+              setEditor={setEditor}/>
           ) : (
             <Paper elevation={0} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
               {activeNote?.content ? parse(activeNote.content) : 'No content'}

@@ -75,16 +75,17 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
 
   // Fetch notes on component mount and use syncNotes for better synchronization
   useEffect(() => {
-    dispatch(fetchNotes());
+    keepnNotesUpdated();
   }, []);
 
   const handleCreateNote = () => {
     const newNote: Note = {
       localId: uuidv4(),
       title: "Untitled Note",
-      content: "<p>Start writing here...</p>",
+      content: "<html><p>Start writing here...</p></html>",
       date: new Date().toISOString(),
       isDraft: true,
+      isMarkdown: false,
     };
     setIsCreating(true);
     dispatch(createNote(newNote))
@@ -110,11 +111,11 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
     });
   };
 
-  const handleCreateMarkdownNote = () => {
+  const handleCreatePlateJsonNote = () => {
     const newNote: Note = {
       localId: uuidv4(),
-      title: "Untitled Markdown Note",
-      content: "# Start writing here...",
+      title: "Untitled Plate JSON Note",
+      content: "[{\"type\":\"p\",\"children\":[{\"text\":\"Start writing here...\"}]}]",
       date: new Date().toISOString(),
       isDraft: true,
       isMarkdown: true,
@@ -160,12 +161,15 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
         console.error("Failed to save note:", error);
       })
       .finally(() => {
+        setOpenEditor(false);
+        dispatch(setActiveNote(null));
         keepnNotesUpdated();
         console.log('NoteExplorer saved Finished saving note');
       });
     } else {
       // Just refresh notes and close editor if no save needed
       keepnNotesUpdated();
+      setOpenEditor(false);
       dispatch(setActiveNote(null));
       console.log('NoteExplorer not saving Finished saving note');
     }
@@ -320,7 +324,7 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
               color="primary"
               aria-label="add markdown"
               size="medium"
-              onClick={handleCreateMarkdownNote}
+              onClick={handleCreatePlateJsonNote}
             >
               <MarkdownIcon />
             </Fab>

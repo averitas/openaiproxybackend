@@ -60,7 +60,6 @@ export function TableDropdownMenu() {
               height: '18px'
             }
           }}
-          title='Table'
         >
           <Table />
         </IconButton>
