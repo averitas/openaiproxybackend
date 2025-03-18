@@ -7,13 +7,12 @@ import {
   Card,
   CardContent,
   CardActionArea,
-  AppBar,
-  Toolbar,
   Fab,
   CircularProgress,
   Modal,
   Zoom,
   Tooltip,
+  LinearProgress,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MarkdownIcon from "@mui/icons-material/Code";
@@ -103,6 +102,14 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
       });
   };
 
+  const keepnNotesUpdated = () => {
+    setIsSaving(true);
+    dispatch(syncNotes())
+    .then(() => {
+      setIsSaving(false);
+    });
+  };
+
   const handleCreateMarkdownNote = () => {
     const newNote: Note = {
       localId: uuidv4(),
@@ -144,23 +151,21 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
           date: new Date().toISOString(),
         })
       )
-        .then(() => {
-          // Refresh notes when editor is closed
-          return dispatch(syncNotes());
-        })
-        .catch((error) => {
-          console.error("Failed to save note:", error);
-        })
-        .finally(() => {
-          setOpenEditor(false);
-          dispatch(setActiveNote(null));
-          setIsSaving(false);
-          console.log('NoteExplorer saved Finished saving note');
-        });
+      .then(() => {
+        // Refresh notes when editor is closed
+        setOpenEditor(false);
+        dispatch(setActiveNote(null));
+      })
+      .catch((error) => {
+        console.error("Failed to save note:", error);
+      })
+      .finally(() => {
+        keepnNotesUpdated();
+        console.log('NoteExplorer saved Finished saving note');
+      });
     } else {
       // Just refresh notes and close editor if no save needed
-      dispatch(syncNotes());
-      setOpenEditor(false);
+      keepnNotesUpdated();
       dispatch(setActiveNote(null));
       console.log('NoteExplorer not saving Finished saving note');
     }
@@ -210,8 +215,21 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
         display: "flex",
         flexDirection: "column",
         height: "calc(100vh - 64px)",
+        position: "relative",
       }}
     >
+      {isSaving && (
+        <LinearProgress
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 2,
+            zIndex: 1000
+          }}
+        />
+      )}
       <Container
         maxWidth="lg"
         sx={{

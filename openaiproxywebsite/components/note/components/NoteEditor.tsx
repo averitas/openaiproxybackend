@@ -242,7 +242,7 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
           )}
 
           <IconButton color="inherit" onClick={handleSave} disabled={props.isSaving}>
-            {props.isSaving ? (
+            {insiderSaving || props.isSaving ? (
               <CircularProgress color="inherit" size={24} />
             ) : (
               <SaveIcon />
