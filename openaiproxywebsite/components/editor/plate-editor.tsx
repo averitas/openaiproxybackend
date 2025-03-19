@@ -59,15 +59,16 @@ export function PlateEditor(props: PlateEditorProps) {
 
   const editor = useCreateEditor({value: editorValue});
 
-  // init editor value
-  if (!!props.contentIsHtml) {
-    console.log('Start Deserialized HTML content:', props.noteContent);
-    const nodes = editor.api.html.deserialize({element: props.noteContent});
+  useEffect(() => {
+    if (!!props.contentIsHtml) {
+      console.log('Start Deserialized HTML content:', props.noteContent);
+      const nodes = editor.api.html.deserialize({element: props.noteContent});
 
-    console.log('Deserialized HTML content:', nodes);
-    editor.children = nodes as unknown as Value;
-  }
-  props.setEditor(editor);
+      console.log('Deserialized HTML content:', nodes);
+      editor.children = nodes as unknown as Value;
+    }
+    props.setEditor(editor);
+  }, [editor, props.contentIsHtml, props.noteContent, props.setEditor]);
 
   // Editor content change handler that updates Redux state
   const editorChangeHandler = (obj) => {
