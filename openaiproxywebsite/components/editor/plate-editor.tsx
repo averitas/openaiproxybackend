@@ -61,10 +61,10 @@ export function PlateEditor(props: PlateEditorProps) {
 
   useEffect(() => {
     if (!!props.contentIsHtml) {
-      console.log('Start Deserialized HTML content:', props.noteContent);
+      console.log('Start Deserialized HTML content:');
       const nodes = editor.api.html.deserialize({element: props.noteContent});
 
-      console.log('Deserialized HTML content:', nodes);
+      console.log('Deserialized HTML content:');
       editor.children = nodes as unknown as Value;
     }
     props.setEditor(editor);

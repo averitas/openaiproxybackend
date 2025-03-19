@@ -46,6 +46,7 @@ export class GraphNotesManager implements NotesManager {
             .get();
         var rawNotes: RemoteNote[] = resp.value;
 
+        console.log("Starting function GetMeNotes");
         while (resp['@odata.nextLink']) {
             resp = await fetch(resp['@odata.nextLink'], {
                 method: 'GET',
@@ -55,7 +56,6 @@ export class GraphNotesManager implements NotesManager {
               })
               .then(response => response.json());
             rawNotes.push(...resp.value);
-            console.log("GetMeNotes for loop get response: " + resp);
         }
 
         return rawNotes;

@@ -10,7 +10,13 @@ import {
   MenuItem,
   Tooltip,
   Tabs,
-  Tab
+  Tab,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button
 } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import NoteIcon from '@mui/icons-material/Note';
@@ -48,6 +54,7 @@ function TabPanel(props: TabPanelProps) {
 
 const AppContainer: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [userIsLogin, setUserIsLogin] = useState(UserManager.instance.isSignedIn);
   const [userEmail, setUserEmail] = useState(UserManager.instance.email);
   const [userIcon, setUserIcon] = useState<string | undefined>(undefined);
@@ -94,9 +101,14 @@ const AppContainer: React.FC = () => {
     }
 
     UserManager.instance.addEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler)
-    UserManager.instance.init().then(() =>
+    UserManager.instance.init().then(() => {
       setUserEmail(UserManager.instance.email)
-    )
+
+      // Show login dialog if user is not logged in
+      if (!UserManager.instance.isSignedIn) {
+        setShowLoginDialog(true);
+      }
+    })
 
     UserManager.instance.addEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler);
 
@@ -192,6 +204,28 @@ const AppContainer: React.FC = () => {
           <NoteApp isSignedIn={userIsLogin} noteIdToOpen={noteIdToOpen} setNoteIdToOpen={setNoteIdToOpen} />
         </TabPanel>
       </Box>
+      
+      <Dialog
+        open={showLoginDialog}
+        onClose={() => setShowLoginDialog(false)}
+        aria-labelledby="login-dialog-title"
+      >
+        <DialogTitle id="login-dialog-title">Sign In Required</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please sign in to access all features of the AI Assistant Platform.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowLoginDialog(false)}>Cancel</Button>
+          <Button onClick={() => {
+            handleSignIn();
+            setShowLoginDialog(false);
+          }} variant="contained" color="primary">
+            Sign In
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

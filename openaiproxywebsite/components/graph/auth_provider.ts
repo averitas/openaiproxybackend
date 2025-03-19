@@ -10,7 +10,7 @@ export default class AuthProvider {
     async getAccessToken() {
         try {
             this.authResult = await UserManager.instance.acquireTokenSlient(protectedResources.graphMe.scopes)
-            console.debug('Get graph token: ' + this.authResult?.accessToken)
+            // console.debug('Get graph token: ' + this.authResult?.accessToken)
             return this.authResult?.accessToken ?? ''
         }
         catch (err) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -73,10 +73,26 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
     }
   }, [noteIdToOpen, setNoteIdToOpen]);
 
+  const isPortraitOrMobile = useCallback(() => {
+    return window.innerHeight > window.innerWidth || window.innerWidth <= 768;
+  }, []);
+
   // Fetch notes on component mount and use syncNotes for better synchronization
   useEffect(() => {
     keepnNotesUpdated();
-  }, []);
+
+    // Listen for window resize events
+    const handleResize = () => {
+      // If we're in modal mode but now in portrait/mobile, redirect to note page
+      if (openEditor && activeNote && isPortraitOrMobile()) {
+        setOpenEditor(false);
+        navigate(`/note/${activeNote.localId}`);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [openEditor, activeNote, isPortraitOrMobile, navigate]);
 
   const handleCreateNote = () => {
     const newNote: Note = {
@@ -93,7 +109,11 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
         // Properly type the payload to fix the "unknown" type error
         const createdNote = action.payload as Note;
         dispatch(setActiveNote(createdNote));
-        setOpenEditor(true);
+        if (isPortraitOrMobile()) {
+          navigate(`/note/${createdNote.localId}`);
+        } else {
+          setOpenEditor(true);
+        }
       })
       .catch((error) => {
         console.error("Failed to create note:", error);
@@ -125,7 +145,11 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
       .then((action) => {
         const createdNote = action.payload as Note;
         dispatch(setActiveNote(createdNote));
-        setOpenEditor(true);
+        if (isPortraitOrMobile()) {
+          navigate(`/note/${createdNote.localId}`);
+        } else {
+          setOpenEditor(true);
+        }
       })
       .catch((error) => {
         console.error("Failed to create markdown note:", error);
@@ -138,7 +162,14 @@ const NoteExplorer: React.FC<NoteExplorerProps> = ({
   const handleNoteClick = (noteId: Note) => {
     console.log('Opening note:', noteId);
     dispatch(setActiveNote(noteId));
-    setOpenEditor(true);
+    
+    if (isPortraitOrMobile()) {
+      // Navigate to note editor directly in portrait/mobile mode
+      navigate(`/note/${noteId.localId}`);
+    } else {
+      // Open modal in landscape/desktop mode
+      setOpenEditor(true);
+    }
   };
 
   const handleCloseEditor = (note?: Note) => {

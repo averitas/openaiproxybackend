@@ -11,7 +11,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^1.1.9",
     "@ariakit/react": "^0.4.13",
-    "@azure/msal-browser": "^2.38.1",
+    "@azure/msal-browser": "^4.7.0",
     "@azure/msal-react": "^1.5.10",
     "@emoji-mart/data": "1.2.1",
     "@emotion/css": "^11.13.5",

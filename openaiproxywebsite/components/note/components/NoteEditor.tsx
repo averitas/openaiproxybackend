@@ -196,16 +196,32 @@ const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
     return <Typography>Note not found</Typography>;
   }
 
+  // Check if we're in a standalone page (non-modal) by looking at the URL
+  const isStandalone = window.location.pathname.startsWith('/note/');
+
   return (
     <Box sx={{
       display: 'flex',
       flexDirection: 'column',
-      height: props.isModal ? '100%' : '100vh',
+      height: props.isModal && !isStandalone ? '100%' : 'calc(100vh - 48px)',
       bgcolor: 'background.paper',
-      borderRadius: props.isModal ? 1 : 0
+      borderRadius: props.isModal && !isStandalone ? 1 : 0
     }}>
-      <AppBar position="static">
-        <Toolbar>
+      <AppBar position="static" sx={{ 
+        backgroundColor: 'rgba(97, 97, 97, 0.9)', // More gray color
+        height: '48px', // Smaller height
+        minHeight: '48px'
+      }}>
+        <Toolbar sx={{ 
+          minHeight: '48px !important', 
+          height: '48px',
+          '& .MuiIconButton-root': { // Adjust icon button size
+            padding: '8px'
+          },
+          '& .MuiTypography-h6': { // Adjust title size
+            fontSize: '1.1rem'
+          }
+        }}>
           <IconButton
             edge="start"
             color="inherit"
