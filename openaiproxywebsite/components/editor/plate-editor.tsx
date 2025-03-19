@@ -22,9 +22,6 @@ export interface PlateEditorProps {
 }
 
 export function PlateEditor(props: PlateEditorProps) {
-  const dispatch = useDispatch<AppDispatch>();
-  const activeNote = useSelector((state: RootState) => state.notes.activeNote);
-
   const noteToEditor = (noteContent: string): Value | undefined => {
     if (!!!props.contentIsHtml) {
       console.log('noteToEditor called with:', noteContent.substring(0, 20) + '...');

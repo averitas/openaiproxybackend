@@ -70,7 +70,6 @@ import {
 import { BaseTogglePlugin } from '@udecode/plate-toggle';
 import { useEditorRef } from '@udecode/plate/react';
 import { ArrowDownToLineIcon } from 'lucide-react';
-import Prism from 'prismjs';
 
 import { BlockquoteElementStatic } from '@/components/plate-ui/blockquote-element-static';
 import { CodeBlockElementStatic } from '@/components/plate-ui/code-block-element-static';
@@ -121,8 +120,10 @@ import { EditorStatic } from './editor-static';
 import { EquationElementStatic } from './equation-element-static';
 import { InlineEquationElementStatic } from './inline-equation-element-static';
 import { ToolbarButton, ToolbarSplitButton, ToolbarSplitButtonPrimary, ToolbarSplitButtonSecondary } from './toolbar';
+import { all, createLowlight } from 'lowlight';
 
 const siteUrl = 'https://platejs.org';
+const lowlight = createLowlight(all);
 
 export function ExportToolbarButton({ children, ...props }: DropdownMenuProps) {
   const editor = useEditorRef();
@@ -256,7 +257,7 @@ export function ExportToolbarButton({ children, ...props }: DropdownMenuProps) {
         BaseInlineEquationPlugin,
         BaseCodeBlockPlugin.configure({
           options: {
-            prism: Prism,
+            lowlight: lowlight,
           },
         }),
         BaseIndentPlugin.extend({

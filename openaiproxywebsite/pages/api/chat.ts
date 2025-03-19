@@ -10,6 +10,7 @@ const FunctionEndpoint = process.env.BACKEND_GOLANG_SERVER_ENDPOINT ?? ""
 
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
   const messages = await req.body.messages;
+  console.log('messages:', messages);
 
   try {
     const openai = createOpenAI({

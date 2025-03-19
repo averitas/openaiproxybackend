@@ -2,6 +2,7 @@
 
 import emojiMartData from '@emoji-mart/data';
 import { CalloutPlugin } from '@udecode/plate-callout/react';
+import { CodeBlockPlugin } from '@udecode/plate-code-block/react';
 import { DatePlugin } from '@udecode/plate-date/react';
 import { DocxPlugin } from '@udecode/plate-docx';
 import { EmojiPlugin } from '@udecode/plate-emoji/react';
@@ -47,7 +48,6 @@ import { softBreakPlugin } from './soft-break-plugin';
 import { suggestionPlugin } from './suggestion-plugin';
 import { tablePlugin } from './table-plugin';
 import { tocPlugin } from './toc-plugin';
-import { CodeBlockPlugin } from '@udecode/plate-code-block/react';
 
 export const viewPlugins = [
   ...basicNodesPlugins,

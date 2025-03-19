@@ -1125,7 +1125,7 @@
 
 "@radix-ui/react-compose-refs@1.1.1", "@radix-ui/react-compose-refs@^1.1.1":
   version "1.1.1"
-  resolved "https://registry.npmmirror.com/@radix-ui/react-compose-refs/-/react-compose-refs-1.1.1.tgz#6f766faa975f8738269ebb8a23bad4f5a8d2faec"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-compose-refs/-/react-compose-refs-1.1.1.tgz#6f766faa975f8738269ebb8a23bad4f5a8d2faec"
   integrity sha512-Y9VzoRDSJtgFMUCoiZBDVo084VQ5hfpXxVE+NgkdNsjiDBByiImMZKKhxMwCbdHvhlENG6a833CbFkOQvTricw==
 
 "@radix-ui/react-context-menu@^2.2.6":
@@ -1817,47 +1817,47 @@
     "@radix-ui/react-primitive" "^2.0.1"
     use-sync-external-store "^1.4.0"
 
-"@udecode/cn@44.0.1":
-  version "44.0.1"
-  resolved "https://registry.npmmirror.com/@udecode/cn/-/cn-44.0.1.tgz#3ac589fd8bb151c2fbbf9956f38f8257e46765aa"
-  integrity sha512-uiykstK3mgWC0SHWXgPiHnOU6XlbSvyJe7KRaatzdkyc/czxDGAcZ3VMFlJvQ9A8siDkDlLKYNnzy+XCxzClkA==
+"@udecode/cn@^46.0.9":
+  version "46.0.9"
+  resolved "https://registry.yarnpkg.com/@udecode/cn/-/cn-46.0.9.tgz#45e7a8402deea5c33d31d22d1863facc6610c68b"
+  integrity sha512-9OMvmzj+DlilV/SX3Q93QlrHi/aORqSh90bJ7KZAm8DSEkbqZ77MwmhB+pf97X6Bj7lOSnGsC0IutyKWuDJsTw==
   dependencies:
-    "@udecode/react-utils" "44.0.1"
+    "@udecode/react-utils" "46.0.9"
 
-"@udecode/plate-ai@44.0.3":
-  version "44.0.3"
-  resolved "https://registry.npmmirror.com/@udecode/plate-ai/-/plate-ai-44.0.3.tgz#ed3f7a346765f189344610196ed00975b7ad2ea0"
-  integrity sha512-PGxCt+pkq2C2Dk8rrV5NVkhNFmHXKLyrf1XXho/KrCgm7pztIGjxUnhfRmlntAzjZ+sQm3G8hqmk9BFlZfcf6g==
+"@udecode/plate-ai@46.0.8":
+  version "46.0.8"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-ai/-/plate-ai-46.0.8.tgz#531c94bde839255f545a37d41761df97523df1e2"
+  integrity sha512-PjQtY90IFk4cBiLuItKb+ti5o4slKrhwjvtjhSLYaNwCTLobT3vI1zf2MK9TDHUFUeuqDMMvfGceFOKq7jJCEg==
   dependencies:
-    "@udecode/plate-markdown" "44.0.0"
-    "@udecode/plate-selection" "44.0.0"
+    "@udecode/plate-markdown" "46.0.8"
+    "@udecode/plate-selection" "46.0.4"
     lodash "^4.17.21"
 
 "@udecode/plate-alignment@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-alignment/-/plate-alignment-44.0.0.tgz#b7808493e71ca95378eb2523fe1697ea20e40b95"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-alignment/-/plate-alignment-44.0.0.tgz#b7808493e71ca95378eb2523fe1697ea20e40b95"
   integrity sha512-I5oKi4aTGXOH4ypNmojXsXuYCaXmx92dnRgENMjj4NWNjnoczxBw8/VOfjELuQWE3NofWPf2iytEdQgTwDX1bw==
 
 "@udecode/plate-autoformat@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-autoformat/-/plate-autoformat-44.0.0.tgz#b131174493fac8b3d20135ee1599bfae707e1fa3"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-autoformat/-/plate-autoformat-44.0.0.tgz#b131174493fac8b3d20135ee1599bfae707e1fa3"
   integrity sha512-mw0/in4XEex+A0y0q6w67F0i5OwKhysM/GiCHAPMKsPh79psR5AIoR+ZRy/pJT4t6q0Zvy9W17Nx13zijJCfjA==
   dependencies:
     lodash "^4.17.21"
 
-"@udecode/plate-basic-elements@44.0.0":
-  version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-basic-elements/-/plate-basic-elements-44.0.0.tgz#6a40c3865c89fef0479b6f5dae172c53c9a4e4a6"
-  integrity sha512-S5BAIj8qeC7wkNW2+8hoE5dn6fjhycUHeRMeRCi5yruDbW7Q+8Rb3twVJMtL3EP6+hTK7igjSsfoI93fSIxdWA==
+"@udecode/plate-basic-elements@46.0.4":
+  version "46.0.4"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-basic-elements/-/plate-basic-elements-46.0.4.tgz#cfa479953d9a32842eda542d41718b00fca60aff"
+  integrity sha512-ALzIqr+YEdCGIfg4nP5xXYzkzNsd2yH+ObjiKtf9JOdo465A88bsKCsoIJnio1fpRYlCWlBZsrwFNezsTq7r5Q==
   dependencies:
     "@udecode/plate-block-quote" "44.0.0"
-    "@udecode/plate-code-block" "44.0.0"
+    "@udecode/plate-code-block" "46.0.4"
     "@udecode/plate-heading" "44.0.0"
 
-"@udecode/plate-basic-marks@45.0.0":
-  version "45.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-basic-marks/-/plate-basic-marks-45.0.0.tgz#d661d306f541c02882b7dde8a6d2fe9a141c4275"
-  integrity sha512-lXSntQWvPEeoeMTXy0hv5tvn18yZEMfDHqWgm7+ksp+OocxssM3FYPvYFx/3ZyIdWBix0c01gKGHfN6Rkg6Tbw==
+"@udecode/plate-basic-marks@46.0.5":
+  version "46.0.5"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-basic-marks/-/plate-basic-marks-46.0.5.tgz#c47d4f6a4d45bd4a15cd3677877a9036551c9f9e"
+  integrity sha512-kXPmR12W+cS975kyBNCWQd7hpppuGYCxJIKM/PC/X7xP4vZGZNdBcY56HKS+wET7BYBxIwWBZe8SvWiJ2gG31g==
 
 "@udecode/plate-block-quote@44.0.0":
   version "44.0.0"
@@ -1866,25 +1866,25 @@
 
 "@udecode/plate-break@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-break/-/plate-break-44.0.0.tgz#e84a1a9d1a800e252b28f417a668b79d0a0da0cb"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-break/-/plate-break-44.0.0.tgz#e84a1a9d1a800e252b28f417a668b79d0a0da0cb"
   integrity sha512-Vx5Iuizus2LYKfKe99tnQ246LiqUU4cfWnso5N+npEM9XNPQFkBjOe2FrSf7Omz30x/fYZcCh7bfMgFrOzVEaw==
 
 "@udecode/plate-callout@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-callout/-/plate-callout-44.0.0.tgz#19aae9ac375548006694f8a853511070fe610c60"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-callout/-/plate-callout-44.0.0.tgz#19aae9ac375548006694f8a853511070fe610c60"
   integrity sha512-vKUngaeSmKbM0TW/fCbS4FjKOxdmXUQ3qeEvPFn7ipubmwQIYWrBsYAINgwA0muO4OQMQEbeeyH9fSy3wJe5xQ==
 
 "@udecode/plate-caption@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-caption/-/plate-caption-44.0.0.tgz#b782d9ed9581345fd5f87c774c807e31e1efc0d3"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-caption/-/plate-caption-44.0.0.tgz#b782d9ed9581345fd5f87c774c807e31e1efc0d3"
   integrity sha512-BRR2cZfskEL2N8cylO9IJh105P4fcQ2yH3DXOVZO5Wr7UADnkjHykfaNgx+oeaYECXvLlCWcygpZKupqHth9LA==
   dependencies:
     react-textarea-autosize "^8.5.7"
 
-"@udecode/plate-code-block@44.0.0":
-  version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-code-block/-/plate-code-block-44.0.0.tgz#64a36eb7e4cd45ffe252ae216e35a31f4f1e6cf9"
-  integrity sha512-8Y/n1OEi3UsRx/dQ7taZ1fhvfpDi0oVjpSn8cf9nzE2xpZCXPEhlYZkAew8Z73Wg+u5Q0eqv+DNm4z78YYoPIw==
+"@udecode/plate-code-block@46.0.4":
+  version "46.0.4"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-code-block/-/plate-code-block-46.0.4.tgz#e3cb12d84f858b659039fe8d88d8c19968f7937d"
+  integrity sha512-pAZromeppt+7su9iSC4v3Br9RfpU17Z7GXOTEObocknF8FpkBu+C7zbmNtun/k7adrPQmRFL9yTUtAB/bQTomA==
 
 "@udecode/plate-combobox@44.0.0":
   version "44.0.0"
@@ -1893,26 +1893,26 @@
 
 "@udecode/plate-comments@45.0.0":
   version "45.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-comments/-/plate-comments-45.0.0.tgz#b5d278ca9b59059fc5f275c9032f2117b5319a7e"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-comments/-/plate-comments-45.0.0.tgz#b5d278ca9b59059fc5f275c9032f2117b5319a7e"
   integrity sha512-bJBOnytVOL8aMkSDRQcxIouBsuDgOxG5S0vEPTtE7fLYlPsReWSLHa+c41w0mMPbK0ABY1SP5g+Sfp88rAkjGA==
   dependencies:
     lodash "^4.17.21"
 
-"@udecode/plate-core@45.0.2":
-  version "45.0.2"
-  resolved "https://registry.npmmirror.com/@udecode/plate-core/-/plate-core-45.0.2.tgz#3a0059848c573d2aeb6ffd477411fafbf422eebb"
-  integrity sha512-ghBaLqaovvWXpDpfuR4wWycpRBT7TIvtvBJ8UBodhYXdgnDKGL9OXQUhzZKdlcEdUB0Q4dYrDaqLcDHW33v8QQ==
+"@udecode/plate-core@46.0.9":
+  version "46.0.9"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-core/-/plate-core-46.0.9.tgz#960ddaf96bd40ac4718245e94e2c8a6ff20055f8"
+  integrity sha512-j+BExswrWYMVWJtRmPPs/tU/cZaPHWt4yIaMQBPeW2UkLn59z5pMAZ06qcW/Taws0D8qMTxjYVjNwAUMpEeK0g==
   dependencies:
     "@udecode/react-hotkeys" "37.0.0"
-    "@udecode/react-utils" "44.0.1"
-    "@udecode/slate" "44.0.0"
+    "@udecode/react-utils" "46.0.9"
+    "@udecode/slate" "45.0.6"
     "@udecode/utils" "42.0.0"
     clsx "^2.1.1"
     html-entities "^2.5.2"
     is-hotkey "^0.2.0"
     jotai "~2.8.4"
     jotai-optics "0.4.0"
-    jotai-x "2.3.0"
+    jotai-x "2.3.2"
     lodash "^4.17.21"
     nanoid "^5.0.9"
     optics-ts "2.4.1"
@@ -1920,16 +1920,16 @@
     slate-react "0.112.1"
     use-deep-compare "^1.3.0"
     zustand "^5.0.3"
-    zustand-x "6.0.3"
+    zustand-x "6.1.0"
 
 "@udecode/plate-cursor@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-cursor/-/plate-cursor-44.0.0.tgz#d6c42ebf8df04d8b6d48c467e84038479a4d7648"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-cursor/-/plate-cursor-44.0.0.tgz#d6c42ebf8df04d8b6d48c467e84038479a4d7648"
   integrity sha512-mi2/5JY6YGu+wlGYBwhQ3Va1h6h2ithrNh/qWBreZTr6ErinDHRauauSfozkOnRvvaimW7srGVUkNz7WG8hdUA==
 
 "@udecode/plate-date@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-date/-/plate-date-44.0.0.tgz#55f411bbbb652daacde690b4f58e9d7906342f36"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-date/-/plate-date-44.0.0.tgz#55f411bbbb652daacde690b4f58e9d7906342f36"
   integrity sha512-WndNVdlOdr0nIXbegAy2LQhJPgX/od34hDPSQey0K1Rf0MQr8XTlK6Wy7TS+k6Rr0nfZgUxlEl8Kfo4gp2eWRw==
 
 "@udecode/plate-diff@44.0.2":
@@ -1940,36 +1940,36 @@
     diff-match-patch-ts "^0.6.0"
     lodash "^4.17.21"
 
-"@udecode/plate-dnd@44.0.0":
-  version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-dnd/-/plate-dnd-44.0.0.tgz#58f42b2a351cdc9d8a6fae5a69b3a7325e914115"
-  integrity sha512-eCEbadTj2UWeOebp33pcPh4pSMkWjk1h1MUUZZfwqS60ttwE2cr35RwRfsCoGwzI8RCIL00cjq2Sjxy9tsMAag==
+"@udecode/plate-dnd@46.0.6":
+  version "46.0.6"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-dnd/-/plate-dnd-46.0.6.tgz#e89507a75fc95f88250075eabe09543a5b5629bb"
+  integrity sha512-ypSxB+UyVZMb8+jqmGZwLCcCvPkRVM0wk6FPI6nq7/z9x6/XqE9Y/cgs1rphE1n7hBkmlhy74QP/bMKgs0jf8Q==
   dependencies:
     lodash "^4.17.21"
     raf "^3.4.1"
 
-"@udecode/plate-docx@45.0.0":
-  version "45.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-docx/-/plate-docx-45.0.0.tgz#9ae7fdc53a6d28a602f256e2a790909f4863fc90"
-  integrity sha512-ywSs7xyk6PrejoZxDx0sDGZ+DgNGBfVeGZ5VSXBYgCEWDOl9TlLXP8DiGFp70XxgUi1CrSpogJaxlkSjYcBDHg==
+"@udecode/plate-docx@46.0.7":
+  version "46.0.7"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-docx/-/plate-docx-46.0.7.tgz#6dd8e897a15fb0c7ff167e1ee30c14687375b683"
+  integrity sha512-7eLYKl/ex9rqTxyaoIe5SnyMAVJSlA2O43ZQP6I5RiQ7U7dAmN7aRfsNwItYFJ4UR8u8IUqt9sEh7diTKk1I6g==
   dependencies:
     "@udecode/plate-heading" "44.0.0"
     "@udecode/plate-indent" "44.0.0"
-    "@udecode/plate-indent-list" "44.0.5"
+    "@udecode/plate-indent-list" "46.0.7"
     "@udecode/plate-media" "44.0.6"
     "@udecode/plate-table" "45.0.0"
     validator "^13.12.0"
 
 "@udecode/plate-emoji@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-emoji/-/plate-emoji-44.0.0.tgz#e8b76ddaa3a93b022c388e072b641a2606556285"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-emoji/-/plate-emoji-44.0.0.tgz#e8b76ddaa3a93b022c388e072b641a2606556285"
   integrity sha512-GLRflfUuFdHVULCYlAb1P/heJvcs2oJeqQ2rZAvNzJ1iIthtuUszPHzBv7SO0l8S9qFqtwK8piumiXZl+pVlAg==
   dependencies:
     "@udecode/plate-combobox" "44.0.0"
 
 "@udecode/plate-excalidraw@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-excalidraw/-/plate-excalidraw-44.0.0.tgz#c52284a9de0cfe708ae7b48ce8c5ca03a16c8693"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-excalidraw/-/plate-excalidraw-44.0.0.tgz#c52284a9de0cfe708ae7b48ce8c5ca03a16c8693"
   integrity sha512-LgaXdROzMaa+mYfriIJPnKjpLWqLO4nhUyknVW6eh+4nktC/mFaGD0hSIiaLD14InOzJVyvze8daQkD79YG6Kw==
   dependencies:
     "@excalidraw/excalidraw" "0.16.4"
@@ -1984,7 +1984,7 @@
 
 "@udecode/plate-font@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-font/-/plate-font-44.0.0.tgz#4f25ebcee269a2e122cc2e9b5b556f5053df5c14"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-font/-/plate-font-44.0.0.tgz#4f25ebcee269a2e122cc2e9b5b556f5053df5c14"
   integrity sha512-liXTMhtXvAEivXAz49qoHfGxzJbVILG9ixwf+3ezYALH9P2B9NmbyNYUXPBFz28uD4IUMVDYllTawtUZCDF5Xw==
   dependencies:
     lodash "^4.17.21"
@@ -1996,18 +1996,18 @@
 
 "@udecode/plate-highlight@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-highlight/-/plate-highlight-44.0.0.tgz#1aa4f199ac14d7d81aceef730b43b883da83ab7b"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-highlight/-/plate-highlight-44.0.0.tgz#1aa4f199ac14d7d81aceef730b43b883da83ab7b"
   integrity sha512-/8i5kI+OPh7onhI+8JcrWogbs7kZuiQ5OYNla6SjJZcdiEEGgEuSwRz5i3W+OU1ulUZ3FASz+ZaCv55hguxB9Q==
 
 "@udecode/plate-horizontal-rule@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-horizontal-rule/-/plate-horizontal-rule-44.0.0.tgz#47bb6b7ffa1f10505e20df10e0e1769fc83afbd1"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-horizontal-rule/-/plate-horizontal-rule-44.0.0.tgz#47bb6b7ffa1f10505e20df10e0e1769fc83afbd1"
   integrity sha512-4vL9t9CTd2SJp8jnBSwxnHxEgThTNBt1tHJ/bdaAzYw+SLv8L4FxWQ4YHyGQi+qB/cAogBWvDDGc2ysqcKcGeg==
 
-"@udecode/plate-indent-list@44.0.5":
-  version "44.0.5"
-  resolved "https://registry.npmmirror.com/@udecode/plate-indent-list/-/plate-indent-list-44.0.5.tgz#6037fcf01a6b1acbe620e4912394c32bdb1988a7"
-  integrity sha512-jFBVHzOS4IU7x/VnAuL0r1s8u6vMKQTQmfiql3/iz6Ai7ctkbFsBMvb3tVIc5MmtObADQ64hVuh9YUfaV0aZfA==
+"@udecode/plate-indent-list@46.0.7":
+  version "46.0.7"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-indent-list/-/plate-indent-list-46.0.7.tgz#3288dbaa07317beaadabfb3ecd065d08559153f7"
+  integrity sha512-LgeZa6ZxklQDwSQBqKmZ+ZpatrInoDYt/BICFMSNhwp0UpWfBt5dUN0UlMEct/3F9DMUDKfT6OhZRWTMV3y+rw==
   dependencies:
     "@udecode/plate-indent" "44.0.0"
     "@udecode/plate-list" "44.0.5"
@@ -2020,29 +2020,29 @@
 
 "@udecode/plate-juice@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-juice/-/plate-juice-44.0.0.tgz#9f472d996bea48f6be082df67aad637d5656c625"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-juice/-/plate-juice-44.0.0.tgz#9f472d996bea48f6be082df67aad637d5656c625"
   integrity sha512-/U4x58sbtTOUSYAoixdkeU7193JD/tawB+AVS1DlG5SMGUn8ow0e4pRFyVWuwx8lH2K4gh5oBNFkf1URF13RsA==
   dependencies:
     juice "^11.0.0"
 
 "@udecode/plate-kbd@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-kbd/-/plate-kbd-44.0.0.tgz#1c84632a3ff776da0348d9948e12895b29a9645b"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-kbd/-/plate-kbd-44.0.0.tgz#1c84632a3ff776da0348d9948e12895b29a9645b"
   integrity sha512-otSPLd84PirZ6BDwv9o3/nqpYtl0CJcwZoqL1zDlUapVsJHfqStrklxH7WHgdIzFRtlqSn8587/YVnPBHfyFaQ==
 
 "@udecode/plate-layout@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-layout/-/plate-layout-44.0.0.tgz#e5a9cd2fbf1dae25aaa88d19fd9b04564cb140dd"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-layout/-/plate-layout-44.0.0.tgz#e5a9cd2fbf1dae25aaa88d19fd9b04564cb140dd"
   integrity sha512-eT3+j6QUJQkgOsRPK+YvI5PSz0t1SYPXInzeQdQX5DRC/NU6LgpuSD9cNv8BIdhWokT+Ot+8RKVs+JoPLnjETg==
 
 "@udecode/plate-line-height@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-line-height/-/plate-line-height-44.0.0.tgz#ccd3fb9ccd64f28aa9933c46141182fe3904ab27"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-line-height/-/plate-line-height-44.0.0.tgz#ccd3fb9ccd64f28aa9933c46141182fe3904ab27"
   integrity sha512-NVbZ6pFH4FkgIrMiqvrY7cYX0y57dNQ5g/EJaIgYkT9eq76fsJqtY3+36LVu46k2qSsRD1QXy+V7zee50re3UQ==
 
 "@udecode/plate-link@44.0.4":
   version "44.0.4"
-  resolved "https://registry.npmmirror.com/@udecode/plate-link/-/plate-link-44.0.4.tgz#d9f042f0cb4cda9a587ab8cf3add043970e2f4de"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-link/-/plate-link-44.0.4.tgz#d9f042f0cb4cda9a587ab8cf3add043970e2f4de"
   integrity sha512-THOa348K6YFPIgxFQQ9YRNvndindBMLpQ9LJkMOP6u8WTkB8z/J5x4ifqqBPpDH4I/0i6I8d0v/xx4kXhRJY0A==
   dependencies:
     "@udecode/plate-floating" "44.0.0"
@@ -2056,10 +2056,10 @@
     "@udecode/plate-reset-node" "44.0.0"
     lodash "^4.17.21"
 
-"@udecode/plate-markdown@44.0.0":
-  version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-markdown/-/plate-markdown-44.0.0.tgz#3686a1d12ebb1d992bf6317ad95e67f7ebd59867"
-  integrity sha512-JjbnAsanwrZ9VaHIQDr4PVC4Yd5fUQcJNV3W4j9GXnEjFPQccUKkdolTTdlMRUHsDUXbYeN2SRQRWFeNpuH/OA==
+"@udecode/plate-markdown@46.0.8":
+  version "46.0.8"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-markdown/-/plate-markdown-46.0.8.tgz#fa824960a0006bba0dc660253c23d55c39f1df4c"
+  integrity sha512-TXGBBa0tZsqUqQ0OSU+/oA8fL7HFVUBfM1/+hzf/jkfRaCWYhftNMkhe/OVtSjyzfT/JjDyacfGuGXoOO0riNg==
   dependencies:
     lodash "^4.17.21"
     marked "^15.0.6"
@@ -2069,7 +2069,7 @@
 
 "@udecode/plate-math@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-math/-/plate-math-44.0.0.tgz#ec816b68483a70526f779e425dd2d08966ee6f58"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-math/-/plate-math-44.0.0.tgz#ec816b68483a70526f779e425dd2d08966ee6f58"
   integrity sha512-stSslQbjZiU8er2/i6v9rpLnmxTuYFozpIQEAOnpXfx7A5sMlqCtvayN4wJWx/mw2/iTO6VPH0dijseyPndzfw==
   dependencies:
     katex "0.16.21"
@@ -2083,7 +2083,7 @@
 
 "@udecode/plate-mention@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-mention/-/plate-mention-44.0.0.tgz#e4cda4766aadc7a936480556275a70ac0a6d9672"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-mention/-/plate-mention-44.0.0.tgz#e4cda4766aadc7a936480556275a70ac0a6d9672"
   integrity sha512-u6jO5h1w8SnKEV7l9D/NehhFbswGvVLd7OysFZzRtbjG61GfL49c/XMQKMfzAS4shQoV2enTc2B4Dypvv1Ezpw==
   dependencies:
     "@udecode/plate-combobox" "44.0.0"
@@ -2114,34 +2114,34 @@
 
 "@udecode/plate-select@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-select/-/plate-select-44.0.0.tgz#33f42a97f0b6a4d63af75624d9b5481f1ffda99d"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-select/-/plate-select-44.0.0.tgz#33f42a97f0b6a4d63af75624d9b5481f1ffda99d"
   integrity sha512-qcKsTRdkDKEkC132RACZo4nDSBq5kWy3NxtX1eFy4vsiVwgPwJzoFvmATwulsotuu5C7Qrrl3b5teYo+DUDs3A==
 
-"@udecode/plate-selection@44.0.0":
-  version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-selection/-/plate-selection-44.0.0.tgz#b2e771be0ecb9801c26fab0a0ee8bd3a35f1f41e"
-  integrity sha512-lOpb+sOVkk8D4PT/xuKX9wmO1nNkhLnZH5s863VjQlaa5H3Og7Fw3Lhz59mBbWWgkvG9LazSDyOW4e1AZIVSTw==
+"@udecode/plate-selection@46.0.4":
+  version "46.0.4"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-selection/-/plate-selection-46.0.4.tgz#d522d895a7708468742b440f22570a7a976ed6d3"
+  integrity sha512-ubvGNr5fxePCd5ko8RMzPDR4/s6aodr7mncOHqlVPpMT7GZkbOTPGXEFd5AHFYcSr/kZMX+MohWmlFIv2WGgng==
   dependencies:
     copy-to-clipboard "^3.3.3"
 
 "@udecode/plate-slash-command@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-slash-command/-/plate-slash-command-44.0.0.tgz#03734f387a5202d2d21e44d17aeda1f2923d769c"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-slash-command/-/plate-slash-command-44.0.0.tgz#03734f387a5202d2d21e44d17aeda1f2923d769c"
   integrity sha512-/mxtC9vVhWfZRZ7WmRuRXzrPoYGOCtPrq1uixnqMo41Qxd/n1GXC956AYWuZMjbRAy64Yys894zFvJPdrb2KrQ==
   dependencies:
     "@udecode/plate-combobox" "44.0.0"
 
-"@udecode/plate-suggestion@^45.0.0":
-  version "45.0.3"
-  resolved "https://registry.npmmirror.com/@udecode/plate-suggestion/-/plate-suggestion-45.0.3.tgz#9392f7f930ccf4a00cf62ffdcc4c237bbf662af5"
-  integrity sha512-M/KX8d/dY4pTCQ0LtliezN0VLKVS4ysC+HOg2Era0L5VDZC8A4pg64FCf1j8Q1H1KWCp881awd1qbAqjEshWtQ==
+"@udecode/plate-suggestion@46.0.1":
+  version "46.0.1"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-suggestion/-/plate-suggestion-46.0.1.tgz#a4c44928d2d18d761b2b39b7f37b4cb0ee56a045"
+  integrity sha512-bOv13aSyzWWZ1NMdK9J6vVPokNMpa/+8Q4wtnsNGvHmJ6OOZZYj3FMC76rTOSAtoQenyqK+v9wUx7j6icOI/PQ==
   dependencies:
     "@udecode/plate-diff" "44.0.2"
     lodash "^4.17.21"
 
 "@udecode/plate-tabbable@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-tabbable/-/plate-tabbable-44.0.0.tgz#12525012c6091410f3cdd016a91a66d8f755ea70"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-tabbable/-/plate-tabbable-44.0.0.tgz#12525012c6091410f3cdd016a91a66d8f755ea70"
   integrity sha512-0unHm1pDCgThQhPgEPzxpIDjizyxbhilNHNnQ9YafczI08k2R1f+F9yVShvBtXdgQ7c0C/I/qHpMFdsZB/LSCA==
   dependencies:
     tabbable "^6.2.0"
@@ -2155,10 +2155,10 @@
     "@udecode/plate-resizable" "44.0.0"
     lodash "^4.17.21"
 
-"@udecode/plate-toggle@44.0.0":
-  version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-toggle/-/plate-toggle-44.0.0.tgz#9727c2c15e7ba6adc86b2e258e9f21c176ae2ecb"
-  integrity sha512-uNsenXw4jHHV5GksN/bBCoY3+l1XIJeIEB6meCgqdjD+yghq1xFZVphDcN3ZTYRIFkjgOBn6uLIr7g75T1X9DQ==
+"@udecode/plate-toggle@45.0.6":
+  version "45.0.6"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-toggle/-/plate-toggle-45.0.6.tgz#a7f431dca0e6b4a539d6bb3f3938891c9be12901"
+  integrity sha512-myfUqQ2vXXIouQRoNUHI4/b6uJb7zURgpX5J/e4BrWtQ7rPvRg3ew7H4G8vu71bOuAMcHJiHTpEiPEGMseyoqQ==
   dependencies:
     "@udecode/plate-indent" "44.0.0"
     "@udecode/plate-node-id" "44.0.0"
@@ -2166,51 +2166,51 @@
 
 "@udecode/plate-trailing-block@44.0.0":
   version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/plate-trailing-block/-/plate-trailing-block-44.0.0.tgz#88ac8bb5667920c3a43ce13690194d2b0a4f8085"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-trailing-block/-/plate-trailing-block-44.0.0.tgz#88ac8bb5667920c3a43ce13690194d2b0a4f8085"
   integrity sha512-gVTWwUqfufq54ISLHaXUxkCLGbBgZ3MXGfcuV/Nu/IelkNchRUA46nMxqcTK9DoOFHC6i6QM/G5ESlOAv9syRw==
 
-"@udecode/plate-utils@45.0.2":
-  version "45.0.2"
-  resolved "https://registry.npmmirror.com/@udecode/plate-utils/-/plate-utils-45.0.2.tgz#886704139eefff4d78e1c4bab0be7774566d8e76"
-  integrity sha512-vO7oL2CTrKWQc0zRSkLjeDzcl42QZP86dA3txvQaeutzVcljF76Qnd1ELdgw2G0xSxQQt8Tqg76u7s/2qQkaTg==
+"@udecode/plate-utils@46.0.9":
+  version "46.0.9"
+  resolved "https://registry.yarnpkg.com/@udecode/plate-utils/-/plate-utils-46.0.9.tgz#97f7f326cce6fc8487d52e3f3d61649d3120e90e"
+  integrity sha512-dIcnGRXKBoZUT3GFXDQbTE3YQIlvylPNHsw7QIcYbrBeu8cN8yXaB8i6uOTcKPPQ9ItaB/Nkoylq91iQ9wbsZw==
   dependencies:
-    "@udecode/plate-core" "45.0.2"
-    "@udecode/react-utils" "44.0.1"
-    "@udecode/slate" "44.0.0"
+    "@udecode/plate-core" "46.0.9"
+    "@udecode/react-utils" "46.0.9"
+    "@udecode/slate" "45.0.6"
     "@udecode/utils" "42.0.0"
     clsx "^2.1.1"
     lodash "^4.17.21"
 
-"@udecode/plate@45.0.2":
-  version "45.0.2"
-  resolved "https://registry.npmmirror.com/@udecode/plate/-/plate-45.0.2.tgz#8174c28345603a853d2945e4e9464b4a94dfeef4"
-  integrity sha512-spUU8L+se0gVxGoKVUi1SubZsQTkol59p4Vo/RojnZ+Ci5z/md1Mvi7pFyB2D1rMnWmTiyz4EwwpIVMq8tfLUw==
+"@udecode/plate@46.0.9":
+  version "46.0.9"
+  resolved "https://registry.yarnpkg.com/@udecode/plate/-/plate-46.0.9.tgz#ba9594c5ea29846a7f2d8e5e332ae0fda9d06d22"
+  integrity sha512-jjVpO9ZXUD7qvT2f4iUqi3A7oUZOjOG5WcRXkusLnwqEp/iW8wZ56fU/YwFC3v2cJUBbaMY+t1d16iu6nvCOYQ==
   dependencies:
-    "@udecode/plate-core" "45.0.2"
-    "@udecode/plate-utils" "45.0.2"
+    "@udecode/plate-core" "46.0.9"
+    "@udecode/plate-utils" "46.0.9"
     "@udecode/react-hotkeys" "37.0.0"
-    "@udecode/react-utils" "44.0.1"
-    "@udecode/slate" "44.0.0"
+    "@udecode/react-utils" "46.0.9"
+    "@udecode/slate" "45.0.6"
     "@udecode/utils" "42.0.0"
 
 "@udecode/react-hotkeys@37.0.0":
   version "37.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/react-hotkeys/-/react-hotkeys-37.0.0.tgz#1a4ab395ff7f23263ccbc5dc1feae3167583776d"
+  resolved "https://registry.yarnpkg.com/@udecode/react-hotkeys/-/react-hotkeys-37.0.0.tgz#1a4ab395ff7f23263ccbc5dc1feae3167583776d"
   integrity sha512-3ZV5LiaTnKyhXwN6U0NE2cofNsNN2IPMkNCDntbSIIRLYmI+o6LRkDwAucSNh/BIdNXfvxscsR04RYyIwjGbJw==
 
-"@udecode/react-utils@44.0.1":
-  version "44.0.1"
-  resolved "https://registry.npmmirror.com/@udecode/react-utils/-/react-utils-44.0.1.tgz#c1e63bb3bd49a89650f8444eef1a9027781ff318"
-  integrity sha512-UKzmuwOWrxfleNOXVsoTNk694WLmyKFaQ4v+QcxfEYmG+VcFQE3vuFXC8EtGK+azADOXgz9Ww3z/Deg+DBnZxg==
+"@udecode/react-utils@46.0.9":
+  version "46.0.9"
+  resolved "https://registry.yarnpkg.com/@udecode/react-utils/-/react-utils-46.0.9.tgz#28eeebe5440176410573111b0bcafd4a484ab36c"
+  integrity sha512-wih5cJRgRbKGZ++VrqsB+3t9Ajo47+aRKiFTqkHeUEDfHwLItm/ITrbzXFXHRuSgwAHUhjePHcRKkRZmmg2uRQ==
   dependencies:
     "@radix-ui/react-slot" "^1.1.1"
     "@udecode/utils" "42.0.0"
     clsx "^2.1.1"
 
-"@udecode/slate@44.0.0":
-  version "44.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/slate/-/slate-44.0.0.tgz#e919d5b1d4f378a0a0813a9e08728d6f7ebbf0d9"
-  integrity sha512-OwH2+qGNpfDr5kdmqnIRKyxQi+ZAoo+532SdNerWnj8bgsFTShLjgERMSP6UJUYVsv4EXZHe1FXKe4tT8GeFfQ==
+"@udecode/slate@45.0.6":
+  version "45.0.6"
+  resolved "https://registry.yarnpkg.com/@udecode/slate/-/slate-45.0.6.tgz#11380dd76a102e060ac2a328f49771e4e33627c2"
+  integrity sha512-MqcEUmUfA3QzFHgM+fhMaoJje220pCxvKCerjYhsPjNFVnoyFc9H4iB3G0UHfonkgyjEUueyuCa+uHQHGMIhBQ==
   dependencies:
     "@udecode/utils" "42.0.0"
     is-plain-object "^5.0.0"
@@ -2220,7 +2220,7 @@
 
 "@udecode/utils@42.0.0":
   version "42.0.0"
-  resolved "https://registry.npmmirror.com/@udecode/utils/-/utils-42.0.0.tgz#448b56d3d889ca560fa986af8e5287dcc7b7d939"
+  resolved "https://registry.yarnpkg.com/@udecode/utils/-/utils-42.0.0.tgz#448b56d3d889ca560fa986af8e5287dcc7b7d939"
   integrity sha512-g7SRp639DMFG5NAqAlkDMYFPiegMvG11OUhzk4bIHpTAddFAaqlSVflzItaiDFx/yhw5QckMb+nEX1N5hiPirg==
 
 "@uploadthing/mime-types@0.3.1":
@@ -2796,7 +2796,7 @@ convert-source-map@^2.0.0:
 
 copy-to-clipboard@^3.3.3:
   version "3.3.3"
-  resolved "https://registry.npmmirror.com/copy-to-clipboard/-/copy-to-clipboard-3.3.3.tgz#55ac43a1db8ae639a4bd99511c148cdd1b83a1b0"
+  resolved "https://registry.yarnpkg.com/copy-to-clipboard/-/copy-to-clipboard-3.3.3.tgz#55ac43a1db8ae639a4bd99511c148cdd1b83a1b0"
   integrity sha512-2KV8NhB5JqC3ky0r9PMCAZKbUHSwtEo4CwCs0KXgruG43gX5PMqDEBbVU4OUzw2MuAWUfsuFmWvEKG5QRfSnJA==
   dependencies:
     toggle-selection "^1.0.6"
@@ -3996,7 +3996,7 @@ html-dom-parser@5.0.13:
 
 html-entities@^2.5.2:
   version "2.5.2"
-  resolved "https://registry.npmmirror.com/html-entities/-/html-entities-2.5.2.tgz#201a3cf95d3a15be7099521620d19dfb4f65359f"
+  resolved "https://registry.yarnpkg.com/html-entities/-/html-entities-2.5.2.tgz#201a3cf95d3a15be7099521620d19dfb4f65359f"
   integrity sha512-K//PSRMQk4FZ78Kyau+mZurHn3FH0Vwr+H36eE0rPbeYkRRi9YxceYPhuN60UwWorxyKHhqoAJl2OFKa4BVtaA==
 
 html-react-parser@^5.2.2:
@@ -4418,17 +4418,17 @@ jiti@^2.4.2:
 
 jotai-optics@0.4.0:
   version "0.4.0"
-  resolved "https://registry.npmmirror.com/jotai-optics/-/jotai-optics-0.4.0.tgz#aad207090a06390e61cc85324b623b2692e2e272"
+  resolved "https://registry.yarnpkg.com/jotai-optics/-/jotai-optics-0.4.0.tgz#aad207090a06390e61cc85324b623b2692e2e272"
   integrity sha512-osbEt9AgS55hC4YTZDew2urXKZkaiLmLqkTS/wfW5/l0ib8bmmQ7kBXSFaosV6jDDWSp00IipITcJARFHdp42g==
 
-jotai-x@2.3.0:
-  version "2.3.0"
-  resolved "https://registry.npmmirror.com/jotai-x/-/jotai-x-2.3.0.tgz#41d00ede766f74ba23c4deb01efc258c596b87e0"
-  integrity sha512-BKjvR4x3dpICT2p8Xrz3O0LdBmlzm+yOx3Pd1CxUsTBMmzjco2cn3VZiUXQsELKSYv4z7h4vCLKsFJI4MiiTow==
+jotai-x@2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/jotai-x/-/jotai-x-2.3.2.tgz#c805b2eac3e75a9b64c9246a3409ccb976c5aa84"
+  integrity sha512-WjOfSO4lZBtuy7igTcJ8ZMq9zf/MfjnJnMgsdLNLZrFeiaAWif7Kh/kXwIG4dFMLTOFZ9Bf96bztv21VBcTB0g==
 
 jotai@~2.8.4:
   version "2.8.4"
-  resolved "https://registry.npmmirror.com/jotai/-/jotai-2.8.4.tgz#ea82b013d640016100e360d19d565862816c96d0"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-2.8.4.tgz#ea82b013d640016100e360d19d565862816c96d0"
   integrity sha512-f6jwjhBJcDtpeauT2xH01gnqadKEySwwt1qNBLvAXcnojkmb76EdqRt05Ym8IamfHGAQz2qMKAwftnyjeSoHAA==
 
 js-sdsl@^4.1.4:
@@ -4666,7 +4666,7 @@ locate-path@^6.0.0:
 
 lodash.mapvalues@^4.6.0:
   version "4.6.0"
-  resolved "https://registry.npmmirror.com/lodash.mapvalues/-/lodash.mapvalues-4.6.0.tgz#1bafa5005de9dd6f4f26668c30ca37230cc9689c"
+  resolved "https://registry.yarnpkg.com/lodash.mapvalues/-/lodash.mapvalues-4.6.0.tgz#1bafa5005de9dd6f4f26668c30ca37230cc9689c"
   integrity sha512-JPFqXFeZQ7BfS00H58kClY7SPVeHertPE0lNuCyZ26/XlN8TvakYD7b9bGyNmXbT/D3BbtPAAmq90gPWqLkxlQ==
 
 lodash.merge@^4.6.2:
@@ -5469,7 +5469,7 @@ multipasta@^0.2.5:
 
 mutative@1.1.0:
   version "1.1.0"
-  resolved "https://registry.npmmirror.com/mutative/-/mutative-1.1.0.tgz#ff3e12a9903702e0487428510f8502dd4667e908"
+  resolved "https://registry.yarnpkg.com/mutative/-/mutative-1.1.0.tgz#ff3e12a9903702e0487428510f8502dd4667e908"
   integrity sha512-2PJADREjOusk3iJkD3rXV2YjAxTuaLxdfqtqTEt6vcY07LtEBR1seHuBHXWEIuscqRDGvbauYPs+A4Rj/KTczQ==
 
 nanoid@^3.3.6, nanoid@^3.3.8:
@@ -5478,9 +5478,9 @@ nanoid@^3.3.6, nanoid@^3.3.8:
   integrity sha512-SppoicMGpZvbF1l3z4x7No3OlIjP7QJvC9XR7AhZr1kL133KHnKPztkKDc+Ir4aJ/1VhTySrtKhrsycmrMQfvg==
 
 nanoid@^5.0.9:
-  version "5.1.3"
-  resolved "https://registry.npmmirror.com/nanoid/-/nanoid-5.1.3.tgz#4ab91f7882148771526e3f0ffb87bb5af9fa71ac"
-  integrity sha512-zAbEOEr7u2CbxwoMRlz/pNSpRP0FdAU4pRaYunCdEezWohXFs+a0Xw7RfkKaezMsmSM1vttcLthJtwRnVtOfHQ==
+  version "5.1.5"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-5.1.5.tgz#f7597f9d9054eb4da9548cdd53ca70f1790e87de"
+  integrity sha512-Ir/+ZpE9fDsNH0hQ3C68uyThDXzYcim2EqcZ8zn8Chtt1iylPT9xXJB0kPCnqzgcEGikO9RxSrh63MsmVCU7Fw==
 
 natural-compare@^1.4.0:
   version "1.4.0"
@@ -5659,7 +5659,7 @@ onetime@^6.0.0:
 
 optics-ts@2.4.1:
   version "2.4.1"
-  resolved "https://registry.npmmirror.com/optics-ts/-/optics-ts-2.4.1.tgz#de94bda2b0ed7fde5b7631283031b9699459d40d"
+  resolved "https://registry.yarnpkg.com/optics-ts/-/optics-ts-2.4.1.tgz#de94bda2b0ed7fde5b7631283031b9699459d40d"
   integrity sha512-HaYzMHvC80r7U/LqAd4hQyopDezC60PO2qF5GuIwALut2cl5rK1VWHsqTp0oqoJJWjiv6uXKqsO+Q2OO0C3MmQ==
 
 optionator@^0.9.1:
@@ -5888,7 +5888,7 @@ property-information@^6.0.0:
 
 proxy-compare@2.6.0:
   version "2.6.0"
-  resolved "https://registry.npmmirror.com/proxy-compare/-/proxy-compare-2.6.0.tgz#5e8c8b5c3af7e7f17e839bf6cf1435bcc4d315b0"
+  resolved "https://registry.yarnpkg.com/proxy-compare/-/proxy-compare-2.6.0.tgz#5e8c8b5c3af7e7f17e839bf6cf1435bcc4d315b0"
   integrity sha512-8xuCeM3l8yqdmbPoYeLbrAXCBWu19XEYc5/F28f5qOaoAIMyfmBUkl5axiK+x9olUvRlcekvnm98AP9RDngOIw==
 
 proxy-from-env@^1.1.0:
@@ -6112,7 +6112,7 @@ react-textarea-autosize@^8.5.7, react-textarea-autosize@^8.5.8:
 
 react-tracked@^1.7.11:
   version "1.7.14"
-  resolved "https://registry.npmmirror.com/react-tracked/-/react-tracked-1.7.14.tgz#66445c918107a502e86501904fee6940ffe37612"
+  resolved "https://registry.yarnpkg.com/react-tracked/-/react-tracked-1.7.14.tgz#66445c918107a502e86501904fee6940ffe37612"
   integrity sha512-6UMlgQeRAGA+uyYzuQGm7kZB6ZQYFhc7sntgP7Oxwwd6M0Ud/POyb4K3QWT1eXvoifSa80nrAWnXWFGpOvbwkw==
   dependencies:
     proxy-compare "2.6.0"
@@ -6938,7 +6938,7 @@ to-regex-range@^5.0.1:
 
 toggle-selection@^1.0.6:
   version "1.0.6"
-  resolved "https://registry.npmmirror.com/toggle-selection/-/toggle-selection-1.0.6.tgz#6e45b1263f2017fa0acc7d89d78b15b8bf77da32"
+  resolved "https://registry.yarnpkg.com/toggle-selection/-/toggle-selection-1.0.6.tgz#6e45b1263f2017fa0acc7d89d78b15b8bf77da32"
   integrity sha512-BiZS+C1OS8g/q2RRbJmy59xpyghNBqrr6k5L/uKBGRsTfxmu3ffiRnd8mlGPUVayg8pvfi5urfnu8TU7DVOkLQ==
 
 trim-lines@^3.0.0:
@@ -7221,12 +7221,12 @@ use-composed-ref@^1.3.0:
 
 use-context-selector@1.4.4:
   version "1.4.4"
-  resolved "https://registry.npmmirror.com/use-context-selector/-/use-context-selector-1.4.4.tgz#f5d65c7fcd78f994cb33cacd57651007a40595c0"
+  resolved "https://registry.yarnpkg.com/use-context-selector/-/use-context-selector-1.4.4.tgz#f5d65c7fcd78f994cb33cacd57651007a40595c0"
   integrity sha512-pS790zwGxxe59GoBha3QYOwk8AFGp4DN6DOtH+eoqVmgBBRXVx4IlPDhJmmMiNQAgUaLlP+58aqRC3A4rdaSjg==
 
 use-deep-compare@^1.3.0:
   version "1.3.0"
-  resolved "https://registry.npmmirror.com/use-deep-compare/-/use-deep-compare-1.3.0.tgz#b36d304072d306e6bf27ca5653f3277dd66d2c0d"
+  resolved "https://registry.yarnpkg.com/use-deep-compare/-/use-deep-compare-1.3.0.tgz#b36d304072d306e6bf27ca5653f3277dd66d2c0d"
   integrity sha512-94iG+dEdEP/Sl3WWde+w9StIunlV8Dgj+vkt5wTwMoFQLaijiEZSXXy8KtcStpmEDtIptRJiNeD4ACTtVvnIKA==
   dependencies:
     dequal "2.0.3"
@@ -7463,10 +7463,10 @@ zod@^3.20.2, zod@^3.24.1:
   resolved "https://registry.npmmirror.com/zod/-/zod-3.24.2.tgz#8efa74126287c675e92f46871cfc8d15c34372b3"
   integrity sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==
 
-zustand-x@6.0.3:
-  version "6.0.3"
-  resolved "https://registry.npmmirror.com/zustand-x/-/zustand-x-6.0.3.tgz#cbb8715a9e194aa65c663fe69fe13296561cb1a8"
-  integrity sha512-R1xMpKZmJI0NG0SVA8WJEjcXwCl0yBgwns4g1WNlhZslAMa5VaaK2JiCDR4j4Cjk1iTughmnXiiCmNjwAoT2gQ==
+zustand-x@6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/zustand-x/-/zustand-x-6.1.0.tgz#1317de83b23a6ed6e4bb43a2198fa454fdf03f8c"
+  integrity sha512-lW1Fs29bLCrerWDa3lZLPuEn+ZkbSGzXdwdImKLJUtI2OqlDjpcFac5WTzCPs2ul/igwXFnGiKH1mdn+1Pl2mw==
   dependencies:
     immer "^10.0.3"
     lodash.mapvalues "^4.6.0"
@@ -7476,7 +7476,7 @@ zustand-x@6.0.3:
 
 zustand@^5.0.3:
   version "5.0.3"
-  resolved "https://registry.npmmirror.com/zustand/-/zustand-5.0.3.tgz#b323435b73d06b2512e93c77239634374b0e407f"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-5.0.3.tgz#b323435b73d06b2512e93c77239634374b0e407f"
   integrity sha512-14fwWQtU3pH4dE0dOpdMiWjddcH+QzKIgk1cl8epwSE7yag43k/AD/m4L6+K7DytAOr9gGBe3/EXj9g7cdostg==
 
 zwitch@^2.0.0:
