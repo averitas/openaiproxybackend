@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Box, 
-  AppBar, 
-  Toolbar, 
-  IconButton, 
-  TextField, 
-  Typography, 
+import {
+  Box,
+  AppBar,
+  Toolbar,
+  IconButton,
+  TextField,
+  Typography,
   CircularProgress,
   Paper,
   Fab,
@@ -22,127 +22,121 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../redux/store';
-import { fetchNotes, updateNote, setActiveNote, deleteNote } from '../redux/notesSlice';
+import { fetchNotes, updateNote, setActiveNote, deleteNote, updateActiveNoteContent } from '../redux/notesSlice';
 import { Note } from '../../../types/note';
 import { v4 as uuidv4 } from 'uuid';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import parse from 'html-react-parser';
 import NoteChatBox from './NoteChatBox';
-import { Descendant } from 'slate';
-import { deserializeHTML, serializeHTML, slateToMarkdown } from '@/tools/textEditor/html-slate-utils';
-import MarkdownPreview from '@/tools/textEditor/markdown-slate';
+import { PlateEditor } from '@/components/editor/plate-editor';
+import { ExtractContentToHtml } from '@/components/editor/utils';
 
 // Dynamically import ReactQuill with SSR disabled
-const ReactQuill = dynamic(
-  () => import('react-quill'),
-  { ssr: false }
-);
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 interface NoteEditorProps {
-  noteId?: string;  // Optional for use with react-router
   onClose?: (note?: Note) => void;  // For modal usage
   isModal?: boolean;  // Flag to indicate if editor is in modal mode
   useMarkdown?: boolean;  // Use markdown instead of HTML
+  isSaving?: boolean;
+  setIsSaving?: (isSaving: boolean) => void;
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, isModal = false, useMarkdown = false }) => {
+const NoteEditor: React.FC<NoteEditorProps> = (props: NoteEditorProps) => {
   const { noteId: routeNoteId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  
-  // Use either the prop noteId or the route param
-  const noteId = propNoteId || routeNoteId;
-  
+
   const notes = useSelector((state: RootState) => state.notes.notes);
   const activeNote = useSelector((state: RootState) => state.notes.activeNote);
   const loading = useSelector((state: RootState) => state.notes.loading);
-  
+
   const [isEditing, setIsEditing] = useState<boolean>(true);
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
-  const [note, setNote] = useState<Note | null>(null);
   const [isChatVisible, setIsChatVisible] = useState<boolean>(false);
-  const [incomingText, setIncomingText] = useState<string>('');
+  const [incomingText, setIncomingText] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [noteContent, setNoteContent] = useState<Descendant[]>(deserializeHTML(note?.content ?? ""));
-  
-  useEffect(() => {
-  }, []);
-  
+
+  const [editor, setEditor] = useState(null);
+
+  const [noteContent, setNoteContent] = useState<string>(activeNote?.content || '');
+  const [insiderSaving, setInsideSaving] = useState<boolean>(false);
+
+  useEffect(() => {}, []);
+
   useEffect(() => {
     if (notes.length === 0) {
       dispatch(fetchNotes());
     }
-  }, [dispatch, notes.length]);
-  
-  useEffect(() => {
-    if (noteId && notes.length > 0) {
-      const foundNote = notes.find(n => n.localId === noteId);
-      if (foundNote) {
-        setNote(foundNote);
-        dispatch(setActiveNote(foundNote));
-      } else {
-        // If note not found, create a new one
-        const newNote: Note = {
-          localId: uuidv4(),
-          title: 'Untitled Note',
-          content: '<p>Start writing here...</p>',
-          date: new Date().toISOString(),
-          isDraft: true
-        };
-        setNote(newNote);
-        dispatch(setActiveNote(newNote));
-      }
-    }
-  }, [noteId, notes, dispatch]);
+  }, [activeNote, dispatch, notes.length]);
 
-  const handleSave = () => {
-    if (note) {
-      setIsSaving(true);
+  const extractContent = async (): Promise<string> => {
+    if (activeNote?.isMarkdown) {
+      return noteContent;
+    }
+
+    // for html, need to use editor to serialize the content
+    const serialized = await ExtractContentToHtml(editor);
+    return serialized;
+  }
+
+  const handleSave = async () => {
+    if (activeNote) {
+      console.log('NoteEditor Start saving note');
+      if (props.setIsSaving) {
+        props.setIsSaving(true);
+      }
+      else{
+        setInsideSaving(true);
+      }
+
       const updatedNote: Note = {
-        ...note,
+        ...activeNote,
         date: new Date().toISOString(),
+        content: await extractContent(),
         isDraft: false,
-        content: useMarkdown || note.isMarkdown ? slateToMarkdown(noteContent) : note.content
       };
-      
+
       dispatch(updateNote(updatedNote))
         .unwrap()
         .then(() => {
-          if (isModal && onClose) {
-            onClose();
+          if (props.isModal && props.onClose) {
+            props.onClose(updatedNote);
           } else {
-            navigate('/');
+            navigate("/");
           }
         })
         .catch((err) => {
           setError(`Failed to save: ${err.message}`);
         })
         .finally(() => {
-          setIsSaving(false);
+          console.log('NoteEditor Finished saving note');
+          setInsideSaving(false);
         });
     }
   };
 
   const handleDelete = () => {
-    if (note) {
+    if (activeNote) {
       setIsDeleting(true);
-      dispatch(deleteNote({ 
-        localId: note.localId, 
-        remoteId: note.remoteId 
-      }))
+      dispatch(
+        deleteNote({
+          localId: activeNote.localId,
+          remoteId: activeNote.remoteId,
+        })
+      )
         .unwrap()
         .then(() => {
-          if (isModal && onClose) {
-            onClose();
+          if (props.isModal && props.onClose) {
+            props.onClose();
           } else {
-            navigate('/');
+            navigate("/");
           }
         })
         .catch((err) => {
-          setError(`Failed to delete: ${err.message || 'Unknown error'}`);
+          setError(`Failed to delete: ${err.message || "Unknown error"}`);
         })
         .finally(() => {
           setIsDeleting(false);
@@ -150,51 +144,65 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
     }
   };
 
-  const handleBackToList = () => {
+  const handleBackToList = async () => {
     // Save current note state before going back
-    if (note) {
-      if (isModal && onClose) {
-        onClose(note);
+    if (activeNote) {
+      if (props.isModal && props.onClose) {
+        const updatedNote: Note = {
+          ...activeNote,
+          date: new Date().toISOString(),
+          content: await extractContent(),
+          isDraft: false
+        };
+        
+        props.onClose(updatedNote);
       } else {
         handleSave();
-        navigate('/');
+        navigate("/");
       }
     } else {
-      if (isModal && onClose) {
-        onClose();
+      if (props.isModal && props.onClose) {
+        props.onClose();
       } else {
-        navigate('/');
+        navigate("/");
       }
     }
   };
 
   const toggleEditingMode = () => {
-    setIsEditing(prev => !prev);
+    setIsEditing((prev) => !prev);
   };
-  
+
   const toggleChat = () => {
     setIsChatVisible(!isChatVisible);
   };
 
-  if (loading && !note) {
+  if (loading && !activeNote) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
   }
 
-  if (!note) {
+  if (!activeNote) {
     return <Typography>Note not found</Typography>;
   }
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      height: isModal ? '100%' : '100vh',
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: props.isModal ? '100%' : '100vh',
       bgcolor: 'background.paper',
-      borderRadius: isModal ? 1 : 0
+      borderRadius: props.isModal ? 1 : 0
     }}>
       <AppBar position="static">
         <Toolbar>
@@ -204,86 +212,93 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
             onClick={handleBackToList}
             aria-label="back"
           >
-            {isModal ? <CloseIcon /> : <ArrowBackIcon />}
+            {props.isModal ? <CloseIcon /> : <ArrowBackIcon />}
           </IconButton>
-          
+
           {isEditingTitle ? (
             <TextField
               autoFocus
-              value={note.title}
-              onChange={(e) => setNote({ ...note, title: e.target.value })}
+              value={activeNote.title}
+              onChange={(e) => dispatch(setActiveNote({ ...activeNote, title: e.target.value }))}
               onBlur={() => setIsEditingTitle(false)}
               onKeyPress={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   setIsEditingTitle(false);
                 }
               }}
               defaultValue={"Enter title here"}
               variant="standard"
-              sx={{ flexGrow: 1, color: 'white' }}
+              sx={{ flexGrow: 1, color: "white" }}
               InputProps={{
-                sx: { color: 'white', fontSize: '1.25rem' }
+                sx: { color: "white", fontSize: "1.25rem" },
               }}
             />
           ) : (
-            <Typography 
-              variant="h6" 
-              component="div" 
-              sx={{ flexGrow: 1, cursor: 'pointer' }}
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1, cursor: "pointer" }}
               onClick={() => setIsEditingTitle(true)}
             >
-              {note.title || "Untitled Note"}
+              {activeNote.title || "Untitled Note"}
             </Typography>
           )}
-          
-          <IconButton color="inherit" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? <CircularProgress color="inherit" size={24} /> : <SaveIcon />}
+
+          <IconButton color="inherit" onClick={handleSave} disabled={props.isSaving}>
+            {insiderSaving || props.isSaving ? (
+              <CircularProgress color="inherit" size={24} />
+            ) : (
+              <SaveIcon />
+            )}
           </IconButton>
-          
+
           <IconButton color="inherit" onClick={toggleEditingMode}>
             {isEditing ? <VisibilityIcon /> : <EditIcon />}
           </IconButton>
-          
+
           <IconButton color="inherit" onClick={toggleChat}>
             <ChatIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: 'row', 
-        flexGrow: 1, 
-        overflow: 'hidden' 
-      }}>
-        <Box sx={{ 
-          flexGrow: 1, 
-          p: 2, 
-          overflow: 'auto', 
-          height: '100%', 
-          width: incomingText ? '50%' : '100%' 
-        }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          flexGrow: 1,
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            flexGrow: 1,
+            p: 2,
+            overflow: "auto",
+            height: "100%",
+            width: incomingText ? "50%" : "100%",
+          }}
+        >
           {isEditing ? (
-            !note.isMarkdown && !useMarkdown ? (
-              <ReactQuill
-                theme="snow"
-                value={note.content}
-                onChange={(content) => setNote({ ...note, content })}
-                style={{ height: 'calc(100% - 42px)' }}
-              />
-            ) : (
-              <MarkdownPreview value={note.content} onChange={setNoteContent} />
-            )
+            <PlateEditor
+              dataRegistry="plate"
+              noteContent={!!!activeNote.isMarkdown ? activeNote.content.toString() : noteContent}
+              setNoteContent={setNoteContent}
+              contentIsHtml={!!!activeNote.isMarkdown}
+              setEditor={setEditor}/>
           ) : (
             <Paper elevation={0} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
-              {parse(note.content)}
+              {activeNote?.content ? parse(activeNote.content) : 'No content'}
             </Paper>
           )}
         </Box>
 
         {incomingText && (
-          <Box sx={{ width: '50%', p: 2, overflow: 'auto', height: '100%' }}>
-            <Paper elevation={1} sx={{ p: 2, height: '100%', overflow: 'auto' }}>
+          <Box sx={{ width: "50%", p: 2, overflow: "auto", height: "100%" }}>
+            <Paper
+              elevation={1}
+              sx={{ p: 2, height: "100%", overflow: "auto" }}
+            >
               {parse(incomingText)}
             </Paper>
           </Box>
@@ -293,17 +308,21 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ noteId: propNoteId, onClose, is
       <Fab
         color="secondary"
         aria-label="delete"
-        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        sx={{ position: "absolute", bottom: 16, right: 16 }}
         onClick={handleDelete}
         disabled={isDeleting}
       >
-        {isDeleting ? <CircularProgress color="inherit" size={24} /> : <DeleteIcon />}
+        {isDeleting ? (
+          <CircularProgress color="inherit" size={24} />
+        ) : (
+          <DeleteIcon />
+        )}
       </Fab>
 
       <NoteChatBox
         visible={isChatVisible}
         onClose={toggleChat}
-        noteContent={note.content}
+        noteContent={activeNote.content}
         setError={setError}
         setOutputText={setIncomingText}
       />

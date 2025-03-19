@@ -80,7 +80,7 @@ export const localToRemoteNote = (note: Note): RemoteNote => {
         subject: note.title,
         body: {
             content: note.content,
-            contentType: 'text'
+            contentType: note.isMarkdown ? 'text' : 'html',
         },
         categories: categories,
     };

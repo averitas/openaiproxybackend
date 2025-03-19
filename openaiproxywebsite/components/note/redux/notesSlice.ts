@@ -202,6 +202,12 @@ const notesSlice = createSlice({
     setActiveNote: (state, action: PayloadAction<Note | null>) => {
       state.activeNote = action.payload;
     },
+    updateActiveNoteContent: (state, action: PayloadAction<{ content: string }>) => {
+      if (state.activeNote) {
+        state.activeNote.content = action.payload.content;
+        state.activeNote.date = new Date().toISOString();
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -287,6 +293,7 @@ const notesSlice = createSlice({
 });
 
 export const selectLocalNotes = (state: RootState) => state.notes.notes;
+export const selectActiveNote = (state: RootState) => state.notes.activeNote;
 
-export const { setActiveNote } = notesSlice.actions;
+export const { setActiveNote, updateActiveNoteContent } = notesSlice.actions;
 export default notesSlice.reducer;

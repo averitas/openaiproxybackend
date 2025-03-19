@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  AppBar, 
-  Toolbar, 
-  IconButton, 
-  Typography, 
-  Box, 
-  Avatar, 
-  Menu, 
-  MenuItem, 
-  Tooltip, 
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Box,
+  Avatar,
+  Menu,
+  MenuItem,
+  Tooltip,
   Tabs,
   Tab
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChatIcon from '@mui/icons-material/Chat';
 import NoteIcon from '@mui/icons-material/Note';
 import UserManager from './auth/user_manager';
 import ChatApp from './chat/chat_app';
 import NoteApp from './note/note_app';
 import GraphClient from './graph/graph_manager';
-import { Note } from '../types/note';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -80,28 +78,28 @@ const AppContainer: React.FC = () => {
 
   useEffect(() => {
     const userChangeHandler = () => {
-        console.debug('!! userChangeHandler Set user email ' + UserManager.instance.email)
-        setUserEmail(UserManager.instance.email)
-        setUserIsLogin(UserManager.instance.isSignedIn)
-  
-        if (UserManager.instance.isSignedIn) {
-          console.debug('user login, set user icon')
-          GraphClient.instance.GetUserPicUrl().then(url => {
-            console.debug('User icon url is ' + url)
-            setUserIcon(url)
-          }).catch(err => {
-            console.error('Set user icon error ' + err)
-          })
-        }
+      console.debug('!! userChangeHandler Set user email ' + UserManager.instance.email)
+      setUserEmail(UserManager.instance.email)
+      setUserIsLogin(UserManager.instance.isSignedIn)
+
+      if (UserManager.instance.isSignedIn) {
+        console.debug('user login, set user icon')
+        GraphClient.instance.GetUserPicUrl().then(url => {
+          console.debug('User icon url is ' + url)
+          setUserIcon(url)
+        }).catch(err => {
+          console.error('Set user icon error ' + err)
+        })
       }
-  
-      UserManager.instance.addEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler)
-      UserManager.instance.init().then( () =>
-        setUserEmail(UserManager.instance.email)
-      )
+    }
+
+    UserManager.instance.addEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler)
+    UserManager.instance.init().then(() =>
+      setUserEmail(UserManager.instance.email)
+    )
 
     UserManager.instance.addEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler);
-    
+
     // Add event listener for tab switching
     const handleSwitchToNotesTab = (event: CustomEvent) => {
       console.log('Switching to Notes tab with note ID:', event.detail?.noteId);
@@ -118,7 +116,7 @@ const AppContainer: React.FC = () => {
       window.removeEventListener('switchToNotesTab', handleSwitchToNotesTab as EventListener);
     };
   }
-  , []);
+    , []);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -127,10 +125,10 @@ const AppContainer: React.FC = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             AI Assistant Platform
           </Typography>
-          
-          <Tabs 
-            value={tabValue} 
-            onChange={handleTabChange} 
+
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
             textColor="inherit"
             indicatorColor="secondary"
             sx={{ mr: 2 }}
@@ -138,7 +136,7 @@ const AppContainer: React.FC = () => {
             <Tab icon={<ChatIcon />} label="Chat" id="app-tab-0" aria-controls="app-tabpanel-0" />
             <Tab icon={<NoteIcon />} label="Notes" id="app-tab-1" aria-controls="app-tabpanel-1" />
           </Tabs>
-          
+
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title={userEmail}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -179,9 +177,9 @@ const AppContainer: React.FC = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      
-      <Box sx={{ 
-        flex: 1, 
+
+      <Box sx={{
+        flex: 1,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column-reverse',
