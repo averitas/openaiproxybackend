@@ -13,6 +13,8 @@ class UserManager extends EventTarget {
     msalInstance: msal.PublicClientApplication
     authResult: msal.AuthenticationResult | undefined
     isInited: boolean = false
+    private tokenRefreshInterval: NodeJS.Timer | null = null
+    private readonly TOKEN_REFRESH_INTERVAL = 15 * 60 * 1000 // 15 minutes
 
     constructor() {
         super()
@@ -21,6 +23,26 @@ class UserManager extends EventTarget {
         this.id = ''
         this.email = 'Anonymous'
         this.msalInstance = new msal.PublicClientApplication(msalConfig);
+    }
+
+    private async startTokenRefresh() {
+        // Clear any existing interval
+        if (this.tokenRefreshInterval) {
+            clearInterval(this.tokenRefreshInterval);
+        }
+
+        // Set up new refresh interval
+        this.tokenRefreshInterval = setInterval(async () => {
+            try {
+                const response = await this.msalInstance.acquireTokenSilent(loginRequest);
+                this.authResult = response;
+                console.log('Token refreshed successfully');
+            } catch (error) {
+                console.error('Failed to refresh token:', error);
+                // If silent refresh fails, we don't want to interrupt the user with popups
+                // The next API call will handle the token refresh with user interaction if needed
+            }
+        }, this.TOKEN_REFRESH_INTERVAL);
     }
 
     async init() {
@@ -39,6 +61,8 @@ class UserManager extends EventTarget {
                 this.authResult = res
                 this.isSignedIn = true
                 this.email = this.authResult.account?.username ?? 'Anonymous'
+                // Start token refresh after successful sign in
+                this.startTokenRefresh()
             })
             .catch(err => {
                 console.log('No account cache or cache is out of date: ' + err)
@@ -75,7 +99,7 @@ class UserManager extends EventTarget {
             this.authResult = tokenResponse
             this.email = tokenResponse.account?.username ?? "Anonymous"
             this.isSignedIn = true
-
+            this.startTokenRefresh()
             this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
 
             return true;
@@ -86,6 +110,7 @@ class UserManager extends EventTarget {
                     this.authResult = res
                     this.email = res.account?.username ?? "Anonymous"
                     this.isSignedIn = true
+                    this.startTokenRefresh()
                     this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
                 })
                 .catch(err => {
@@ -98,6 +123,7 @@ class UserManager extends EventTarget {
                     this.authResult = res
                     this.email = res.account?.username ?? "Anonymous"
                     this.isSignedIn = true
+                    this.startTokenRefresh()
                     this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
                 })
                 .catch(err => {
@@ -112,6 +138,10 @@ class UserManager extends EventTarget {
 
     async signOut() {
         // remove user sign in session in server
+        if (this.tokenRefreshInterval) {
+            clearInterval(this.tokenRefreshInterval);
+            this.tokenRefreshInterval = null;
+        }
         try {
             await this.msalInstance.logoutPopup({'postLogoutRedirectUri': '/'})
             this.authResult = undefined
