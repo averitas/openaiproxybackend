@@ -4,17 +4,23 @@ import { faker } from '@faker-js/faker';
 import { useChat as useBaseChat } from 'ai/react';
 
 import { useSettings } from '@/components/editor/settings';
+import UserManager from '../auth/user_manager';
 
 export const useChat = () => {
   const { keys, model } = useSettings();
 
   return useBaseChat({
     id: 'editor',
-    api: '/api/ai/command',
+    api: '/api/chat',
     body: {
       // !!! DEMO ONLY: don't use API keys client-side
       apiKey: keys.openai,
-      model: model.value,
+      model: "o1-mini",
+    },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-functions-key': keys.openai,
+      'usertoken': `Bearer ${UserManager.instance.authResult?.accessToken}`,
     },
     fetch: async (input, init) => {
       const res = await fetch(input, init);
