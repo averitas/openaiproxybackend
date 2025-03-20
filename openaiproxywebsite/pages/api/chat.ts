@@ -62,9 +62,6 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
           (res as any).flush();
         }
       }
-      
-      // End the response when streaming is complete
-      res.end();
     } catch (streamError) {
       console.error('Error streaming response:', streamError);
       // Only send error if headers haven't been sent yet
