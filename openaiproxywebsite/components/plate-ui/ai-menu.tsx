@@ -4,7 +4,6 @@ import * as React from 'react';
 
 import { type NodeEntry, isHotkey } from '@udecode/plate';
 import {
-  AIChatPlugin,
   useEditorChat,
   useLastAssistantMessage,
 } from '@udecode/plate-ai/react';
@@ -18,6 +17,7 @@ import {
   usePluginOption,
 } from '@udecode/plate/react';
 import { Loader2Icon } from 'lucide-react';
+import { AIChatPlugin } from '@/tools/platePlugin/ai-chat';
 
 import { useChat } from '@/components/editor/use-chat';
 

@@ -1,0 +1,21 @@
+import { type PlateEditor, getEditorPlugin } from '@udecode/plate/react';
+
+import type { AIChatPluginConfig } from '../AIChatPlugin';
+
+import { AIPlugin } from '@udecode/plate-ai/react';
+
+export const resetAIChat = (editor: PlateEditor) => {
+  const { api, getOptions } = getEditorPlugin<AIChatPluginConfig>(editor, {
+    key: 'aiChat',
+  });
+
+  api.aiChat.stop();
+
+  const chat = getOptions().chat;
+
+  if (chat.messages && chat.messages.length > 0) {
+    chat.setMessages?.([]);
+  }
+
+  editor.getTransforms(AIPlugin).ai.removeNodes();
+};

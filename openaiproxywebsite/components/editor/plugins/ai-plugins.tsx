@@ -2,12 +2,13 @@
 
 import React from 'react';
 
-import { AIChatPlugin, AIPlugin } from '@udecode/plate-ai/react';
+import { AIPlugin } from '@udecode/plate-ai/react';
 import { MarkdownPlugin } from '@udecode/plate-markdown';
 
 import { AIMenu } from '@/components/plate-ui/ai-menu';
 
 import { cursorOverlayPlugin } from './cursor-overlay-plugin';
+import { AIChatPlugin } from '@/tools/platePlugin/ai-chat';
 
 const systemCommon = `\
 You are an advanced AI-powered note-taking assistant, designed to enhance productivity and creativity in note management.
