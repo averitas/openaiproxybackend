@@ -1,11 +1,11 @@
 import { deserializeInlineMd } from '@udecode/plate-markdown';
 import { useEditorPlugin, usePluginOption } from '@udecode/plate/react';
 
-import type { AIPluginConfig } from '../ai/AIPlugin';
 import type { AIChatPluginConfig } from './AIChatPlugin';
 
-import { withAIBatch } from '../../lib';
 import { useChatChunk } from './hooks/useChatChunk';
+import { withAIBatch } from './transforms';
+import { AIPluginConfig } from '@udecode/plate-ai/react';
 
 export const useAIChatHooks = () => {
   const { editor, tf } = useEditorPlugin<AIPluginConfig>({ key: 'ai' });
