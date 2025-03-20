@@ -1,26 +1,83 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# OpenAI Proxy Website
+
+This project provides a web interface for interacting with an OpenAI proxy backend. It is built using React, Next.js, Redux, and Plate editor.
+
+## Folder Structure
+
+```
+openaiproxywebsite/
+├── components/
+│   ├── editor/
+│   │   ├── plate-editor.tsx
+│   │   ├── use-create-editor.ts
+│   │   ├── settings.tsx
+│   │   └── plate-ui/
+│   │       ├── editor.tsx
+│   │       └── editor-container.tsx
+│   └── ... (other reusable components)
+├── pages/
+│   ├── api/
+│   │   └── ... (API routes)
+│   └── ... (Next.js pages)
+├── redux/
+│   ├── store.ts
+│   └── slices/
+│       └── notesSlice.ts
+├── public/
+│   └── ... (static assets)
+├── styles/
+│   └── ... (global styles and themes)
+├── utils/
+│   └── ... (utility functions)
+└── README.md
+```
+
+## Components
+
+### Editor Components (`components/editor`)
+
+- **plate-editor.tsx**: Main editor component integrating Plate editor with Redux state management.
+- **use-create-editor.ts**: Custom hook to initialize and configure the Plate editor instance.
+- **settings.tsx**: Dialog component for editor settings and configurations.
+- **plate-ui/editor.tsx**: Customized Plate editor UI component.
+- **plate-ui/editor-container.tsx**: Container component for styling and layout of the editor.
+
+### Redux (`redux`)
+
+- **store.ts**: Redux store configuration.
+- **slices/notesSlice.ts**: Redux slice managing notes state.
+
+### Pages (`pages`)
+
+- Contains Next.js pages and API routes for server-side rendering and backend communication.
+
+### Public (`public`)
+
+- Static assets such as images, icons, and fonts.
+
+### Styles (`styles`)
+
+- Global CSS and theme definitions.
+
+### Utils (`utils`)
+
+- Utility functions and helpers used across the application.
 
 ## Getting Started
 
-First, run the development server:
+To run the project locally:
 
 ```bash
-npm run dev
-# or
+yarn install
 yarn dev
-# or
-pnpm dev
+
+# Or
+# for production
+yarn build
+yarn start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Open [http://localhost:3000](http://localhost:3000) to view the application in your browser.
 
 ## Learn More
 

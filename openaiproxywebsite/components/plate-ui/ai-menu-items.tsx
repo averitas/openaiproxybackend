@@ -3,7 +3,8 @@
 import { useEffect, useMemo } from 'react';
 
 import { type SlateEditor, NodeApi } from '@udecode/plate';
-import { AIChatPlugin, AIPlugin } from '@udecode/plate-ai/react';
+import { AIPlugin } from '@udecode/plate-ai/react';
+import { AIChatPlugin } from '@/tools/platePlugin/ai-chat';
 import { useIsSelecting } from '@udecode/plate-selection/react';
 import {
   type PlateEditor,

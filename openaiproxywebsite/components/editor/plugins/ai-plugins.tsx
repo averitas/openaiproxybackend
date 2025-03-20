@@ -2,12 +2,13 @@
 
 import React from 'react';
 
-import { AIChatPlugin, AIPlugin } from '@udecode/plate-ai/react';
+import { AIPlugin } from '@udecode/plate-ai/react';
 import { MarkdownPlugin } from '@udecode/plate-markdown';
 
 import { AIMenu } from '@/components/plate-ui/ai-menu';
 
 import { cursorOverlayPlugin } from './cursor-overlay-plugin';
+import { AIChatPlugin } from '@/tools/platePlugin/ai-chat';
 
 const systemCommon = `\
 You are an advanced AI-powered note-taking assistant, designed to enhance productivity and creativity in note management.
@@ -71,10 +72,7 @@ If this is an instruction, provide ONLY the text to replace <Selection>. No expl
 Ensure it fits seamlessly within <Block>. If <Block> is empty, write ONE random sentence.
 NEVER write <Block> or <Selection>.
 </Reminder>
-{prompt} about:
-<Selection>
-{selection}
-</Selection>`;
+{prompt} about: <Selection>`;
 
 const userBlockSelecting = `<Reminder>
 If this is a question, provide a helpful and concise answer about <Selection>.
@@ -82,10 +80,7 @@ If this is an instruction, provide ONLY the content to replace the entire <Selec
 Maintain the overall structure unless instructed otherwise.
 NEVER write <Block> or <Selection>.
 </Reminder>
-{prompt} about:
-<Selection>
-{block}
-</Selection>`;
+{prompt} about: <Selection>`;
 
 export const PROMPT_TEMPLATES = {
   systemBlockSelecting,

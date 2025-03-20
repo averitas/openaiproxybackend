@@ -1,5 +1,5 @@
 import { createOpenAI } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { streamText, CoreAssistantMessage, CoreUserMessage } from 'ai';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 // Allow streaming responses up to 30 seconds
@@ -9,7 +9,18 @@ const FunctionKey = process.env.AZ_OPENAI_TRIGGER_FUNCTION_KEY ?? ""
 const FunctionEndpoint = process.env.BACKEND_GOLANG_SERVER_ENDPOINT ?? ""
 
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
-  const messages = await req.body.messages;
+  const messages = req.body.messages as (CoreUserMessage | CoreAssistantMessage)[];
+  const system = req.body.system;
+  let newMessages: (CoreUserMessage | CoreAssistantMessage)[] = [];
+  if (system) {
+    newMessages.push({
+      role: 'assistant',
+      content: system,
+    });
+  }
+  if (messages) {
+    newMessages = newMessages.concat(messages);
+  }
 
   try {
     const openai = createOpenAI({
@@ -24,7 +35,7 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     });
     const result = streamText({
       model: openai.languageModel('o1-mini'),
-      messages,
+      messages: newMessages,
     });
 
     const responseStream = result.toDataStream();
