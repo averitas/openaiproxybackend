@@ -44,6 +44,7 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Transfer-Encoding', 'chunked');
     res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
 
     try {
       const reader = responseStream.getReader();
@@ -56,6 +57,10 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
         }
         // Write each chunk to the response
         res.write(value);
+        // Use flush method if available (for streams)
+        if (typeof (res as any).flush === 'function') {
+          (res as any).flush();
+        }
       }
       
       // End the response when streaming is complete
@@ -65,12 +70,13 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
       // Only send error if headers haven't been sent yet
       if (!res.headersSent) {
         res.status(500).json({ error: 'Streaming error' });
-      } else {
-        res.end();
       }
     }
   } catch (error) {
     console.error('Error in chat API:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+  finally {
+    res.end();
   }
 }

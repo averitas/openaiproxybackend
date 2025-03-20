@@ -19,12 +19,12 @@ import {
 import { Loader2Icon } from 'lucide-react';
 import { AIChatPlugin } from '@/tools/platePlugin/ai-chat';
 
-import { useChat } from '@/components/editor/use-chat';
-
 import { AIChatEditor } from './ai-chat-editor';
 import { AIMenuItems } from './ai-menu-items';
 import { Command, CommandList, InputCommand } from './command';
 import { Popover, PopoverAnchor, PopoverContent } from './popover';
+import { useChat } from '@ai-sdk/react';
+import UserManager from '../auth/user_manager';
 
 export function AIMenu() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
@@ -34,7 +34,13 @@ export function AIMenu() {
 
   const [value, setValue] = React.useState('');
 
-  const chat = useChat();
+  const chat = useChat({
+    api: '/api/chat',
+    headers: {
+      'Content-Type': 'application/json',
+      usertoken: `Bearer ${UserManager.instance.authResult?.accessToken}`,
+    },
+  });
 
   const { input, isLoading, messages, setInput } = chat;
   const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(
