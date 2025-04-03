@@ -162,22 +162,7 @@ const ChatWindow = () => {
       }
     };
 
-    // Clear selection when clicking elsewhere
-    const handleClickOutside = (e: MouseEvent) => {
-      if (showSelectionButton) {
-        // Check if the click is on the selection button
-        const target = e.target as Element;
-        // Check if clicked element is the button or its children
-        if (target.closest('[data-selection-button="true"]')) {
-          // Don't hide if clicking on the button
-          return;
-        }
-        setShowSelectionButton(false);
-      }
-    };
-
     document.addEventListener("selectionchange", handleTextSelection);
-    document.addEventListener("mousedown", handleClickOutside);
     // Initial viewport height calculation
     updateViewportHeight();
 
@@ -187,11 +172,10 @@ const ChatWindow = () => {
 
     return () => {
       document.removeEventListener("selectionchange", handleTextSelection);
-      document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("orientationchange", handleOrientationChange);
       window.removeEventListener("resize", updateViewportHeight);
     };
-  }, [messages, showSelectionButton]);
+  }, [messages]);
 
   const handleSendMessage = async () => {
     console.log(
@@ -454,7 +438,7 @@ const ChatWindow = () => {
         </List>
 
         {/* Floating button for creating a note from selected text */}
-        {showSelectionButton && virtualElement && (
+        { (isCreatingNote || (showSelectionButton && virtualElement)) && (
           <Popper
             open={true}
             anchorEl={virtualElement}
