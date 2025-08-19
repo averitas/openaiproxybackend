@@ -101,7 +101,8 @@ const AppContainer: React.FC = () => {
     }
 
     UserManager.instance.addEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler)
-    UserManager.instance.init().then(() => {
+    UserManager.instance.init().then(async () => {
+      await UserManager.instance.signInMsal()
       setUserEmail(UserManager.instance.email)
 
       // Show login dialog if user is not logged in
@@ -218,8 +219,8 @@ const AppContainer: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShowLoginDialog(false)}>Cancel</Button>
-          <Button onClick={() => {
-            handleSignIn();
+          <Button onClick={async () => {
+            await handleSignIn();
             setShowLoginDialog(false);
           }} variant="contained" color="primary">
             Sign In

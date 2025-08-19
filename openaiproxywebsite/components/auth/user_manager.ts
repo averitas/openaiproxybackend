@@ -1,6 +1,11 @@
 import * as msal from "@azure/msal-browser";
 import { loginRequest, msalConfig } from "./auth_config";
-import { MsalAuthenticationResult } from "@azure/msal-react";
+import {
+  AccountInfo,
+  AuthenticationResult,
+  LogLevel,
+  PublicClientApplication,
+} from "@azure/msal-browser";
 
 class UserManager extends EventTarget {
     static USER_CHANGE_EVENT: 'userChange'
@@ -93,7 +98,7 @@ class UserManager extends EventTarget {
         return true
     }
 
-    async signInMsal() {
+    async signInMsal_legacy() {
         await this.msalInstance.acquireTokenSilent(loginRequest)
         .then(tokenResponse => {
             this.authResult = tokenResponse
@@ -134,6 +139,62 @@ class UserManager extends EventTarget {
         })
 
         return true;
+    }
+
+    async signInMsal() {
+        // TODO: There are cases where MSAL fails to get cached user account from localStorage
+        try {
+            // Resume already started authentication process and return when the request is finished.
+            const tokenResponse = await this.msalInstance.handleRedirectPromise();
+            if (!!tokenResponse) {
+                this.email = tokenResponse.account?.username ?? "Anonymous"
+                this.isSignedIn = true
+                this.startTokenRefresh()
+                this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
+                console.log('User signed in(handleRedirectPromise): ' + this.email)
+                return;
+            }
+
+            // If AuthenticationResult of redirect is null, try to get account from cache, local storage or cookie
+            const currentAccount = this.msalInstance.getAllAccounts()[0];
+            if (currentAccount) {
+                this.email = currentAccount.username ?? "Anonymous"
+                this.isSignedIn = true
+                this.startTokenRefresh()
+                this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
+                console.log('User signed in(with get account): ' + this.email)
+                return true;
+            }
+        } catch (e: any) {
+            console.warn('Login failed, try redirect to login: ' + e)
+        }
+
+        // If no accounts detected, try to login user.
+        try{
+            await this.msalInstance.loginRedirect(loginRequest);
+            this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT));
+            const currentAccount = this.msalInstance.getAllAccounts()[0];
+            if (currentAccount) {
+                this.email = currentAccount.username ?? "Anonymous"
+                this.isSignedIn = true
+                this.startTokenRefresh()
+                this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
+                console.log('User signed in(loginRedirect): ' + this.email)
+                return true;
+            }
+        } catch (e: any) {
+            console.warn('Login failed: ' + e)
+            return false;
+        }
+        this.email = 'Anonymous';
+        this.isSignedIn = false;
+        if (this.tokenRefreshInterval) {
+            clearInterval(this.tokenRefreshInterval);
+            this.tokenRefreshInterval = null;
+        }
+        this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
+
+        return false;
     }
 
     async signOut() {
