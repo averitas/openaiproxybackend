@@ -104,11 +104,6 @@ const AppContainer: React.FC = () => {
     UserManager.instance.init().then(async () => {
       await UserManager.instance.signInMsal()
       setUserEmail(UserManager.instance.email)
-
-      // Show login dialog if user is not logged in
-      if (!UserManager.instance.isSignedIn) {
-        setShowLoginDialog(true);
-      }
     })
 
     UserManager.instance.addEventListener(UserManager.USER_CHANGE_EVENT, userChangeHandler);

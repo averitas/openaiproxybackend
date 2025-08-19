@@ -28,7 +28,7 @@ class ChatSession extends EventTarget {
 
         const botMsg = this.createBot()
         botMsg.isWaiting = true
-        if (UserManager.instance.authResult === undefined) {
+        if (!UserManager.instance.isSignedIn) {
             botMsg.content = 'Please login you Microsoft account with top right corner'
             botMsg.isWaiting = false
             this.dispatchEvent(new Event(ChatSession.MESSAGES_CHANGE_EVENT))

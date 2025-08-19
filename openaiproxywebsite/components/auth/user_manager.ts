@@ -77,11 +77,15 @@ class UserManager extends EventTarget {
         this.isInited = true
     }
 
-    async acquireTokenSlient(scopes: string[]) {
+    async acquireTokenSlient(scopes: string[] = []) {
         const accounts = this.msalInstance.getAllAccounts()
         if (accounts.length > 0) {
             this.msalInstance.setActiveAccount(accounts[0])
-            return await this.msalInstance.acquireTokenSilent({scopes: scopes})
+            if (scopes != null && scopes.length > 0) {
+                return await this.msalInstance.acquireTokenSilent({scopes: scopes})
+            } else {
+                return await this.msalInstance.acquireTokenSilent(loginRequest)
+            }
         }
 
         return undefined
@@ -147,6 +151,7 @@ class UserManager extends EventTarget {
             // Resume already started authentication process and return when the request is finished.
             const tokenResponse = await this.msalInstance.handleRedirectPromise();
             if (!!tokenResponse) {
+                this.authResult = tokenResponse
                 this.email = tokenResponse.account?.username ?? "Anonymous"
                 this.isSignedIn = true
                 this.startTokenRefresh()
@@ -158,6 +163,7 @@ class UserManager extends EventTarget {
             // If AuthenticationResult of redirect is null, try to get account from cache, local storage or cookie
             const currentAccount = this.msalInstance.getAllAccounts()[0];
             if (currentAccount) {
+                this.authResult = await this.msalInstance.acquireTokenSilent(loginRequest);
                 this.email = currentAccount.username ?? "Anonymous"
                 this.isSignedIn = true
                 this.startTokenRefresh()
@@ -175,6 +181,7 @@ class UserManager extends EventTarget {
             this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT));
             const currentAccount = this.msalInstance.getAllAccounts()[0];
             if (currentAccount) {
+                this.authResult = await this.msalInstance.acquireTokenSilent(loginRequest);
                 this.email = currentAccount.username ?? "Anonymous"
                 this.isSignedIn = true
                 this.startTokenRefresh()
@@ -192,6 +199,7 @@ class UserManager extends EventTarget {
             clearInterval(this.tokenRefreshInterval);
             this.tokenRefreshInterval = null;
         }
+        this.authResult = undefined
         this.dispatchEvent(new Event(UserManager.USER_CHANGE_EVENT))
 
         return false;
